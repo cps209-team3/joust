@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2020
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoustClient", "JoustClient\JoustClient.csproj", "{85CA9310-4562-4458-BEEE-DE2147463C1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoustModel", "JoustModel\JoustModel.csproj", "{93E87207-94FD-4A31-907B-77CE1E3113B6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{85CA9310-4562-4458-BEEE-DE2147463C1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85CA9310-4562-4458-BEEE-DE2147463C1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85CA9310-4562-4458-BEEE-DE2147463C1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85CA9310-4562-4458-BEEE-DE2147463C1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93E87207-94FD-4A31-907B-77CE1E3113B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93E87207-94FD-4A31-907B-77CE1E3113B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93E87207-94FD-4A31-907B-77CE1E3113B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93E87207-94FD-4A31-907B-77CE1E3113B6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {440601F2-8813-4779-9587-519D450D6B46}
+	EndGlobalSection
+EndGlobal
