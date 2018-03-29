@@ -8,6 +8,14 @@ namespace JoustModel
 {
     public class Ostrich : Entity
     {
+        public int score;
 
+        public override int Value { get; set; }
+
+        public Ostrich()
+        {
+            Value = 750;
+            score = 0;
+        }
     }
 }

@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    public class Entity : WorldObject
+    public abstract class Entity : WorldObject
     {
         public double speed;
         public double angle;
+        
+        public abstract int Value { get; set; }
     }
 }

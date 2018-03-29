@@ -8,6 +8,11 @@ namespace JoustModel
 {
     public class Buzzard : Enemy
     {
+        public override int Value { get; set; }
 
+        public Buzzard()
+        {
+            Value = 500;
+        }
     }
 }

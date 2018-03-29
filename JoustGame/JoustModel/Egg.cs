@@ -8,6 +8,11 @@ namespace JoustModel
 {
     public class Egg : Enemy
     {
+        public override int Value { get; set; }
 
+        public Egg()
+        {
+            Value = 250;
+        }
     }
 }
