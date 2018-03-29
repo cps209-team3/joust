@@ -49,6 +49,7 @@
     <Compile Include="Platform.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Pterodactyl.cs" />
+    <Compile Include="Respawn.cs" />
     <Compile Include="World.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorldObject.cs" />
