@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    public class WorldObject
+    public abstract class WorldObject
     {
         public Point coords;
         public Hitbox hitbox;
