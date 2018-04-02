@@ -1,0 +1,16 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace JoustModel
+{
+    public abstract class Entity : WorldObject
+    {
+        public double speed;
+        public double angle;
+        
+        public abstract int Value { get; set; }
+    }
+}
