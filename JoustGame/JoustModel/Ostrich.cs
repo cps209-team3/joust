@@ -26,11 +26,12 @@ namespace JoustModel
             return string.Format("Ostrich, {0}, {1}, {2}, {3}", this.score, lives, stage, this.coords);
         }
 
-        public void Deserialize(string score, string lives, string stage, string coords)
+        public void Deserialize(string data)
         {
-            this.score = Convert.ToInt32(score);
-            this.lives = Convert.ToInt32(lives);
-            this.coords = coords; //convert to point
+            // set score
+            // set lives
+            // set stage
+            // set coords
         }
     }
 }

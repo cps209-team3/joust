@@ -10,13 +10,13 @@ namespace JoustModel
     {
         public string Serialize()
         {
-            return Convert.ToString(this.coords);
+            return string.Format("Platform, {1}", this.coords);
         }
 
         // Set coords to value read from file
-        public void Deserialize(string coords)
+        public void Deserialize(string data)
         {
-            this.coords = coords;
+            // set coords
         }
     }
 }
