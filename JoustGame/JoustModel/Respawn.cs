@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    public class Respawn : Platform, ISerializable
+    public class Respawn : Platform
     {
-        public string Serialize()
+        public override string Serialize()
         {
             return string.Format("Respawn, {1}", this.coords);
         }
 
         // Set coords to value read from file
-        public void Deserialize(string data)
+        public override void Deserialize(string data)
         {
             // set coords
         }
