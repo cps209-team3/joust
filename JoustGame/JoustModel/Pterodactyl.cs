@@ -22,7 +22,7 @@ namespace JoustModel
             return string.Format("Pterodactyl, {0}, {1}, {2}", this.coords, this.speed, this.angle);
         }
 
-        public void Deserialize(string data
+        public void Deserialize(string data)
         {
             // set coords
             // set speed
