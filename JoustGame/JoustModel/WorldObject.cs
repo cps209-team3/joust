@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
+    interface Iserialization
+    {
+        void Serialize();
+        void Deserialize();
+    }
+    
     public abstract class WorldObject
     {
         public Point coords;
