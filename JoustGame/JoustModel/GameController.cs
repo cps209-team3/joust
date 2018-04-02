@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JoustModel
 {
     class GameController
     {
-        public World world { get; set; }
+        public World WorldObj { get; set; }
 
         public GameController()
         {
-            world = World.Instance;
+            WorldObj = World.Instance;
         }
 
         public string Load(string filename)
@@ -28,7 +29,7 @@ namespace JoustModel
             // loop through game objects and build string by activating each's serialize method. 
             // sample complete save line:
             // {saveDate} Player: [score, lives, stage, playerPos] WorldObjects: [platforms: (int)numOfPlats, (point)coords, (bool)respawn], [Entities: (int)numOfEnts, (string)type, (point)coords, (double)speed, (double)angle]
-            return string line2save;
+            return line2save;
         }
     }
     
