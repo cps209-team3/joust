@@ -12,7 +12,7 @@ namespace JoustModel
 
         public GameController()
         {
-            world = new World();
+            world = World.Instance;
         }
 
         public string Load(string date)
@@ -41,8 +41,8 @@ namespace JoustModel
         {
             GameController game = new GameController();
             // populate world with objects
-            string result = "{saveDate} Player: [score, lives, stage, playerPos] WorldObjects: [platforms: (int)numOfPlats, (point)coords, (bool)respawn], [Entities: (int)numOfEnts, (string)type, (point)coords, (double)speed, (double)angle]"
-            line = game.Load();
+            string result = "Player: [1000, 3, 2, (300,600)] WorldObjects: [platforms: 1, (100,300), false], [Entities: 1, buzzard, (500,700), 3.6, 4.7]";
+            line = game.Load("Save 2018-4-2-5-32-00");
             Assert.IsTrue(result == line);
         }
 
@@ -51,7 +51,7 @@ namespace JoustModel
         {
             GameController game = new GameController();
             // the save file needs test data
-            string result = string result = "{saveDate} Player: [score, lives, stage, playerPos] WorldObjects: [platforms: (int)numOfPlats, (point)coords, (bool)respawn], [Entities: (int)numOfEnts, (string)type, (point)coords, (double)speed, (double)angle]";
+            string result = "Player: [1000, 3, 2, (300,600)] WorldObjects: [platforms: 1, (100,300), false], [Entities: 1, buzzard, (500,700), 3.6, 4.7]";
             line2save = game.Save();
             Assert.IsTrue(result == line2save);
         }
