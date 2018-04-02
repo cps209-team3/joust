@@ -16,9 +16,9 @@ namespace JoustModel
         }
 
         // Set coords to value read from file
-        public void Deserialize(string coords)
+        public void Deserialize(string data)
         {
-            this.coords = coords;
+            // set coords
         }
     }
 }
