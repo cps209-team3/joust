@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    public abstract class WorldObject
+    public abstract class WorldObject : ISerializable
     {
         public Point coords;
         public Hitbox hitbox;
         public string image;
     }
+    
+    abstract public string Serialize();
+    abstract public void Deserialize();
 }
