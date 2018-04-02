@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    class Ostrich : Entity, Iserialization
+    class Ostrich : Entity, ISerializable
     {
         public int lives;
         public int stage;

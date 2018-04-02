@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    public class Platform : WorldObject, Iserialization
+    public class Platform : WorldObject, ISerializable
     {
 
         // Convert coords to one line string to be put into save file

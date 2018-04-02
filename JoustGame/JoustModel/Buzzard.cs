@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    public class Buzzard : Enemy, Iserialization
+    public class Buzzard : Enemy, ISerializable
     {
         public override int Value { get; set; }
 
