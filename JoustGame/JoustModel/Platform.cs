@@ -12,7 +12,7 @@ namespace JoustModel
         // Convert coords to one line string to be put into save file
         public string Serialize()
         {
-            return Convert.ToString(this.coords);
+            return string.Format("Platform, {1}", this.coords);
         }
 
         // Set coords to value read from file
