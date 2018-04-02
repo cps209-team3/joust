@@ -45,6 +45,7 @@
     <Compile Include="Egg.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="GameController.cs" />
     <Compile Include="ISerializable.cs" />
     <Compile Include="Score.cs" />
     <Compile Include="Hitbox.cs" />
@@ -56,6 +57,9 @@
     <Compile Include="World.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorldObject.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
