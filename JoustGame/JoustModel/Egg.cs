@@ -15,6 +15,7 @@ namespace JoustModel
             Value = 250;
         }
 
+        //Serialization
         public string Serialize()
         {
             return string.Format("Egg, {0}, {1}, {2}", this.coords, this.speed, this.angle);

@@ -26,5 +26,5 @@ namespace JoustModel
             this.speed = Convert.ToDouble(speed);
             this.angle = Convert.ToDouble(angle);
         }
-}
+    }
 }
