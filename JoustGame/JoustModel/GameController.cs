@@ -15,7 +15,7 @@ namespace JoustModel
             world = World.Instance;
         }
 
-        public string Load(string date)
+        public string Load(string filename)
         {
             string line = "";
             // loops through save lines looking for the one that matches the provided date
