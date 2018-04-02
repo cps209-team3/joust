@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    public class Ostrich : Entity
+    class Ostrich : Entity, ISerializable
     {
+        public int lives;
+        public int stage;
         public int score;
 
         public override int Value { get; set; }
@@ -16,6 +18,21 @@ namespace JoustModel
         {
             Value = 750;
             score = 0;
+        }
+        
+        //Serialization
+        public string Serialize()
+        {
+            return string.Format("Ostrich, {0}, {1}, {2}, {3}", this.score, lives, stage, this.coords);
+        }
+
+        public void Deserialize(string score, string lives, string stage, string coords)
+        {
+            this.score = Convert.ToInt32(score);
+            this.lives = Convert.ToInt32(lives);
+            this.stage = Convert.ToInt32(stage);
+            this.coords = coords; //convert to point
+
         }
     }
 }
