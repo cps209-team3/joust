@@ -15,25 +15,18 @@ namespace JoustModel
             world = new World();
         }
 
-        public void Load(string fileName, string user)
+        public void Load(string date)
         {
-            // search for section in file according to username
-            // Get lives count
-            // Get score number
-            // Get level number
+            // loops through save lines looking for the one that matches the provided date
+            // feed line into each object class of the game activating its Deserialize method and loading each object into the game
 
         }
-        public void Save(string fileName)
+        public void Save()
         {
-            // write username
-            // write score data under "score"
-            // write lives count
-            // write level number
-
-            // Sample save line:
-            // USERNAME, SCORE, LIVES, LEVEL
-            // NerdDestroyer9000, 999999, 3, 10
-
+            // loop through game objects and build string by activating each's serialize method. 
+            // sample complete save line:
+            // {saveDate} Player: [score, lives, stage, playerPos] WorldObjects: [platforms: (int)numOfPlats, (point)coords, (bool)respawn], [Entities: (int)numOfEnts, (string)type, (point)coords, (double)speed, (double)angle]
+            
         }
     }
 }
