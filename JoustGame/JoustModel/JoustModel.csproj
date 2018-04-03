@@ -46,6 +46,8 @@
     <Compile Include="Enemy.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="GameController.cs" />
+    <Compile Include="HighScoreManager.cs" />
+    <Compile Include="HighScoreManagerTest.cs" />
     <Compile Include="ISerializable.cs" />
     <Compile Include="Score.cs" />
     <Compile Include="Hitbox.cs" />
