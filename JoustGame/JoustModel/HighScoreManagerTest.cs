@@ -11,7 +11,7 @@ namespace JoustModel
     class HighScoreManagerTest
     {
         [TestMethod]
-        public void Score_Creation_Test()
+        public void TestScoreCreation()
         {
             List<Score> testList = new List<Score>();
 
@@ -35,10 +35,10 @@ namespace JoustModel
 
             foreach (Score i in testList)
             {
-                HighScore_Manager.AddScore(i);
+                HighScoreManager.AddScore(i);
             }
 
-            List<Score> checkList = HighScore_Manager.getScores("someFile");
+            List<Score> checkList = HighScoreManager.GetScores("someFile");
 
             List<Score> checkList2 = new List<Score>();
 
