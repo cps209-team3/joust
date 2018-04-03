@@ -46,5 +46,4 @@ namespace JoustModel
             return toReturn;
         }
     }
-
 }
