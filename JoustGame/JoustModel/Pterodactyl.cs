@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    public class Pterodactyl : Enemy, ISerializable
+    public class Pterodactyl : Enemy
     {
         public override int Value { get; set; }
 
@@ -15,12 +15,12 @@ namespace JoustModel
             Value = 1000;
         }
 
-        public string Serialize()
+        public override string Serialize()
         {
             return string.Format("Pterodactyl, {0}, {1}, {2}", this.coords, this.speed, this.angle);
         }
 
-        public void Deserialize(string data)
+        public override void Deserialize(string data)
         {
             // set coords
             // set speed

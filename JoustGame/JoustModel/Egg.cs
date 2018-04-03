@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    public class Egg : Enemy, ISerializable
+    public class Egg : Enemy
     {
         public override int Value { get; set; }
 
@@ -16,12 +16,12 @@ namespace JoustModel
         }
 
         //Serialization
-        public string Serialize()
+        public override string Serialize()
         {
             return string.Format("Egg, {0}, {1}, {2}", this.coords, this.speed, this.angle);
         }
 
-        public void Deserialize(string data)
+        public override void Deserialize(string data)
         {
             // set coords
             // set speed

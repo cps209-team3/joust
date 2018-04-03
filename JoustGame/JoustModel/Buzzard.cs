@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    public class Buzzard : Enemy, ISerializable
+    public class Buzzard : Enemy
     {
         public override int Value { get; set; }
 
@@ -15,12 +15,12 @@ namespace JoustModel
             Value = 500;
         }
 
-        public string Serialize()
+        public override string Serialize()
         {
             return string.Format("Buzzard, {0}, {1}, {2}", this.coords, this.speed, this.angle);
         }
 
-        public void Deserialize(string data)
+        public override void Deserialize(string data)
         {
             //set coords
             //set speed 
