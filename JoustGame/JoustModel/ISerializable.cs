@@ -9,6 +9,6 @@ namespace JoustModel
     public interface ISerializable
     {
         string Serialize();
-        void Deserialize();
+        void Deserialize(string data);
     }
 }

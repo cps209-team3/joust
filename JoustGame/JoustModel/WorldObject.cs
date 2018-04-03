@@ -13,6 +13,6 @@ namespace JoustModel
         public string image;
 
         abstract public string Serialize();
-        abstract public void Deserialize();
+        abstract public void Deserialize(string data);
     }
 }
