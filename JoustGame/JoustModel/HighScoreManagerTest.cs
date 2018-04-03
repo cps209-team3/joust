@@ -35,7 +35,7 @@ namespace JoustModel
 
             foreach (Score i in testList)
             {
-                HighScoreManager.AddScore(i);
+                HighScoreManager.Instance.AddScore(i);
             }
 
             List<Score> checkList = HighScoreManager.GetScores("someFile");
