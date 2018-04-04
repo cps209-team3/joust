@@ -14,17 +14,9 @@ namespace JoustModel
         
         public abstract int Value { get; set; }
 
-        public void Die()
-        {
-            World.Instance.objects.Remove(this);
-            // Play death animation
-        }
+        public abstract void Die();
 
-        public void Update()
-        {
-            // Move based on input/AI
-            // Check for collisions
-        }
+        public abstract void Update();
     }
 
     [TestClass]
