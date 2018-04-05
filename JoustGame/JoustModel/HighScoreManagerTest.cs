@@ -15,14 +15,14 @@ namespace JoustModel
         {
             List<Score> testList = new List<Score>();
 
-            Score a = new Score("efting", 14);
-            Score c = new Score("franklin", 12);
-            Score b = new Score("cockrell", 13);
+            Score a = new Score(14,"efting");
+            Score c = new Score(12, "franklin");
+            Score b = new Score(13, "cockrell");
 
-            Score sa = new Score("sandy", 3);
-            Score sb = new Score("sandy", 2);
-            Score sc = new Score("sandy", 1);
-            Score sd = new Score("sandy", 4);
+            Score sa = new Score(3, "sandy");
+            Score sb = new Score(2, "sandy");
+            Score sc = new Score(1, "sandy");
+            Score sd = new Score(4, "sandy");
 
             testList.Add(a);
             testList.Add(b);
@@ -38,7 +38,7 @@ namespace JoustModel
                 HighScoreManager.Instance.AddScore(i);
             }
 
-            List<Score> checkList = HighScoreManager.GetScores("someFile");
+            List<Score> checkList = HighScoreManager.Instance.AllScores;
 
             List<Score> checkList2 = new List<Score>();
 

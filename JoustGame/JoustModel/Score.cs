@@ -13,13 +13,18 @@ namespace JoustModel
         // up to ask for a username. using the game's score
         // and the supplied name, a score is created
 
+        public int points;
         public string username;
-        public int score;
 
-        public Score(string username, int score)
+        public Score(int points, string username)
         {
+            this.points = points;
             this.username = username;
-            this.score = score;
+        }
+
+        public override string ToString()
+        {
+            return this.points.ToString() + " || " + this.username.ToString();
         }
     }
 
