@@ -9,8 +9,12 @@ namespace JoustModel
     public class World
     {
         public List<WorldObject> objects;
+        public int stage;
 
-        private World() { }
+        private World()
+        {
+            stage = 0;
+        }
 
         private static World instance = new World();
         public static World Instance
