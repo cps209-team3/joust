@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    class GameController
+    public class GameController
     {
         public World WorldObj { get; set; }
 
