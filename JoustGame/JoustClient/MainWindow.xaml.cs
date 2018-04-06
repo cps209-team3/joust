@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using JoustModel;
 
 namespace JoustClient
 {
@@ -20,9 +21,21 @@ namespace JoustClient
     /// </summary>
     public partial class MainWindow : Window
     {
+        public GameController control = new GameController();
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        public void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadGameView();
+        }
+
+        public void LoadGameView()
+        {
+            // Get stage num from controla
         }
     }
 }
