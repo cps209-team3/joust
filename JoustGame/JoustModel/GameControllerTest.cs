@@ -1,17 +1,18 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using JoustModel;
 
-[TestClass]
+namespace JoustModel
+{
+    [TestClass]
     public class SerialTest
     {
 
         [TestMethod]
-        public void Save_Default()
+        public void Load_Default()
         {
             GameController game = new GameController();
             string line;
@@ -22,7 +23,7 @@ using JoustModel;
         }
 
         [TestMethod]
-        public void Load_Default()
+        public void Save_Default()
         {
             GameController game = new GameController();
             string line2save;
@@ -32,3 +33,6 @@ using JoustModel;
             Assert.IsTrue(result == line2save);
         }
     }
+}
+
+

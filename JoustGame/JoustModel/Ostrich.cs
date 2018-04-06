@@ -34,7 +34,7 @@ namespace JoustModel
         //Serialization
         public override string Serialize()
         {
-            return string.Format("Ostrich, {0}, {1}, {2}, {3}", this.score, lives, stage, this.coords);
+            return string.Format("Ostrich, {0}, {1}, {2}", this.score, this.lives, /*stage,*/ this.coords);
         }
 
         public override void Deserialize(string data)

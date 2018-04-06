@@ -93,5 +93,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JoustModel\JoustModel.csproj">
+      <Project>{93e87207-94fd-4a31-907b-77ce1e3113b6}</Project>
+      <Name>JoustModel</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
