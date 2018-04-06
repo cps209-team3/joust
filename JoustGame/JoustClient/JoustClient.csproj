@@ -93,27 +93,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\JoustModel\JoustModel.csproj">
-      <Project>{93e87207-94fd-4a31-907b-77ce1e3113b6}</Project>
-      <Name>JoustModel</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Player\ostrich_fly1.png" />
-    <Resource Include="Images\Player\ostrich_fly2.png" />
-    <Resource Include="Images\Player\ostrich_move1.png" />
-    <Resource Include="Images\Player\ostrich_move2.png" />
-    <Resource Include="Images\Player\ostrich_move3.png" />
-    <Resource Include="Images\Player\ostrich_stand.png" />
-    <Resource Include="Images\Player\ostrich_stop.png" />
-    <Resource Include="Images\Player\player_fly1.png" />
-    <Resource Include="Images\Player\player_fly2.png" />
-    <Resource Include="Images\Player\player_move1.png" />
-    <Resource Include="Images\Player\player_move2.png" />
-    <Resource Include="Images\Player\player_move3.png" />
-    <Resource Include="Images\Player\player_stand.png" />
-    <Resource Include="Images\Player\player_stop.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

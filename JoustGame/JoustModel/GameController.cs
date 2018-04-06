@@ -15,19 +15,6 @@ namespace JoustModel
             WorldObj = World.Instance;
         }
 
-        public void CalculateNumEnemies(int stageNum, ref int numBuzzards, ref int numPterodactyls)
-        {
-            numBuzzards = stageNum + 3;
-            if (stageNum < 5)
-            {
-                numPterodactyls = 0;
-            }
-            else
-            {
-                numPterodactyls = 1 + ((stageNum - 5) / 2);
-            }
-        }
-
         public string Load(string filename)
         {
             string line = "";
