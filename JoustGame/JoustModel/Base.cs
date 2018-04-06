@@ -1,16 +1,16 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace JoustModel
 {
-    public class Platform : WorldObject
+    public class Base : Respawn
     {
+        
         public override string Serialize()
         {
-            return string.Format("Platform, {0}", this.coords);
+            return string.Format("Base, {0}", this.coords);
         }
 
         // Set coords to value read from file
