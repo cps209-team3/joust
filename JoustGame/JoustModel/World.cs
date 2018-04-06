@@ -8,7 +8,7 @@ namespace JoustModel
 {
     public class World
     {
-        public List<WorldObject> objects;
+        public List<WorldObject> objects = new List<WorldObject>() { };
         public int stage;
 
         private World() { }

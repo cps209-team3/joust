@@ -8,23 +8,47 @@ namespace JoustModel
 {
     public class GameController
     {
-        public World WorldObj { get; set; }
+        public World WorldRef { get; set; }
 
         public GameController()
         {
-            WorldObj = World.Instance;
+            WorldRef = World.Instance;
         }
 
-        public string Load(string filename)
+        public string[] Load(string filename)
         {
-            string line = "";
+            string[] lineLoaded = new string[] {"", ""};
+            lineLoaded = System.IO.File.ReadAllLines("C:/Users/James/OneDrive - Bob Jones University/School/CpS 209/joust/Save2018-4-2-5-32-00");
+
             // loops through save lines looking for the one that matches the provided date
             // feed line into each object class of the game activating its Deserialize method and loading each object into the game
-            return line;
+            return lineLoaded;
         }
         public string[] Save()
         {
             string[] lines2save = { "Player: ", "Platforms: ", "Entities: " };
+
+            foreach (WorldObject obj in WorldRef.objects)
+            {
+                if (obj is Ostrich)
+                {
+                    lines2save[0] += obj.Serialize();
+                }
+                else if (obj is Platform)
+                {
+                    lines2save[1] += obj.Serialize();
+                }
+                else if (obj is Entity)
+                {
+                    lines2save[2] += obj.Serialize();
+                }
+            }
+
+            // test for lines
+            foreach (string i in lines2save)
+            {
+                Console.WriteLine(i);
+            }
 
 
 
