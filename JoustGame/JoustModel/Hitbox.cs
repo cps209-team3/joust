@@ -39,10 +39,8 @@ namespace JoustModel
         [TestMethod]
         public void TestNoCollision()
         {
-            Ostrich a = new Ostrich();
-            Buzzard b = new Buzzard();
-            a.coords = new Point(500, 500);
-            b.coords = new Point(600, 600);
+            Ostrich a = new Ostrich(new Point(500, 500));
+            Buzzard b = new Buzzard(new Point(600, 600));
             a.hitbox = new Hitbox(50, 50);
             b.hitbox = new Hitbox(50, 50);
             World.Instance.objects.Add(a);
@@ -53,10 +51,8 @@ namespace JoustModel
         [TestMethod]
         public void TestCollisions()
         {
-            Ostrich a = new Ostrich();
-            Buzzard b = new Buzzard();
-            a.coords = new Point(500, 500);
-            b.coords = new Point(510, 510);
+            Ostrich a = new Ostrich(new Point(500, 500));
+            Buzzard b = new Buzzard(new Point(510, 510));
             a.hitbox = new Hitbox(50, 50);
             b.hitbox = new Hitbox(50, 50);
             World.Instance.objects.Add(a);
