@@ -51,6 +51,7 @@
     <Compile Include="HighScoreManager.cs" />
     <Compile Include="HighScoreManagerTest.cs" />
     <Compile Include="ISerializable.cs" />
+    <Compile Include="IState.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Score.cs" />
     <Compile Include="Hitbox.cs" />
