@@ -11,9 +11,13 @@ namespace JoustModel
     {
         public override int Value { get; set; }
 
-        public Pterodactyl()
+        public Pterodactyl(Point coords)
         {
             Value = 1000;
+            speed = 0;
+            angle = 0;
+            imagePath = "Images/Player/player_stand.png";
+            this.coords = coords;
             World.Instance.objects.Add(this);
         }
 
@@ -46,7 +50,7 @@ namespace JoustModel
         [TestMethod]
         public void TestDie()
         {
-            Pterodactyl p = new Pterodactyl();
+            Pterodactyl p = new Pterodactyl(new Point(500, 500));
             p.Die();
             Assert.AreEqual(new List<WorldObject> { }, World.Instance.objects);
         }
