@@ -54,6 +54,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BaseControl.cs" />
+    <Compile Include="PlatformControl.cs" />
+    <Compile Include="WorldObjectControl.cs" />
+    <Compile Include="EggControl.cs" />
+    <Compile Include="PterodactylControl.cs" />
+    <Compile Include="RespawnControl.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -62,12 +68,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="BuzzardControl.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OstrichControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -98,6 +106,69 @@
       <Project>{93e87207-94fd-4a31-907b-77ce1e3113b6}</Project>
       <Name>JoustModel</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Enemy\buzzard_fly1.png" />
+    <Resource Include="Images\Enemy\buzzard_fly2.png" />
+    <Resource Include="Images\Enemy\buzzard_move1.png" />
+    <Resource Include="Images\Enemy\buzzard_move2.png" />
+    <Resource Include="Images\Enemy\buzzard_move3.png" />
+    <Resource Include="Images\Enemy\buzzard_stand.png" />
+    <Resource Include="Images\Enemy\buzzard_stop.png" />
+    <Resource Include="Images\Enemy\egg1.png" />
+    <Resource Include="Images\Enemy\egg2.png" />
+    <Resource Include="Images\Enemy\egg3.png" />
+    <Resource Include="Images\Enemy\egg4.png" />
+    <Resource Include="Images\Enemy\egg5.png" />
+    <Resource Include="Images\Enemy\egg6.png" />
+    <Resource Include="Images\Enemy\mik_blue_fly1.png" />
+    <Resource Include="Images\Enemy\mik_blue_fly2.png" />
+    <Resource Include="Images\Enemy\mik_blue_move1.png" />
+    <Resource Include="Images\Enemy\mik_blue_move2.png" />
+    <Resource Include="Images\Enemy\mik_blue_move3.png" />
+    <Resource Include="Images\Enemy\mik_blue_stand.png" />
+    <Resource Include="Images\Enemy\mik_blue_stop.png" />
+    <Resource Include="Images\Enemy\mik_red_fly1.png" />
+    <Resource Include="Images\Enemy\mik_red_fly2.png" />
+    <Resource Include="Images\Enemy\mik_red_move1.png" />
+    <Resource Include="Images\Enemy\mik_red_move2.png" />
+    <Resource Include="Images\Enemy\mik_red_move3.png" />
+    <Resource Include="Images\Enemy\mik_red_stand.png" />
+    <Resource Include="Images\Enemy\mik_red_stop.png" />
+    <Resource Include="Images\Enemy\mik_silver_fly1.png" />
+    <Resource Include="Images\Enemy\mik_silver_fly2.png" />
+    <Resource Include="Images\Enemy\mik_silver_move1.png" />
+    <Resource Include="Images\Enemy\mik_silver_move2.png" />
+    <Resource Include="Images\Enemy\mik_silver_move3.png" />
+    <Resource Include="Images\Enemy\mik_silver_stand.png" />
+    <Resource Include="Images\Enemy\mik_silver_stop.png" />
+    <Resource Include="Images\Enemy\pterodactyl_charge.png" />
+    <Resource Include="Images\Enemy\pterodactyl_fly1.png" />
+    <Resource Include="Images\Enemy\pterodactyl_fly2.png" />
+    <Resource Include="Images\Platform\platform_bottom.png" />
+    <Resource Include="Images\Platform\platform_long1.png" />
+    <Resource Include="Images\Platform\platform_long2.png" />
+    <Resource Include="Images\Platform\platform_long3.png" />
+    <Resource Include="Images\Platform\platform_respawn1.png" />
+    <Resource Include="Images\Platform\platform_respawn2.png" />
+    <Resource Include="Images\Platform\platform_short1.png" />
+    <Resource Include="Images\Platform\platform_short2.png" />
+    <Resource Include="Images\Platform\platform_short3.png" />
+    <Resource Include="Images\Platform\platform_short4.png" />
+    <Resource Include="Images\Player\ostrich_fly1.png" />
+    <Resource Include="Images\Player\ostrich_fly2.png" />
+    <Resource Include="Images\Player\ostrich_move1.png" />
+    <Resource Include="Images\Player\ostrich_move2.png" />
+    <Resource Include="Images\Player\ostrich_move3.png" />
+    <Resource Include="Images\Player\ostrich_stand.png" />
+    <Resource Include="Images\Player\ostrich_stop.png" />
+    <Resource Include="Images\Player\player_fly1.png" />
+    <Resource Include="Images\Player\player_fly2.png" />
+    <Resource Include="Images\Player\player_move1.png" />
+    <Resource Include="Images\Player\player_move2.png" />
+    <Resource Include="Images\Player\player_move3.png" />
+    <Resource Include="Images\Player\player_stand.png" />
+    <Resource Include="Images\Player\player_stop.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

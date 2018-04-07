@@ -8,6 +8,13 @@ namespace JoustModel
 {
     public class Respawn : Platform
     {
+        public string respawnImagePath = "Images/Platform/platform_respawn1.png";
+
+        public Respawn(Point coords) : base(coords)
+        {
+            imagePath = "Images/Platform/platform_short2.png";
+        }
+
         public override string Serialize()
         {
             return string.Format("Respawn,{0},{1}", coords.x, coords.y);

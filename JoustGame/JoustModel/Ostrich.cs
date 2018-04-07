@@ -13,11 +13,15 @@ namespace JoustModel
         public int score;
         public override int Value { get; set; }
 
-        public Ostrich()
+        public Ostrich(Point coords, string imagePath = "Images/Player/player_stand.png")
         {
-            Value = 750;
+            Value = 2000;
             lives = 3;
             score = 0;
+            speed = 0;
+            angle = 0;
+            this.imagePath = imagePath;
+            this.coords = coords;
             World.Instance.objects.Add(this);
         }
 
@@ -31,7 +35,7 @@ namespace JoustModel
 
         }
 
-        //Serialization
+        // Serialization
         public override string Serialize()
         {
             return string.Format("Ostrich,{0},{1},{2},{3},{4},{5}", score, lives, speed, angle, coords.x, coords.y);
@@ -55,7 +59,7 @@ namespace JoustModel
         [TestMethod]
         public void TestDie()
         {
-            Ostrich o = new Ostrich();
+            Ostrich o = new Ostrich(new Point(500, 500));
             o.Die();
             Assert.AreEqual(new List<WorldObject> { }, World.Instance.objects);
         }

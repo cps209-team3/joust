@@ -7,7 +7,11 @@ namespace JoustModel
 {
     public class Base : Respawn
     {
-        
+        public Base(Point coords) : base(coords)
+        {
+            imagePath = "Images/Platform/platform_bottom.png";
+        }
+
         public override string Serialize()
         {
             return string.Format("Base, {0}", this.coords);

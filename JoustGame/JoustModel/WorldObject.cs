@@ -10,7 +10,7 @@ namespace JoustModel
     {
         public Point coords = new Point(0,0);
         public Hitbox hitbox;
-        public string image;
+        public string imagePath;
 
         abstract public string Serialize();
         abstract public void Deserialize(string data);

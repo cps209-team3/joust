@@ -5,12 +5,11 @@ using System.Linq;
 
 namespace JoustModel
 {
-    public class Map : ISerializable
+    public class Map// : ISerializable
     {
         public List<Platform> platforms = new List<Platform>();
         public int numOfPlats;
         public int numOfRespawns;
-        
         
         public string Serialize()
         {
