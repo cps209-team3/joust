@@ -35,7 +35,7 @@ namespace JoustClient
             LoadGameView();
         }
 
-        public void ImageFactory(string control, JoustModel.Point point)
+        public void WorldObjectFactory(string control, JoustModel.Point point)
         {
             Image i;
             switch (control)
@@ -76,9 +76,11 @@ namespace JoustClient
 
         public void LoadGameView()
         {
+            // Load Map here
+
             // Get stage num from controls once the proper screens are implemented
             JoustModel.Point oCoords = new JoustModel.Point(720, 450);
-            ImageFactory("ostrich", oCoords);
+            WorldObjectFactory("ostrich", oCoords);
 
             int stage = 0;
             control.WorldObj.stage = stage;
@@ -89,13 +91,13 @@ namespace JoustClient
             for (int i = 0; i < numBuzzards; i++)
             {
                 JoustModel.Point bCoords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                ImageFactory("buzzard", bCoords);
+                WorldObjectFactory("buzzard", bCoords);
             }
 
             for (int i = 0; i < numPterodactyls; i++)
             {
                 JoustModel.Point pCoords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                ImageFactory("pterodactyl", pCoords);
+                WorldObjectFactory("pterodactyl", pCoords);
             }
         }
     }
