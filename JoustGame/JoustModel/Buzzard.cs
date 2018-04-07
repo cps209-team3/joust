@@ -50,7 +50,7 @@ namespace JoustModel
         [TestMethod]
         public void TestDie()
         {
-            Buzzard b = new Buzzard();
+            Buzzard b = new Buzzard(new Point(500, 500));
             b.Die();
             Assert.AreEqual(new List<WorldObject> { }, World.Instance.objects);
         }

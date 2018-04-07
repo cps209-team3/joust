@@ -28,7 +28,7 @@ namespace JoustModel
         {
             for (int i = 0; i < numBuzzards; i++)
             {
-                Buzzard b = new Buzzard();
+                Buzzard b = new Buzzard(new Point(500, 500));
                 WorldObj.objects.Add(b);
             }
         }

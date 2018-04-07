@@ -50,7 +50,7 @@ namespace JoustModel
         [TestMethod]
         public void TestDie()
         {
-            Pterodactyl p = new Pterodactyl();
+            Pterodactyl p = new Pterodactyl(new Point(500, 500));
             p.Die();
             Assert.AreEqual(new List<WorldObject> { }, World.Instance.objects);
         }

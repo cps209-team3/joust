@@ -38,7 +38,7 @@ namespace JoustModel
         // Serialization
         public override string Serialize()
         {
-            return string.Format("Ostrich, {0}, {1}, {2}, {3}", this.score, lives, stage, this.coords);
+            return string.Format("Ostrich, {0}, {1}, {2}", this.score, lives, this.coords);
         }
 
         public override void Deserialize(string data)
@@ -56,7 +56,7 @@ namespace JoustModel
         [TestMethod]
         public void TestDie()
         {
-            Ostrich o = new Ostrich(new Point(500, 500);
+            Ostrich o = new Ostrich(new Point(500, 500));
             o.Die();
             Assert.AreEqual(new List<WorldObject> { }, World.Instance.objects);
         }
