@@ -30,12 +30,19 @@ namespace JoustClient
 
         public void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // To load straight into a game for faster testing
+            // Comment this out if needed
             LoadGameView();
         }
 
+        // Usually only called by single player or multiplayer game setup screen
         public void LoadGameView()
         {
-            // Get stage num from controla
+            // When we implement level progression, will need to get stage number from view controls instead
+            int stageNum = 0;
+            int numBuzzards = 0;
+            int numPterodactyls = 0;
+            control.CalculateNumEnemies(stageNum, ref numBuzzards, ref numPterodactyls);
         }
     }
 }
