@@ -22,6 +22,8 @@ namespace JoustClient
     public partial class MainWindow : Window
     {
         public GameController control = new GameController();
+        public int currentEndScore = 100000; // must set this when game end conditions have been met
+        public TextBox namebox = new TextBox();
 
         public MainWindow()
         {
@@ -35,6 +37,8 @@ namespace JoustClient
             //LoadGameView();
 
             Title_Screen(null, EventArgs.Empty);
+            // Finish_HighScores(null, EventArgs.Empty);
+            // called when game end conditions have been met
         }
         
         public void WorldObjectFactory(string control, JoustModel.Point point)
@@ -167,6 +171,63 @@ namespace JoustClient
                 x.SetValue(Canvas.LeftProperty, 620.0);
             }
             Button back = Make_Button("Back", 425.0, Title_Screen);
+            back.SetValue(Canvas.LeftProperty, 620.0);
+            back.Height = 100;
+            back.Width = 200;
+            canvas.Children.Add(back);
+        }
+
+        private void Finish_HighScores(object sender, EventArgs e)
+        {
+            canvas.Children.Clear();
+
+            namebox.Height = 50;
+            namebox.Width = 400;
+            Canvas.SetLeft(namebox, 520);
+            Canvas.SetTop(namebox, 280);
+            namebox.Text = "[Name]";
+            namebox.MaxLength = 15;
+            canvas.Children.Add(namebox);
+
+            List<Button> btnList = new List<Button>();
+
+            Button yes = Make_Button("Save score", 300.0, Accept_SaveScore);
+            Button no = Make_Button("Don't save score", 300.0, Title_Screen);
+
+            btnList.Add(yes);
+            btnList.Add(no);
+
+            foreach (Button x in btnList)
+            {
+                x.Height = 50;
+                x.Width = 200;
+                canvas.Children.Add(x);
+            }
+
+            yes.SetValue(Canvas.LeftProperty, 520.0);
+            no.SetValue(Canvas.LeftProperty, 720.0);
+        }
+
+        private void Accept_SaveScore(object sender, RoutedEventArgs e)
+        {
+            canvas.Children.Clear();
+
+            TextBlock scoreBlock = new TextBlock();
+            scoreBlock.Height = 500;
+            scoreBlock.Width = 400;
+            Canvas.SetLeft(scoreBlock, 620);
+            Canvas.SetTop(scoreBlock, 280);
+            canvas.Children.Add(scoreBlock);
+
+            Score thisScore = new Score(currentEndScore, namebox.Text);
+            HighScoreManager.Instance.AddScore(thisScore);
+
+            foreach (Score s in HighScoreManager.Instance.AllScores)
+            {
+                scoreBlock.Text += s.Serialize() + "\n";
+            }
+
+            Button back = Make_Button("Title screen", 625.0, Title_Screen);
             back.SetValue(Canvas.LeftProperty, 620.0);
             back.Height = 100;
             back.Width = 200;
