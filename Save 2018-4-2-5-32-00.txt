@@ -1,2 +1,0 @@
-Player: [1000, 3, 2, (300,600)] WorldObjects: [platforms: 1, (100,300), false], [Entities: 1, buzzard, (500,700), 3.6, 4.7]
-

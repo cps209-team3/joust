@@ -20,7 +20,9 @@ namespace JoustModel
         // Set coords to value read from file
         public override void Deserialize(string data)
         {
-            // set coords
+            string[] properties = data.Split(',');
+            coords.x = Convert.ToDouble(properties[1]); // set x coord
+            coords.y = Convert.ToDouble(properties[2]); // set y coord
         }
     }
 }

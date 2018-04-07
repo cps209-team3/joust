@@ -38,15 +38,18 @@ namespace JoustModel
         // Serialization
         public override string Serialize()
         {
-            return string.Format("Ostrich, {0}, {1}, {2}", this.score, lives, this.coords);
+            return string.Format("Ostrich,{0},{1},{2},{3},{4},{5}", score, lives, speed, angle, coords.x, coords.y);
         }
 
         public override void Deserialize(string data)
         {
-            // set score
-            // set lives
-            // set stage
-            // set coords
+            string[] properties = data.Split(',');
+            score = Convert.ToInt32(properties[1]); // set score
+            lives = Convert.ToInt32(properties[2]); // set lives
+            speed = Convert.ToDouble(properties[3]); // set speed
+            angle = Convert.ToDouble(properties[4]); // set angle
+            coords.x = Convert.ToDouble(properties[5]); // set x coord
+            coords.y = Convert.ToDouble(properties[6]); // set y coord
         }
     }
 

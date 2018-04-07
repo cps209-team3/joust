@@ -8,11 +8,11 @@ namespace JoustModel
 {
     public class GameController
     {
-        public World WorldObj { get; set; }
+        public World WorldRef { get; set; }
 
         public GameController()
         {
-            WorldObj = World.Instance;
+            WorldRef = World.Instance;
         }
 
         public void CalculateNumEnemies(int stage, ref int numBuzzards, ref int numPterodactyls)
@@ -35,18 +35,53 @@ namespace JoustModel
 
         public string Load(string filename)
         {
-            string line = "";
-            // loops through save lines looking for the one that matches the provided date
-            // feed line into each object class of the game activating its Deserialize method and loading each object into the game
-            return line;
+            string loadedLine = System.IO.File.ReadAllText(string.Format(@"{0}.txt", filename));
+            string[] savedObjects = loadedLine.Split(':');
+            foreach (string savedObj in savedObjects)
+            {
+                if (savedObj.Length > 0)
+                {
+                    string type = savedObj.Substring(0, savedObj.IndexOf(","));
+                    WorldObject obj = CreateWorldObj(type);
+                    obj.Deserialize(savedObj);
+                }
+            }
         }
         public string Save()
         {
+            string filename = DateTime.Now.ToString("H-mm-ss");
             string line2save = "";
-            // loop through game objects and build string by activating each's serialize method. 
-            // sample complete save line:
-            // {saveDate} Player: [score, lives, stage, playerPos] WorldObjects: [platforms: (int)numOfPlats, (point)coords, (bool)respawn], [Entities: (int)numOfEnts, (string)type, (point)coords, (double)speed, (double)angle]
+            foreach (WorldObject obj in WorldRef.objects)
+            {
+                line2save += obj.Serialize() + ':';
+            }
+
+            string path = string.Format(@"{0}.txt", filename);
+            System.IO.File.WriteAllText(path, line2save); 
             return line2save;
+        }
+
+        public WorldObject CreateWorldObj(string type)
+        {
+            switch (type)
+            {
+                case "Ostrich":
+                    return new Ostrich();
+                case "Base":
+                    return new Base();
+                case "Buzzard":
+                    return new Buzzard();
+                case "Egg":
+                    return new Egg();
+                case "Platform":
+                    return new Platform();
+                case "Pterodactyl":
+                    return new Pterodactyl();
+                case "Respawn":
+                    return new Respawn();
+                default:
+                    return null;
+            }
         }
     }
 }
