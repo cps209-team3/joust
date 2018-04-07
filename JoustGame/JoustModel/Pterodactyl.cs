@@ -29,14 +29,16 @@ namespace JoustModel
 
         public override string Serialize()
         {
-            return string.Format("Pterodactyl, {0}, {1}, {2}", this.coords, this.speed, this.angle);
+            return string.Format("Pterodactyl,{0},{1},{2},{3}", speed, angle, coords.x, coords.y);
         }
 
         public override void Deserialize(string data)
         {
-            // set coords
-            // set speed
-            // set angle
+            string[] properties = data.Split(',');
+            speed = Convert.ToDouble(properties[0]); // set speed
+            angle = Convert.ToDouble(properties[1]); // set angle
+            coords.x = Convert.ToDouble(properties[2]); // set x coord
+            coords.y = Convert.ToDouble(properties[3]); // set y coord
         }
     }
 

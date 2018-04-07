@@ -15,49 +15,54 @@ namespace JoustModel
             WorldRef = World.Instance;
         }
 
-        public string[] Load(string filename)
+        public void Load(string filename)
         {
-            string[] lineLoaded = new string[] {"", ""};
-            lineLoaded = System.IO.File.ReadAllLines("C:/Users/James/OneDrive - Bob Jones University/School/CpS 209/joust/Save2018-4-2-5-32-00");
+            string loadedLine = System.IO.File.ReadAllText("C:/Users/Soarex/Desktop/Github Projects/joust/joust/Save2018-4-2-5-32-00");
+            string[] savedObjects = loadedLine.Split(':');
+            foreach (string savedObj in savedObjects)
+            {
+                string type = savedObj.Substring(0, savedObj.IndexOf(" "));
+                WorldObject obj = CreateWorldObj(type);
+                obj.Deserialize(savedObj.Substring(savedObj.IndexOf(" "), -1));
 
-            // loops through save lines looking for the one that matches the provided date
-            // feed line into each object class of the game activating its Deserialize method and loading each object into the game
-            return lineLoaded;
+                
+            }
         }
-        public string[] Save()
+        public string Save()
         {
-            string[] lines2save = { "Player: ", "Platforms: ", "Entities: " };
-
+            string filename = DateTime.Now.ToString("H-mm-ss");
+            string line2save = "";
             foreach (WorldObject obj in WorldRef.objects)
             {
-                if (obj is Ostrich)
-                {
-                    lines2save[0] += obj.Serialize();
-                }
-                else if (obj is Platform)
-                {
-                    lines2save[1] += obj.Serialize();
-                }
-                else if (obj is Entity)
-                {
-                    lines2save[2] += obj.Serialize();
-                }
+                line2save += obj.Serialize() + ':';
             }
 
-            // test for lines
-            foreach (string i in lines2save)
+            string path = string.Format(@"{0}.txt", filename);
+            System.IO.File.WriteAllText(path, line2save); 
+            return line2save;
+        }
+
+        public WorldObject CreateWorldObj(string type)
+        {
+            switch (type)
             {
-                Console.WriteLine(i);
+                case "Ostrich":
+                    return new Ostrich();
+                case "Base":
+                    return new Base();
+                case "Buzzard":
+                    return new Buzzard();
+                case "Egg":
+                    return new Egg();
+                case "Platform":
+                    return new Platform();
+                case "Pterodactyl":
+                    return new Pterodactyl();
+                case "Respawn":
+                    return new Respawn();
+                default:
+                    return null;
             }
-
-
-
-            // loop through game objects and build string by activating each's serialize method. 
-            // sample complete save line:
-            // {saveDate} Player: [score, lives, stage, playerPos] WorldObjects: [platforms: (int)numOfPlats, (point)coords, (bool)respawn], [Entities: (int)numOfEnts, (string)type, (point)coords, (double)speed, (double)angle]
-            
-            //System.IO.File.WriteAllLines(@"JoustGame\GameSaves\save1.txt", lines2save); 
-            return lines2save;
         }
     }
 }
