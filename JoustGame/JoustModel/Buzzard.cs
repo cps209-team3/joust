@@ -35,10 +35,10 @@ namespace JoustModel
         public override void Deserialize(string data)
         {
             string[] properties = data.Split(',');
-            speed = Convert.ToDouble(properties[0]); // set speed
-            angle = Convert.ToDouble(properties[1]); // set angle
-            coords.x = Convert.ToDouble(properties[2]); // set x coord
-            coords.y = Convert.ToDouble(properties[3]); // set y coord
+            speed = Convert.ToDouble(properties[1]); // set speed
+            angle = Convert.ToDouble(properties[2]); // set angle
+            coords.x = Convert.ToDouble(properties[3]); // set x coord
+            coords.y = Convert.ToDouble(properties[4]); // set y coord
         }
     }
 

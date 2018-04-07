@@ -15,7 +15,10 @@ namespace JoustModel
         public void Load_Default()
         {
             GameController game = new GameController();
-            game.Load("Save2018-4-2-5-32-00");
+            game.Load(DateTime.Now.ToString("17-42-49"));
+            Assert.IsTrue(game.WorldRef.objects.Count == 4);
+            Assert.IsTrue(game.WorldRef.objects[0].coords.x == 5);
+            Assert.IsTrue((game.WorldRef.objects[3] as Buzzard).speed == 100);
 
         }
 
@@ -23,18 +26,23 @@ namespace JoustModel
         public void Save_Default()
         {
             GameController game = new GameController();
-            game.Save();
+            string testLine = game.Save();
+            Assert.IsTrue(testLine == "");
         }
 
         [TestMethod]
         public void Save_OneObjEach()
         {
             GameController game = new GameController();
-            new Ostrich() { angle = 1.5, coords = new Point(5, 9), lives = 3, score = 1000, speed = 10};
-            new Egg();
-            new Pterodactyl();
-            new Buzzard();
-            game.Save();
+            new Ostrich() { angle = 1.5, coords = new Point(5, 9), speed = 10};
+            new Egg() { angle = 0, coords = new Point(10, 10), speed = 100 };
+            new Pterodactyl() { angle = 0, coords = new Point(10, 10), speed = 100 };
+            new Buzzard() { angle = 0, coords = new Point(10, 10), speed = 100 };
+            // new Platform();  //add later once Jacob polishes the constructors
+            // new Respawn();
+            // new Base();
+            string testLine = game.Save();
+            Assert.IsTrue(testLine == "Ostrich,0,3,10,1.5,5,9:Egg,100,0,10,10:Pterodactyl,100,0,10,10:Buzzard,100,0,10,10:");
         }
     }
 }

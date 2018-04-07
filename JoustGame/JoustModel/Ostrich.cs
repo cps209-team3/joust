@@ -40,12 +40,12 @@ namespace JoustModel
         public override void Deserialize(string data)
         {
             string[] properties = data.Split(',');
-            score = Convert.ToInt32(properties[0]); // set score
-            lives = Convert.ToInt32(properties[1]); // set lives
-            speed = Convert.ToDouble(properties[2]); // set speed
-            angle = Convert.ToDouble(properties[3]); // set angle
-            coords.x = Convert.ToDouble(properties[4]); // set x coord
-            coords.y = Convert.ToDouble(properties[5]); // set y coord
+            score = Convert.ToInt32(properties[1]); // set score
+            lives = Convert.ToInt32(properties[2]); // set lives
+            speed = Convert.ToDouble(properties[3]); // set speed
+            angle = Convert.ToDouble(properties[4]); // set angle
+            coords.x = Convert.ToDouble(properties[5]); // set x coord
+            coords.y = Convert.ToDouble(properties[6]); // set y coord
         }
     }
 

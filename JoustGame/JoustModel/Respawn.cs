@@ -17,8 +17,8 @@ namespace JoustModel
         public override void Deserialize(string data)
         {
             string[] properties = data.Split(',');
-            coords.x = Convert.ToDouble(properties[0]); // set x coord
-            coords.y = Convert.ToDouble(properties[1]); // set y coord
+            coords.x = Convert.ToDouble(properties[1]); // set x coord
+            coords.y = Convert.ToDouble(properties[2]); // set y coord
         }
     }
 }

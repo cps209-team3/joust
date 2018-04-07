@@ -17,15 +17,16 @@ namespace JoustModel
 
         public void Load(string filename)
         {
-            string loadedLine = System.IO.File.ReadAllText("C:/Users/Soarex/Desktop/Github Projects/joust/joust/Save2018-4-2-5-32-00");
+            string loadedLine = System.IO.File.ReadAllText(string.Format(@"{0}.txt", filename));
             string[] savedObjects = loadedLine.Split(':');
             foreach (string savedObj in savedObjects)
             {
-                string type = savedObj.Substring(0, savedObj.IndexOf(" "));
-                WorldObject obj = CreateWorldObj(type);
-                obj.Deserialize(savedObj.Substring(savedObj.IndexOf(" "), -1));
-
-                
+                if (savedObj.Length > 0)
+                {
+                    string type = savedObj.Substring(0, savedObj.IndexOf(","));
+                    WorldObject obj = CreateWorldObj(type);
+                    obj.Deserialize(savedObj);
+                }
             }
         }
         public string Save()
