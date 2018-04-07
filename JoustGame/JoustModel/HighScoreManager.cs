@@ -8,7 +8,7 @@ namespace JoustModel
     // handles saving and loading high scores
     public class HighScoreManager
     {
-        // must be set with the "getScores" method
+        // must be set with the "Load" method
         public List<Score> AllScores { get; set; }
         public int lowestScore = 0;
         public string path = "";
@@ -31,7 +31,7 @@ namespace JoustModel
             }
 
             this.path = newpath;
-            this.AllScores = HighScoreManager.GetScores(this.path);
+            this.AllScores = HighScoreManager.Load(this.path);
             this.lowestScore = replaceLow(this.AllScores);
         }
 
@@ -47,7 +47,7 @@ namespace JoustModel
             // checked to see if it is less than the lowestScore. If it is, 
             // it replaces that score
             // 
-            // calls the GetScores method to update the list here
+            // calls the Load method to update the list here
 
             if (newScore.points >= this.lowestScore)
             {
@@ -71,7 +71,7 @@ namespace JoustModel
                         }
                     }
 
-                    this.AllScores = HighScoreManager.GetScores(this.path);
+                    this.AllScores = HighScoreManager.Load(this.path);
                     HighScoreManager.Instance.replaceLow();
                 }
                 else if (lineCount == 10)
@@ -86,13 +86,13 @@ namespace JoustModel
                         }
                     }
                     File.WriteAllLines(this.path, lines);
-                    this.AllScores = HighScoreManager.GetScores(this.path);
+                    this.AllScores = HighScoreManager.Load(this.path);
                     HighScoreManager.Instance.replaceLow();
                 }
             }
         }
 
-        private static  List<Score> GetScores(string filepath)
+        private static  List<Score> Load(string filepath)
         {
             // line by line will split the txt file and return a 
             // list of the top ten scores. called by the AddScore

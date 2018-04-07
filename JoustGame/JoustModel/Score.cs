@@ -25,7 +25,7 @@ namespace JoustModel
             this.username = this.username.TrimEnd('\r', '\n');
         }
 
-        public override string ToString()
+        public string Serialize()
         {
             return this.points.ToString() + " || " + this.username.ToString();
         }
