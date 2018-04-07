@@ -16,11 +16,12 @@ using JoustModel;
 
 namespace JoustClient
 {
-    public class PterodactylControl : Image
+    public class PterodactylControl : WorldObjectControl
     {
-        public PterodactylControl(string imagePath)
+        public PterodactylControl(string imagePath) : base(imagePath)
         {
-            Source = new BitmapImage(new Uri(imagePath, UriKind.Relative));
+            Height = 20;
+            Width = 80;
         }
     }
 }

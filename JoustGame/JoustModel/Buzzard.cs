@@ -16,7 +16,7 @@ namespace JoustModel
             Value = 500;
             speed = 0;
             angle = 0;
-            imagePath = "Images/Player/player_stand.png";
+            imagePath = "Images/Enemy/mik_red_stand.png";
             this.coords = coords;
             World.Instance.objects.Add(this);
         }

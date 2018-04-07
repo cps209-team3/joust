@@ -16,11 +16,12 @@ using JoustModel;
 
 namespace JoustClient
 {
-    public class OstrichControl : Image
+    public class OstrichControl : WorldObjectControl
     {
-        public OstrichControl(string imagePath)
+        public OstrichControl(string imagePath) : base(imagePath)
         {
-            Source = new BitmapImage(new Uri(imagePath, UriKind.Relative));
+            Height = 75;
+            Width = 50;
         }
     }
 }
