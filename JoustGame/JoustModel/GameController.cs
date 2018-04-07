@@ -15,6 +15,24 @@ namespace JoustModel
             WorldObj = World.Instance;
         }
 
+        public void CalculateNumEnemies(int stage, ref int numBuzzards, ref int numPterodactyls)
+        {
+            numBuzzards = stage + 3;
+            if (stage >= 5)
+            {
+                numPterodactyls = (stage - 4) + (stage / 2);
+            }
+        }
+
+        public void SpawnEnemies(int numBuzzards, int numPterodactyls)
+        {
+            for (int i = 0; i < numBuzzards; i++)
+            {
+                Buzzard b = new Buzzard();
+                WorldObj.objects.Add(b);
+            }
+        }
+
         public string Load(string filename)
         {
             string line = "";
