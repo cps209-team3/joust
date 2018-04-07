@@ -22,6 +22,8 @@ namespace JoustClient
     public partial class MainWindow : Window
     {
         public GameController control = new GameController();
+        public int currentEndScore = 100000; // must set this when game end conditions have been met
+        public TextBox namebox = new TextBox();
 
         public MainWindow()
         {
@@ -34,55 +36,21 @@ namespace JoustClient
             // If you need a different screen on window load, comment out the line below
             //LoadGameView();
 
-            Title_Screen(null, EventArgs.Empty);
-        }
-        
-        public void WorldObjectFactory(string control, JoustModel.Point point)
-        {
-            Image i;
-            switch (control)
-            {
-                case "ostrich":
-                    Ostrich o = new Ostrich(point);
-                    i = new OstrichControl(o.imagePath);
-                    break;
-                case "buzzard":
-                    Buzzard b = new Buzzard(point);
-                    i = new BuzzardControl(b.imagePath);
-                    break;
-                case "pterodactyl":
-                    Pterodactyl p = new Pterodactyl(point);
-                    i = new PterodactylControl(p.imagePath);
-                    break;
-                case "egg":
-                    Egg e = new Egg(point);
-                    i = new EggControl(e.imagePath);
-                    break;
-                case "platform":
-                    Platform pl = new Platform(point);
-                    i = new PlatformControl(pl.imagePath);
-                    break;
-                case "respawn":
-                    Respawn r = new Respawn(point);
-                    i = new RespawnControl(r.imagePath);
-                    break;
-                default:
-                    Base ba = new Base(point);
-                    i = new BaseControl(ba.imagePath);
-                    break;
-            }
-            Canvas.SetTop(i, point.y);
-            Canvas.SetLeft(i, point.x);
-            canvas.Children.Add(i);
+            Title_Screen(null, EventArgs.Empty); // Activates title screen
+            // Finish_HighScores(null, EventArgs.Empty)
+            // for activating the ending highscore screen/name input
+
         }
 
         public void LoadGameView()
         {
-            // Load Map here
-
             // Get stage num from controls once the proper screens are implemented
-            JoustModel.Point oCoords = new JoustModel.Point(720, 450);
-            WorldObjectFactory("ostrich", oCoords);
+            JoustModel.Point coords = new JoustModel.Point(720, 450);
+            Ostrich o = new Ostrich(coords);
+            OstrichControl oControl = new OstrichControl(o.imagePath);
+            Canvas.SetTop(oControl, coords.y);
+            Canvas.SetLeft(oControl, coords.x);
+            canvas.Children.Add(oControl);
 
             int stage = 0;
             control.WorldObj.stage = stage;
@@ -93,17 +61,25 @@ namespace JoustClient
             for (int i = 0; i < numBuzzards; i++)
             {
                 JoustModel.Point bCoords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                WorldObjectFactory("buzzard", bCoords);
+                Buzzard b = new Buzzard(bCoords);
+                BuzzardControl bControl = new BuzzardControl(b.imagePath);
+                Canvas.SetTop(bControl, bCoords.y);
+                Canvas.SetLeft(bControl, bCoords.x);
+                canvas.Children.Add(bControl);
             }
 
             for (int i = 0; i < numPterodactyls; i++)
             {
                 JoustModel.Point pCoords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                WorldObjectFactory("pterodactyl", pCoords);
+                Pterodactyl p = new Pterodactyl(pCoords);
+                PterodactylControl pControl = new PterodactylControl(p.imagePath);
+                Canvas.SetTop(pControl, pCoords.y);
+                Canvas.SetLeft(pControl, pCoords.x);
+                canvas.Children.Add(pControl);
             }
         }
-       
-       // title screens
+        // title screens
+
         private Button Make_Button(string content, double top, RoutedEventHandler eventx)
         {
             Button btnReturn = new Button();
@@ -167,6 +143,63 @@ namespace JoustClient
                 x.SetValue(Canvas.LeftProperty, 620.0);
             }
             Button back = Make_Button("Back", 425.0, Title_Screen);
+            back.SetValue(Canvas.LeftProperty, 620.0);
+            back.Height = 100;
+            back.Width = 200;
+            canvas.Children.Add(back);
+        }
+
+        private void Finish_HighScores(object sender, EventArgs e)
+        {
+            canvas.Children.Clear();
+
+            namebox.Height = 50;
+            namebox.Width = 400;
+            Canvas.SetLeft(namebox, 520);
+            Canvas.SetTop(namebox, 280);
+            namebox.Text = "[Name]";
+            namebox.MaxLength = 15;
+            canvas.Children.Add(namebox);
+
+            List<Button> btnList = new List<Button>();
+
+            Button yes = Make_Button("Save score", 300.0, Accept_SaveScore);
+            Button no = Make_Button("Don't save score", 300.0, Title_Screen);
+
+            btnList.Add(yes);
+            btnList.Add(no);
+
+            foreach (Button x in btnList)
+            {
+                x.Height = 50;
+                x.Width = 200;
+                canvas.Children.Add(x);
+            }
+
+            yes.SetValue(Canvas.LeftProperty, 520.0);
+            no.SetValue(Canvas.LeftProperty, 720.0);
+        }
+
+        private void Accept_SaveScore(object sender, RoutedEventArgs e)
+        {
+            canvas.Children.Clear();
+
+            TextBlock scoreBlock = new TextBlock();
+            scoreBlock.Height = 500;
+            scoreBlock.Width = 400;
+            Canvas.SetLeft(scoreBlock, 620);
+            Canvas.SetTop(scoreBlock, 280);
+            canvas.Children.Add(scoreBlock);
+
+            Score thisScore = new Score(currentEndScore, namebox.Text);
+            HighScoreManager.Instance.AddScore(thisScore);
+
+            foreach (Score s in HighScoreManager.Instance.AllScores)
+            {
+                scoreBlock.Text += s.Serialize() + "\n";
+            }
+
+            Button back = Make_Button("Title screen", 625.0, Title_Screen);
             back.SetValue(Canvas.LeftProperty, 620.0);
             back.Height = 100;
             back.Width = 200;
@@ -479,4 +512,6 @@ namespace JoustClient
             canvas.Children.Add(back);
         }
     }
+
+    
 }
