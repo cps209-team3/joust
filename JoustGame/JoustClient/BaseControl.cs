@@ -16,12 +16,12 @@ using JoustModel;
 
 namespace JoustClient
 {
-    public class BuzzardControl : WorldObjectControl
+    public class BaseControl : WorldObjectControl
     {
-        public BuzzardControl(string imagePath) : base(imagePath)
+        public BaseControl(string imagePath) : base(imagePath)
         {
-            Height = 75;
-            Width = 50;
+            Height = 100;
+            Width = 700;
         }
     }
 }
