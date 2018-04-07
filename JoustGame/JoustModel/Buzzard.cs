@@ -9,14 +9,18 @@ namespace JoustModel
 {
     public class Buzzard : Enemy
     {
+        public event EventHandler BuzzardMoveEvent;
+        private Random rand;
+
         public override int Value { get; set; }
 
         public Buzzard(Point coords)
         {
+            rand = new Random();
             Value = 500;
             speed = 0;
             angle = 0;
-            imagePath = "Images/Player/player_stand.png";
+            imagePath = "Images/Enemy/buzzard_stand.png";
             this.coords = coords;
             World.Instance.objects.Add(this);
         }
@@ -28,7 +32,10 @@ namespace JoustModel
 
         public override void Update()
         {
-            
+            speed = 10;
+            angle = rand.Next(360);
+            if (BuzzardMoveEvent != null) // Is anyone subscribed?
+                BuzzardMoveEvent(this, null); // Raise event
         }
 
         public override string Serialize()

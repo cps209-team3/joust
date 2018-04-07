@@ -18,9 +18,21 @@ namespace JoustClient
 {
     public class BuzzardControl : Image
     {
-        public BuzzardControl(string imagePath)
+        public BuzzardControl()
         {
-            Source = new BitmapImage(new Uri(imagePath, UriKind.Relative));
+            Source = new BitmapImage(new Uri("Images/Enemy/buzzard_stand.png", UriKind.Relative));
+        }
+
+        public void NotifyMoved(object sender, EventArgs e) {
+            Buzzard buzzard = sender as Buzzard;
+
+            // Determine the endpoint of the move vector
+            double xPos = Canvas.GetLeft(this) + buzzard.speed * Math.Cos(buzzard.angle);
+            double yPos = Canvas.GetTop(this) + buzzard.speed * Math.Sin(buzzard.angle);
+
+
+            Canvas.SetTop(this, yPos);
+            Canvas.SetLeft(this, xPos);
         }
     }
 }

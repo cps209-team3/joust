@@ -33,6 +33,8 @@ namespace JoustClient
             // This is only here for faster testing
             // If you need a different screen on window load, comment out the line below
             LoadGameView();
+
+
         }
 
         public void LoadGameView()
@@ -55,7 +57,8 @@ namespace JoustClient
             {
                 JoustModel.Point bCoords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
                 Buzzard b = new Buzzard(bCoords);
-                BuzzardControl bControl = new BuzzardControl(b.imagePath);
+                BuzzardControl bControl = new BuzzardControl();
+                b.BuzzardMoveEvent += bControl.NotifyMoved;
                 Canvas.SetTop(bControl, bCoords.y);
                 Canvas.SetLeft(bControl, bCoords.x);
                 canvas.Children.Add(bControl);
