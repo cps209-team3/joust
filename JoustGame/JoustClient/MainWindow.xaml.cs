@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using JoustModel;
 
 namespace JoustClient
@@ -24,6 +25,7 @@ namespace JoustClient
         public GameController control = new GameController();
         public int currentEndScore = 100000; // must set this when game end conditions have been met
         public TextBox namebox = new TextBox();
+        public DispatcherTimer updateTimer;
 
         public MainWindow()
         {
@@ -40,8 +42,33 @@ namespace JoustClient
             // Finish_HighScores(null, EventArgs.Empty);
             // called when game end conditions have been met
         }
-        
-        public void WorldObjectFactory(string control, WorldObject worldObject)
+
+        private void Canvas_KeyDown(object sender, KeyEventArgs e)
+        {
+            StateMachine s = control.WorldRef.player.stateMachine;
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    // display escape menu here
+                    break;
+                case Key.W:
+                case Key.Up:
+                    s.HandleInput("flap");
+                    break;
+                case Key.A:
+                case Key.Left:
+                    s.HandleInput("left");
+                    break;
+                case Key.D:
+                case Key.Right:
+                    s.HandleInput("right");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void WorldObjectControlFactory(string control, WorldObject worldObject)
         {
             WorldObjectControl i;
             switch (control)
@@ -89,7 +116,8 @@ namespace JoustClient
             // Get stage num from controls once the proper screens are implemented
             Ostrich o = control.CreateWorldObj("Ostrich") as Ostrich;
             o.coords = new JoustModel.Point(720, 450);
-            WorldObjectFactory("ostrich", o);
+            control.WorldRef.player = o;
+            WorldObjectControlFactory("ostrich", o);
 
             int stage = 0;
             control.WorldRef.stage = stage;
@@ -101,15 +129,26 @@ namespace JoustClient
             {
                 Buzzard b = control.CreateWorldObj("Buzzard") as Buzzard;
                 b.coords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                WorldObjectFactory("buzzard", b);
+                WorldObjectControlFactory("buzzard", b);
             }
 
             for (int i = 0; i < numPterodactyls; i++)
             {
                 Pterodactyl p = control.CreateWorldObj("Pterodactyl") as Pterodactyl;
                 p.coords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                WorldObjectFactory("pterodactyl", p);
+                WorldObjectControlFactory("pterodactyl", p);
             }
+            updateTimer = new DispatcherTimer(
+                TimeSpan.FromMilliseconds(20), 
+                DispatcherPriority.Render,
+                UpdateTick,
+                Dispatcher.CurrentDispatcher);
+            updateTimer.Start();
+        }
+
+        public void UpdateTick(object sender, EventArgs e)
+        {
+            control.Update();
         }
        
        // title screens
