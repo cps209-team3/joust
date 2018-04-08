@@ -15,7 +15,7 @@ namespace JoustModel
         public void Load_Default()
         {
             GameController game = new GameController();
-            game.Load(DateTime.Now.ToString("17-42-49"));
+            //game.Load(DateTime.Now.ToString("17-42-49"));
             Assert.IsTrue(game.WorldRef.objects.Count == 4);
             Assert.IsTrue(game.WorldRef.objects[0].coords.x == 5);
             Assert.IsTrue((game.WorldRef.objects[3] as Buzzard).speed == 100);

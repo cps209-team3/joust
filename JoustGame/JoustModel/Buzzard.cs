@@ -11,13 +11,12 @@ namespace JoustModel
     {
         public override int Value { get; set; }
 
-        public Buzzard(Point coords)
+        public Buzzard()
         {
             Value = 500;
             speed = 0;
             angle = 0;
             imagePath = "Images/Enemy/mik_red_stand.png";
-            this.coords = coords;
             World.Instance.objects.Add(this);
         }
 
@@ -52,7 +51,8 @@ namespace JoustModel
         [TestMethod]
         public void TestDie()
         {
-            Buzzard b = new Buzzard(new Point(500, 500));
+            Buzzard b = new Buzzard();
+            b.coords = new Point(500, 500);
             b.Die();
             Assert.AreEqual(new List<WorldObject> { }, World.Instance.objects);
         }

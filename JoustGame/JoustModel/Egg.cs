@@ -10,12 +10,11 @@ namespace JoustModel
     public class Egg : Enemy
     {
         public override int Value { get; set; }
-
-        public Egg(Point coords)
+        
+        public Egg()
         {
             Value = 250;
             imagePath = "Images/Platform/egg1.png";
-            this.coords = coords;
             World.Instance.objects.Add(this);
         }
 
@@ -51,7 +50,8 @@ namespace JoustModel
         [TestMethod]
         public void TestDie()
         {
-            Egg e = new Egg(new Point(500, 500));
+            Egg e = new Egg();
+            e.coords = new Point(500, 500);
             e.Die();
             Assert.AreEqual(new List<WorldObject> { }, World.Instance.objects);
         }

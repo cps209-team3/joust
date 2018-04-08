@@ -9,8 +9,8 @@ namespace JoustModel
     public class Respawn : Platform
     {
         public string respawnImagePath = "Images/Platform/platform_respawn1.png";
-
-        public Respawn(Point coords) : base(coords)
+        
+        public Respawn() : base()
         {
             imagePath = "Images/Platform/platform_short2.png";
         }
