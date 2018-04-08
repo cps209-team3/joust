@@ -9,7 +9,7 @@ namespace JoustModel
     {
         public void Update() { }
         public void HandleInput(string data) { }
-        public void Enter(params object[] args) { }
+        public void Enter() { }
         public void Exit() { }
     }
 
@@ -28,18 +28,18 @@ namespace JoustModel
         {
             currentState.Exit();
             IState nextState = stateDict[id];
-            nextState.Enter(args);
+            nextState.Enter();
             currentState = nextState;
         }
 
-        public void Update(float data)
+        public void Update()
         {
-            currentState.Update(data);
+            currentState.Update();
         }
 
-        public void HandleInput()
+        public void HandleInput(string data)
         {
-            currentState.HandleInput();
+            currentState.HandleInput(data);
         }
     }
 
@@ -51,10 +51,15 @@ namespace JoustModel
         public StandState(Ostrich ostrich)
         {
             this.ostrich = ostrich;
-            this.stateMachine = ostrich.StateMachine;
+            this.stateMachine = ostrich.stateMachine;
         }
 
-        public void Update() { }
+        public void Update()
+        { 
+            // Check for collisions
+            // if collision:
+            // stateMachine.Change("collide");
+        }
 
         public void HandleInput(string command)
         {
@@ -73,40 +78,40 @@ namespace JoustModel
                     break;
             }
         }
-
-        public Enter(params object[] args) { }
+        
+        public void Enter() { /* Play animation */ }
         public void Exit() { }
-    }
 
-    public class FlapState : IState
-    {
-        StateMachine stateMachine;
-        Ostrich ostrich;
-
-        public FlapState(Ostrich ostrich)
+        public class FlapState : IState
         {
-            this.ostrich = ostrich;
-            this.stateMachine = ostrich.StateMachine;
-        }
+            StateMachine stateMachine;
+            Ostrich ostrich;
 
-        public void Update() { }
-
-        public void HandleInput(string command)
-        {
-            switch (command)
+            public FlapState(Ostrich ostrich)
             {
-                case "left":
-                    stateMachine.Change("left");
-                    break;
-                case "right":
-                    stateMachine.Change("right");
-                    break;
-                default:
-                    break;
+                this.ostrich = ostrich;
+                this.stateMachine = ostrich.stateMachine;
             }
-        }
 
-        public Enter(params object[] args) { }
-        public void Exit() { }
+            public void Update() { }
+
+            public void HandleInput(string command)
+            {
+                switch (command)
+                {
+                    case "left":
+                        stateMachine.Change("left");
+                        break;
+                    case "right":
+                        stateMachine.Change("right");
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            public void Enter() { }
+            public void Exit() { }
+        }
     }
 }

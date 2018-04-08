@@ -43,7 +43,7 @@ namespace JoustClient
         
         public void WorldObjectFactory(string control, JoustModel.Point point)
         {
-            Image i;
+            WorldObjectControl i;
             switch (control)
             {
                 case "ostrich":

@@ -8,7 +8,7 @@ namespace JoustModel
     public interface IState
     {
         void Update();
-        void HandleInput();
+        void HandleInput(string data);
         void Enter();
         void Exit();
     }
