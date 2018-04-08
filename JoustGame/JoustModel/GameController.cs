@@ -15,6 +15,19 @@ namespace JoustModel
             WorldRef = World.Instance;
         }
 
+        public void Update()
+        {
+            // Update everything 30 times per second (subject to change)
+            foreach(WorldObject worldObject in WorldRef.objects)
+            {
+                Entity entity = worldObject as Entity;
+                if (entity != null)
+                {
+                    entity.Update();
+                }
+            }
+        }
+
         public void CalculateNumEnemies(int stage, ref int numBuzzards, ref int numPterodactyls)
         {
             numBuzzards = stage + 3;
