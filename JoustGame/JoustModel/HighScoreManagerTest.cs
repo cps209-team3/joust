@@ -4,53 +4,47 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace JoustModel
 {
     [TestClass]
-    class HighScoreManagerTest
+    public class HighScoreManagerTest
     {
         [TestMethod]
         public void TestScoreCreation()
         {
+            HighScoreManager.Instance.testReset();
+
             List<Score> testList = new List<Score>();
 
-            Score a = new Score("efting", 14);
-            Score c = new Score("franklin", 12);
-            Score b = new Score("cockrell", 13);
+            Score sa = new Score(1, "sandy");
+            Score sb = new Score(2, "sandy");
+            Score sc = new Score(3, "sandy");
 
-            Score sa = new Score("sandy", 3);
-            Score sb = new Score("sandy", 2);
-            Score sc = new Score("sandy", 1);
-            Score sd = new Score("sandy", 4);
-
-            testList.Add(a);
-            testList.Add(b);
-            testList.Add(c);
+            Score sz = new Score(1, "sandy");
 
             testList.Add(sa);
             testList.Add(sb);
             testList.Add(sc);
-            testList.Add(sd);
 
             foreach (Score i in testList)
             {
                 HighScoreManager.Instance.AddScore(i);
             }
 
-            List<Score> checkList = HighScoreManager.GetScores("someFile");
+            List<Score> checkList = HighScoreManager.Instance.AllScores;
 
             List<Score> checkList2 = new List<Score>();
 
-            checkList2.Add(a);
-            checkList2.Add(b);
-            checkList2.Add(c);
-
-            checkList2.Add(sd);
-            checkList2.Add(sb);
             checkList2.Add(sc);
+            checkList2.Add(sb);
+            checkList2.Add(sa);
 
-            Assert.IsTrue(checkList2.Equals(checkList));
+            for (int i = 0; i < 3; i++)
+            {
+                Assert.IsTrue(Score.Equals_Mine(checkList[i], checkList2[i]));
+            }
         }
     }
 }
