@@ -7,7 +7,7 @@ namespace JoustModel
 {
     public class Base : Respawn
     {
-        public Base(Point coords) : base(coords)
+        public Base() : base()
         {
             imagePath = "Images/Platform/platform_bottom.png";
         }

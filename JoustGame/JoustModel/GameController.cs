@@ -28,25 +28,27 @@ namespace JoustModel
         {
             for (int i = 0; i < numBuzzards; i++)
             {
-                Buzzard b = new Buzzard(new Point(500, 500));
-                WorldObj.objects.Add(b);
+                Buzzard b = new Buzzard();
+                b.coords = new Point(500, 500);
+                WorldRef.objects.Add(b);
             }
         }
 
-        public string Load(string filename)
-        {
-            string loadedLine = System.IO.File.ReadAllText(string.Format(@"{0}.txt", filename));
-            string[] savedObjects = loadedLine.Split(':');
-            foreach (string savedObj in savedObjects)
-            {
-                if (savedObj.Length > 0)
-                {
-                    string type = savedObj.Substring(0, savedObj.IndexOf(","));
-                    WorldObject obj = CreateWorldObj(type);
-                    obj.Deserialize(savedObj);
-                }
-            }
-        }
+        //public string Load(string filename)
+        //{
+        //    string loadedLine = System.IO.File.ReadAllText(string.Format(@"{0}.txt", filename));
+        //    string[] savedObjects = loadedLine.Split(':');
+        //    foreach (string savedObj in savedObjects)
+        //    {
+        //        if (savedObj.Length > 0)
+        //        {
+        //            string type = savedObj.Substring(0, savedObj.IndexOf(","));
+        //            WorldObject obj = CreateWorldObj(type);
+        //            obj.Deserialize(savedObj);
+        //        }
+        //    }
+        //}
+
         public string Save()
         {
             string filename = DateTime.Now.ToString("H-mm-ss");

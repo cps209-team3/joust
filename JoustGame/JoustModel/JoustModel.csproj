@@ -46,6 +46,7 @@
     <Compile Include="Egg.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="FlapState.cs" />
     <Compile Include="GameController.cs" />
     <Compile Include="GameControllerTest.cs" />
     <Compile Include="HighScoreManager.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="ISerializable.cs" />
     <Compile Include="IState.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="EmptyState.cs" />
     <Compile Include="Score.cs" />
     <Compile Include="Hitbox.cs" />
     <Compile Include="Ostrich.cs" />
@@ -60,6 +62,8 @@
     <Compile Include="Point.cs" />
     <Compile Include="Pterodactyl.cs" />
     <Compile Include="Respawn.cs" />
+    <Compile Include="StandState.cs" />
+    <Compile Include="StateMachine.cs" />
     <Compile Include="World.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorldObject.cs" />

@@ -11,6 +11,8 @@ namespace JoustModel
     {
         public double speed;
         public double angle;
+        public double acceleration;
+        public double accelerationAngle;
         
         public abstract int Value { get; set; }
 
@@ -25,7 +27,8 @@ namespace JoustModel
         [TestMethod]
         public void TestMoveUp()
         {
-            Entity e = new Ostrich(new Point(500, 500));
+            Entity e = new Ostrich();
+            e.coords = new Point(500, 500);
             // set initial speed, angle, and position
             e.Update();
             Point testPoint = new Point(450, 500);
@@ -35,7 +38,8 @@ namespace JoustModel
         [TestMethod]
         public void TestMoveLeft()
         {
-            Entity e = new Ostrich(new Point(500, 500));
+            Entity e = new Ostrich();
+            e.coords = new Point(500, 500);
             // set initial speed, angle, and position
             e.Update();
             Point testPoint = new Point(450, 500);
@@ -45,7 +49,8 @@ namespace JoustModel
         [TestMethod]
         public void TestMoveRight()
         {
-            Entity e = new Ostrich(new Point(500, 500));
+            Entity e = new Ostrich();
+            e.coords = new Point(500, 500);
             // set initial speed, angle, and position
             e.Update();
             Point testPoint = new Point(450, 500);
@@ -55,7 +60,8 @@ namespace JoustModel
         [TestMethod]
         public void TestMoveDown()
         {
-            Entity e = new Ostrich(new Point(500, 500));
+            Entity e = new Ostrich();
+            e.coords = new Point(500, 500);
             // set initial speed, angle, and position
             e.Update();
             Point testPoint = new Point(450, 500);

@@ -34,49 +34,51 @@ namespace JoustClient
         {
             // This is only here for faster testing
             // If you need a different screen on window load, comment out the line below
-            //LoadGameView();
+            LoadGameView();
 
-            Title_Screen(null, EventArgs.Empty);
+            //Title_Screen(null, EventArgs.Empty);
             // Finish_HighScores(null, EventArgs.Empty);
             // called when game end conditions have been met
         }
         
-        public void WorldObjectFactory(string control, JoustModel.Point point)
+        public void WorldObjectFactory(string control, WorldObject worldObject)
         {
             WorldObjectControl i;
             switch (control)
             {
                 case "ostrich":
-                    Ostrich o = new Ostrich(point);
+                    Ostrich o = worldObject as Ostrich;
                     i = new OstrichControl(o.imagePath);
+                    OstrichControl oC = i as OstrichControl;
+                    o.ostrichMoved += oC.NotifyMoved;
                     break;
                 case "buzzard":
-                    Buzzard b = new Buzzard(point);
+                    Buzzard b = worldObject as Buzzard;
                     i = new BuzzardControl(b.imagePath);
                     break;
                 case "pterodactyl":
-                    Pterodactyl p = new Pterodactyl(point);
+                    Pterodactyl p = worldObject as Pterodactyl;
                     i = new PterodactylControl(p.imagePath);
                     break;
                 case "egg":
-                    Egg e = new Egg(point);
+                    Egg e = worldObject as Egg;
                     i = new EggControl(e.imagePath);
                     break;
                 case "platform":
-                    Platform pl = new Platform(point);
+                    Platform pl = worldObject as Platform;
                     i = new PlatformControl(pl.imagePath);
                     break;
                 case "respawn":
-                    Respawn r = new Respawn(point);
+                    Respawn r = worldObject as Respawn;
                     i = new RespawnControl(r.imagePath);
                     break;
                 default:
-                    Base ba = new Base(point);
+                    Base ba = worldObject as Base;
                     i = new BaseControl(ba.imagePath);
                     break;
             }
-            Canvas.SetTop(i, point.y);
-            Canvas.SetLeft(i, point.x);
+            Canvas.SetTop(i, worldObject.coords.y);
+            Canvas.SetLeft(i, worldObject.coords.x);
             canvas.Children.Add(i);
         }
 
@@ -85,25 +87,28 @@ namespace JoustClient
             // Load Map here
 
             // Get stage num from controls once the proper screens are implemented
-            JoustModel.Point oCoords = new JoustModel.Point(720, 450);
-            WorldObjectFactory("ostrich", oCoords);
+            Ostrich o = control.CreateWorldObj("Ostrich") as Ostrich;
+            o.coords = new JoustModel.Point(720, 450);
+            WorldObjectFactory("ostrich", o);
 
             int stage = 0;
-            control.WorldObj.stage = stage;
+            control.WorldRef.stage = stage;
             int numBuzzards = 0;
             int numPterodactyls = 0;
-            control.CalculateNumEnemies(control.WorldObj.stage, ref numBuzzards, ref numPterodactyls);
+            control.CalculateNumEnemies(control.WorldRef.stage, ref numBuzzards, ref numPterodactyls);
 
             for (int i = 0; i < numBuzzards; i++)
             {
-                JoustModel.Point bCoords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                WorldObjectFactory("buzzard", bCoords);
+                Buzzard b = control.CreateWorldObj("Buzzard") as Buzzard;
+                b.coords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
+                WorldObjectFactory("buzzard", b);
             }
 
             for (int i = 0; i < numPterodactyls; i++)
             {
-                JoustModel.Point pCoords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                WorldObjectFactory("pterodactyl", pCoords);
+                Pterodactyl p = control.CreateWorldObj("Pterodactyl") as Pterodactyl;
+                p.coords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
+                WorldObjectFactory("pterodactyl", p);
             }
         }
        
@@ -219,13 +224,14 @@ namespace JoustClient
             Canvas.SetTop(scoreBlock, 280);
             canvas.Children.Add(scoreBlock);
 
-            Score thisScore = new Score(currentEndScore, namebox.Text);
-            HighScoreManager.Instance.AddScore(thisScore);
+            // FIX
+            //Score thisScore = new Score(currentEndScore, namebox.Text);
+            //HighScoreManager.Instance.AddScore(thisScore);
 
-            foreach (Score s in HighScoreManager.Instance.AllScores)
-            {
-                scoreBlock.Text += s.Serialize() + "\n";
-            }
+            //foreach (Score s in HighScoreManager.Instance.AllScores)
+            //{
+            //    scoreBlock.Text += s.Serialize() + "\n";
+            //}
 
             Button back = Make_Button("Title screen", 625.0, Title_Screen);
             back.SetValue(Canvas.LeftProperty, 620.0);
@@ -342,7 +348,8 @@ namespace JoustClient
             about.Text += "\n\n";
             foreach (Score s in HighScoreManager.Instance.AllScores)
             {
-                about.Text += "\t" + s.Serialize() + "\n";
+                // FIX
+                //about.Text += "\t" + s.Serialize() + "\n";
             }
             canvas.Children.Add(about);
 
@@ -364,16 +371,17 @@ namespace JoustClient
             about.Text += "\tEach player controls a knight riding an ostrich. The knight holds a lance above the bird's head.\n\tThe player moves left by pressing the A or Left Arrow key. The player moves right by pressing\n\tthe D or Right Arrow key. If a player moves through the left or right side of the screen, they will\n\tpass through to the opposite side of the screen. If the player presses the W or Up Arrow key,\n\tthe ostrich will flap its wings and gain some height. The rate at which the player flaps the\n\tostrich's wings will control how fast the ostrich ascends or descends.\n";
             canvas.Children.Add(about);
 
-            string newpath = HighScoreManager.Instance.path;
-            int indexPos = newpath.IndexOf("\\JoustGame");
-            newpath = newpath.Substring(0, indexPos);
-            newpath += "\\Images\\player.png";
+            // FIX
+            //string newpath = HighScoreManager.Instance.path;
+            //int indexPos = newpath.IndexOf("\\JoustGame");
+            //newpath = newpath.Substring(0, indexPos);
+            //newpath += "\\Images\\player.png";
 
-            BitmapImage playerpng = new BitmapImage(new Uri(newpath, UriKind.RelativeOrAbsolute));
+            //BitmapImage playerpng = new BitmapImage(new Uri(newpath, UriKind.RelativeOrAbsolute));
             var image = new Image();
             image.Height = 50;
             image.Width = 50;
-            image.Source = playerpng;
+            //image.Source = playerpng;
             canvas.Children.Add(image);
 
             Button back = Make_Button("Back", 525.0, Help_Screen);
@@ -443,16 +451,16 @@ namespace JoustClient
             about.Text += "\tBuzzards are the basic enemy type, and they have the same range of movement as the player.\n\tBuzzards have riders and lances.\n";
             canvas.Children.Add(about);
 
-            string newpath = HighScoreManager.Instance.path;
-            int indexPos = newpath.IndexOf("\\JoustGame");
-            newpath = newpath.Substring(0, indexPos);
-            newpath += "\\Images\\buzzard.png";
+            //string newpath = HighScoreManager.Instance.path;
+            //int indexPos = newpath.IndexOf("\\JoustGame");
+            //newpath = newpath.Substring(0, indexPos);
+            //newpath += "\\Images\\buzzard.png";
 
-            BitmapImage playerpng = new BitmapImage(new Uri(newpath, UriKind.RelativeOrAbsolute));
+            //BitmapImage playerpng = new BitmapImage(new Uri(newpath, UriKind.RelativeOrAbsolute));
             var image = new Image();
             image.Height = 50;
             image.Width = 50;
-            image.Source = playerpng;
+            //image.Source = playerpng;
             canvas.Children.Add(image);
 
             Button back = Make_Button("Back", 425.0, Enemies_Screen);
@@ -473,16 +481,16 @@ namespace JoustClient
             about.Text += "\tIf a buzzard loses a joust, the buzzard will die and an egg will fall from the buzzard's last\n\tlocation with the buzzard's last speed and direction. If it lands in the lava, the egg is destroyed.\n\tIf it lands on a platform, the egg will eventually hatch into a new rider. A new buzzard will fly in\n\tfor the rider to mount. Players can collect eggs by touching them, which will prevent them from\n\thatching.\n";
             canvas.Children.Add(about);
 
-            string newpath = HighScoreManager.Instance.path;
-            int indexPos = newpath.IndexOf("\\JoustGame");
-            newpath = newpath.Substring(0, indexPos);
-            newpath += "\\Images\\egg.png";
+            //string newpath = HighScoreManager.Instance.path;
+            //int indexPos = newpath.IndexOf("\\JoustGame");
+            //newpath = newpath.Substring(0, indexPos);
+            //newpath += "\\Images\\egg.png";
 
-            BitmapImage playerpng = new BitmapImage(new Uri(newpath, UriKind.RelativeOrAbsolute));
+            //BitmapImage playerpng = new BitmapImage(new Uri(newpath, UriKind.RelativeOrAbsolute));
             var image = new Image();
             image.Height = 50;
             image.Width = 50;
-            image.Source = playerpng;
+            //image.Source = playerpng;
             canvas.Children.Add(image);
 
             Button back = Make_Button("Back", 425.0, Enemies_Screen);
@@ -503,16 +511,16 @@ namespace JoustClient
             about.Text += "\tPterodactyls move faster than buzzards, and their beak is used as a lance.\n";
             canvas.Children.Add(about);
 
-            string newpath = HighScoreManager.Instance.path;
-            int indexPos = newpath.IndexOf("\\JoustGame");
-            newpath = newpath.Substring(0, indexPos);
-            newpath += "\\Images\\pterodactyl.png";
+            //string newpath = HighScoreManager.Instance.path;
+            //int indexPos = newpath.IndexOf("\\JoustGame");
+            //newpath = newpath.Substring(0, indexPos);
+            //newpath += "\\Images\\pterodactyl.png";
 
-            BitmapImage playerpng = new BitmapImage(new Uri(newpath, UriKind.RelativeOrAbsolute));
+            //BitmapImage playerpng = new BitmapImage(new Uri(newpath, UriKind.RelativeOrAbsolute));
             var image = new Image();
             image.Height = 50;
             image.Width = 50;
-            image.Source = playerpng;
+            //image.Source = playerpng;
             canvas.Children.Add(image);
 
             Button back = Make_Button("Back", 425.0, Enemies_Screen);

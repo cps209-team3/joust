@@ -8,10 +8,9 @@ namespace JoustModel
 {
     public class Platform : WorldObject
     {
-        public Platform(Point coords)
+        public Platform()
         {
             imagePath = "Images/Platform/platform_short1.png";
-            this.coords = coords;
             World.Instance.objects.Add(this);
         }
 
