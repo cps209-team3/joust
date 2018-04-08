@@ -11,6 +11,7 @@ namespace JoustModel
     {
         // must be set with the "getScores" method
         public List<Score> AllScores { get; set; }
+        public string path = "\\JoustGame";
 
         private HighScoreManager(List<Score> allscores)
         {

@@ -16,7 +16,7 @@ namespace JoustModel
             Value = 1000;
             speed = 0;
             angle = 0;
-            imagePath = "Images/Player/player_stand.png";
+            imagePath = "Images/Enemy/pterodactyl_fly1.png";
             this.coords = coords;
             World.Instance.objects.Add(this);
         }

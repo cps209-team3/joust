@@ -21,5 +21,23 @@ namespace JoustModel
         {
             get { return instance; }
         }
+
+        public void UpdateAllEnemies_Position(object sender, EventArgs e) {
+            foreach (WorldObject obj in objects) {
+                Buzzard buzzardObj = obj as Buzzard;
+                if (buzzardObj != null) {
+                    buzzardObj.Update();
+                }
+            }
+        }
+
+        public void UpdateAllEnemies_State(object sender, EventArgs e) {
+            foreach (WorldObject obj in objects) {
+                Buzzard buzzardObj = obj as Buzzard;
+                if (buzzardObj != null) {
+                    buzzardObj.UpdateState();
+                }
+            }
+        }
     }
 }

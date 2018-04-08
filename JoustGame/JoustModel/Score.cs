@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace JoustModel
 {
 
-    public class Score
+    public class Score : ISerializable
     {
         // when the user loses the game, a screen pops 
         // up to ask for a username. using the game's score
@@ -20,6 +20,16 @@ namespace JoustModel
         {
             this.username = username;
             this.score = score;
+        }
+
+        public void Deserialize(string data) {
+            // Implement the Deserialization of scores
+            throw new NotImplementedException();
+        }
+
+        public string Serialize() {
+            // Implement the Serialization of scores
+            throw new NotImplementedException();
         }
     }
 
