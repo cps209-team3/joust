@@ -36,10 +36,10 @@ namespace JoustClient
         {
             // This is only here for faster testing
             // If you need a different screen on window load, comment out the line below
-            //LoadGameView();
+            LoadGameView();
 
             //Title_Screen(null, EventArgs.Empty);
-            Finish_HighScores(null, EventArgs.Empty);
+            //Finish_HighScores(null, EventArgs.Empty);
             // called when game end conditions have been met
         }
 
