@@ -19,8 +19,9 @@ namespace JoustModel
         // Set coords to value read from file
         public void Deserialize(string data)
         {
-            // set numOfPlats
-            // set numOfRespawns
+            string[] properties = data.Split(',');
+            numOfPlats = Convert.ToInt32(properties[1]);
+            numOfRespawns = Convert.ToInt32(properties[2]);
         }
     }
 }
