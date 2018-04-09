@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace JoustModel
 {
@@ -13,13 +14,33 @@ namespace JoustModel
         // up to ask for a username. using the game's score
         // and the supplied name, a score is created
 
+        public int points;
         public string username;
-        public int score;
 
-        public Score(string username, int score)
+        public Score(int points, string username)
         {
+            this.points = points;
             this.username = username;
-            this.score = score;
+
+            this.username = this.username.TrimEnd('\r', '\n');
+        }
+
+        public string Serialize()
+        {
+            return this.points.ToString() + " || " + this.username.ToString();
+        }
+
+        public static bool Equals_Mine(Score expected, Score actual)
+        {
+
+            if ((expected.points == actual.points) && (expected.username == actual.username))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
