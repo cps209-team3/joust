@@ -12,21 +12,28 @@ namespace JoustModel
     {
         public event EventHandler BuzzardMoveEvent;
         public event EventHandler BuzzardStateChange;
+        public event EventHandler BuzzardDropEgg;
+        public event EventHandler BuzzardDestroyed;
 
         public override int Value { get; set; }
 
         public static string lock_this = "Lock this please";
-        private EnemyState state;
-        private int count;
-        private const int SPEED = 2;
+
+        private int updateGraphic;
+        private double prevAngle;
+        public bool droppedEgg;
+        private const double SPEED = 3;
+        private const double TERMINAL_VELOCITY = 4;
 
         public Buzzard(Point coords)
         {
             Value = 500;
-            speed = 0;
+            speed = SPEED;
             angle = 0;
-            count = 0;
-            state = EnemyState.Standing;
+            updateGraphic = 0;
+            prevAngle = angle;
+            droppedEgg = false;
+            state = new EnemyStandingState();
             imagePath = "Images/Enemy/mik_red_stand.png";
             this.coords = coords;
             World.Instance.objects.Add(this);
@@ -37,188 +44,54 @@ namespace JoustModel
             World.Instance.objects.Remove(this);
         }
 
-        public void UpdateState() {
-
-        }
-
         public override void Update()
         {
             // Determine the next state
-            DetermineNextState();
-            DetermineStateInformation();
+            state = EnemyState.GetNextState(this);
+            state.Setup();
+            // Handle gravity
+            if (state is EnemyFlappingState) {
+                if (speed > TERMINAL_VELOCITY) {
+                    if (prevAngle == 225 || prevAngle == 270 || prevAngle == 315) speed = 0.05;
+                    else speed = TERMINAL_VELOCITY;
+                }
+            }
+            else if (state is EnemyFallingState) {
+                if (speed > TERMINAL_VELOCITY) {
+                    if (prevAngle == 45 || prevAngle == 90 || prevAngle == 135) speed = 0.05;
+                    else speed = TERMINAL_VELOCITY;
+                }
+            }
+            else if (state is EnemyRunningState) {
+                speed = SPEED;
+            }
+            else if (state is BuzzardFleeingState) {
+                if (coords.x < 3) {
+                    if (BuzzardDestroyed != null)
+                        BuzzardDestroyed(this, null);
+                    Die();
+                }
+            }
+
+            Trace.WriteLine(state.GetType().ToString());
+
+            prevAngle = angle;
+
+            if (updateGraphic > 3) updateGraphic = 0;
+            else updateGraphic++;
 
             if (BuzzardMoveEvent != null) // Is anyone subscribed?
                 BuzzardMoveEvent(this, null); // Raise event
 
-            if (count == 0) {
+            if (updateGraphic == 0) {
                 if (BuzzardStateChange != null)
                     BuzzardStateChange(this, null);
             }
-        }
 
-        public void DetermineStateInformation() {
-            if (count > 3) count = 0;
-            else count++;
-
-            switch (state) {
-                case EnemyState.Standing:
-                    // Counteract gravity
-                    speed = 0;
-                    imagePath = "Images/Enemy/mik_red_stand.png";
-                    break;
-
-                case EnemyState.Running_Right:
-                    speed = SPEED;
-                    angle = 0;
-                    switch (imagePath) {
-                        case "Images/Enemy/mik_red_stand.png":
-                            imagePath = "Images/Enemy/mik_red_move1.png";
-                            break;
-                        case "Images/Enemy/mik_red_move1.png":
-                            imagePath = "Images/Enemy/mik_red_move2.png";
-                            break;
-                        case "Images/Enemy/mik_red_move2.png":
-                            imagePath = "Images/Enemy/mik_red_move3.png";
-                            break;
-                        case "Images/Enemy/mik_red_move3.png":
-                            imagePath = "Images/Enemy/mik_red_stand.png";
-                            break;
-                        default:
-                            imagePath = "Images/Enemy/mik_red_stand.png";
-                            break;
-                    }
-                    break;
-
-                case EnemyState.Running_Left:
-                    speed = SPEED;
-                    angle = 180;
-                    switch (imagePath) {
-                        case "Images/Enemy/mik_red_stand.png":
-                            imagePath = "Images/Enemy/mik_red_move1.png";
-                            break;
-                        case "Images/Enemy/mik_red_move1.png":
-                            imagePath = "Images/Enemy/mik_red_move2.png";
-                            break;
-                        case "Images/Enemy/mik_red_move2.png":
-                            imagePath = "Images/Enemy/mik_red_move3.png";
-                            break;
-                        case "Images/Enemy/mik_red_move3.png":
-                            imagePath = "Images/Enemy/mik_red_stand.png";
-                            break;
-                        default:
-                            imagePath = "Images/Enemy/mik_red_stand.png";
-                            break;
-                    }
-                    break;
-
-                case EnemyState.InAir:
-                    speed = SPEED;
-                    angle = 270;
-                    imagePath = "Images/Enemy/mik_red_fly1.png";
-                    break;
-
-                case EnemyState.InAir_Right:
-                    speed = SPEED;
-                    angle = 315;
-                    imagePath = "Images/Enemy/mik_red_fly1.png";
-                    break;
-
-                case EnemyState.InAir_Left:
-                    speed = SPEED;
-                    angle = 225;
-                    imagePath = "Images/Enemy/mik_red_fly1.png";
-                    break;
-
-                case EnemyState.Flapping:
-                    speed = SPEED;
-                    angle = 90;
-                    switch (imagePath) {
-                        case "Images/Enemy/mik_red_fly1.png":
-                            imagePath = "Images/Enemy/mik_red_fly2.png";
-                            break;
-                        default:
-                            imagePath = "Images/Enemy/mik_red_fly1.png";
-                            break;
-                    }
-                    break;
-
-                case EnemyState.Flapping_Right:
-                    speed = SPEED;
-                    angle = 45;
-                    switch (imagePath) {
-                        case "Images/Enemy/mik_red_fly1.png":
-                            imagePath = "Images/Enemy/mik_red_fly2.png";
-                            break;
-                        default:
-                            imagePath = "Images/Enemy/mik_red_fly1.png";
-                            break;
-                    }
-                    break;
-
-                case EnemyState.Flapping_Left:
-                    speed = SPEED;
-                    angle = 135;
-                    switch (imagePath) {
-                        case "Images/Enemy/mik_red_fly1.png":
-                            imagePath = "Images/Enemy/mik_red_fly2.png";
-                            break;
-                        default:
-                            imagePath = "Images/Enemy/mik_red_fly1.png";
-                            break;
-                    }
-                    break;
-            }
-        }
-
-        public void DetermineNextState() {
-            Random rand = new Random(DateTime.Now.Millisecond);
-            for (int i = 0; i < 999990; i++) { } // Use up time so each Buzzard's random updates differently
-            int chance = rand.Next(100);
-
-            switch (state) {
-                case EnemyState.Standing:
-                    if (chance % 2 == 0) {
-                        if (chance % 10 < 5) state = EnemyState.Running_Right; // Next state is running
-                        else state = EnemyState.Running_Left; // Next state is running
-                    }
-                    else {
-                        state = EnemyState.Flapping; // Next state is flapping
-                    }
-                    break;
-
-                case EnemyState.Running_Right:
-                    if (chance < 2) state = EnemyState.Standing; // Next state is standing
-                    else if (chance < 99) state = EnemyState.Running_Right; // Next state is running to the right
-                    else state = EnemyState.Running_Left; // Next state is running to the right
-                    break;
-
-                case EnemyState.Running_Left:
-                    if (chance < 2) state = EnemyState.Standing; // Next state is standing
-                    else if (chance < 99) state = EnemyState.Running_Left; // Next state is running to the right
-                    else state = EnemyState.Running_Right; // Next state is running to the right
-                    break;
-
-                case EnemyState.InAir:
-                    if (chance % 10 < 3) state = EnemyState.Flapping;
-                    else if (chance % 2 == 0) state = EnemyState.InAir_Right;
-                    else state = EnemyState.InAir_Left;
-                    break;
-
-                case EnemyState.InAir_Right:
-                case EnemyState.InAir_Left:
-                    if (chance < 3) state = EnemyState.InAir;
-                    break;
-
-                case EnemyState.Flapping:
-                    if (chance / 10 < 2 && chance % 10 < 4 || coords.y < 10) state = EnemyState.InAir;
-                    else if (chance % 2 == 0) state = EnemyState.Flapping_Right;
-                    else state = EnemyState.Flapping_Left;
-                    break;
-
-                case EnemyState.Flapping_Right:
-                case EnemyState.Flapping_Left:
-                    if (chance < 2 || coords.y < 10) state = EnemyState.Flapping;
-                    break;
+            if (coords.y > 450 && coords.y < 525 && coords.x > 650 && coords.x < 800 && !droppedEgg) {
+                if (BuzzardDropEgg != null)
+                    BuzzardDropEgg(this, null);
+                droppedEgg = true;
             }
         }
 

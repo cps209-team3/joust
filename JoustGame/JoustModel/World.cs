@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,20 +24,19 @@ namespace JoustModel
         }
 
         public void UpdateAllEnemies_Position(object sender, EventArgs e) {
-            foreach (WorldObject obj in objects) {
-                Buzzard buzzardObj = obj as Buzzard;
-                if (buzzardObj != null) {
-                    buzzardObj.Update();
+            try {
+                foreach (WorldObject obj in objects) {
+                    Buzzard buzzardObj = obj as Buzzard;
+                    if (buzzardObj != null) {
+                        buzzardObj.Update();
+                    }
+                    Egg eggObj = obj as Egg;
+                    if (eggObj != null) {
+                        eggObj.Update();
+                    }
                 }
-            }
-        }
-
-        public void UpdateAllEnemies_State(object sender, EventArgs e) {
-            foreach (WorldObject obj in objects) {
-                Buzzard buzzardObj = obj as Buzzard;
-                if (buzzardObj != null) {
-                    buzzardObj.UpdateState();
-                }
+            } catch (InvalidOperationException op) {
+                Trace.WriteLine(op.Message);
             }
         }
     }

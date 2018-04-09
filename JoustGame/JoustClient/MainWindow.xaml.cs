@@ -53,16 +53,13 @@ namespace JoustClient
                     BuzzardControl iCtrl = i as BuzzardControl;
                     b.BuzzardMoveEvent += iCtrl.NotifyMoved;
                     b.BuzzardStateChange += iCtrl.NotifyState;
+                    b.BuzzardDropEgg += iCtrl.NotifyDrop;
+                    b.BuzzardDestroyed += iCtrl.NotifyDestroy;
 
                     DispatcherTimer moveTimer = new DispatcherTimer();
                     moveTimer.Interval = new TimeSpan(0, 0, 0, 0, 33);
                     moveTimer.Tick += World.Instance.UpdateAllEnemies_Position;
                     moveTimer.Start();
-
-                    DispatcherTimer stateTimer = new DispatcherTimer();
-                    stateTimer.Interval = new TimeSpan(0, 0, 0, 0,100);
-                    stateTimer.Tick += World.Instance.UpdateAllEnemies_State;
-                    stateTimer.Start();
                     break;
                 case "pterodactyl":
                     Pterodactyl p = new Pterodactyl(point);

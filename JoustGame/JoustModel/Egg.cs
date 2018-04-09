@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,12 +10,28 @@ namespace JoustModel
 {
     public class Egg : Enemy
     {
+        public event EventHandler EggMoveEvent;
+        public event EventHandler EggStateChange;
+        public event EventHandler EggHatched;
+        public event EventHandler EggDestroyed;
+
         public override int Value { get; set; }
+        public int seconds;
+        public int milliseconds;
+        public bool mounted;
+
+        private int updateGraphic;
+        private bool alreadyHatched;
 
         public Egg(Point coords)
         {
             Value = 250;
-            imagePath = "Images/Platform/egg1.png";
+            updateGraphic = 0;
+            seconds = 0;
+            milliseconds = 3;
+            alreadyHatched = false;
+            mounted = false;
+            imagePath = "Images/Enemy/egg1.png";
             this.coords = coords;
             World.Instance.objects.Add(this);
         }
@@ -26,7 +43,34 @@ namespace JoustModel
 
         public override void Update()
         {
+            state = EnemyState.GetNextState(this);
+            state.Setup();
 
+            if (state is EggHatchedState) {
+                if (milliseconds > 30 && !alreadyHatched) {
+                    if (EggHatched != null) {
+                        EggHatched(this, null);
+                        alreadyHatched = true;
+                    }
+                }
+            }
+
+            if (mounted) {
+                if (EggDestroyed != null)
+                    EggDestroyed(this, null);
+                Die();
+            }
+
+            if (updateGraphic > 3) updateGraphic = 0;
+            else updateGraphic++;
+
+            if (EggMoveEvent != null) // Is anyone subscribed?
+                EggMoveEvent(this, null); // Raise event
+
+            if (updateGraphic == 0) {
+                if (EggStateChange != null)
+                    EggStateChange(this, null);
+            }
         }
 
         //Serialization

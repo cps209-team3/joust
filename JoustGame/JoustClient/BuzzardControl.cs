@@ -51,5 +51,29 @@ namespace JoustClient
             Buzzard buzzard = sender as Buzzard;
             Source = new BitmapImage(new Uri(buzzard.imagePath, UriKind.Relative));
         }
+
+        public void NotifyDrop(object sender, EventArgs e) {
+            Buzzard buzzard = sender as Buzzard;
+
+            Egg egg = new Egg(buzzard.coords);
+            if (buzzard.angle > 180) egg.angle = buzzard.angle;
+            else egg.angle = buzzard.angle + 180;
+            egg.speed = buzzard.speed;
+            egg.state = new EnemyFallingState() { Angle = buzzard.state.Angle, StateEnemy = egg };
+            EggControl eCtrl = new EggControl(egg.imagePath);
+            egg.EggMoveEvent += eCtrl.NotifyMoved;
+            egg.EggStateChange += eCtrl.NotifyState;
+            egg.EggHatched += eCtrl.NotifyHatch;
+            egg.EggDestroyed += eCtrl.NotifyDestroy;
+            Canvas.SetTop(eCtrl, egg.coords.y);
+            Canvas.SetLeft(eCtrl, egg.coords.x);
+            Canvas canvas = Parent as Canvas;
+            canvas.Children.Add(eCtrl);
+        }
+
+        public void NotifyDestroy(object sender, EventArgs e) {
+            Canvas canvas = Parent as Canvas;
+            canvas.Children.Remove(this);
+        }
     }
 }
