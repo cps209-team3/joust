@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -51,19 +52,32 @@ namespace JoustClient
                     Buzzard b = new Buzzard(point);
                     i = new BuzzardControl(b.imagePath);
                     BuzzardControl iCtrl = i as BuzzardControl;
+
+                    // Used to update the view with model updates
                     b.BuzzardMoveEvent += iCtrl.NotifyMoved;
                     b.BuzzardStateChange += iCtrl.NotifyState;
                     b.BuzzardDropEgg += iCtrl.NotifyDrop;
                     b.BuzzardDestroyed += iCtrl.NotifyDestroy;
-
+                    // Used to update all enemies in the world
                     DispatcherTimer moveTimer = new DispatcherTimer();
                     moveTimer.Interval = new TimeSpan(0, 0, 0, 0, 33);
                     moveTimer.Tick += World.Instance.UpdateAllEnemies_Position;
                     moveTimer.Start();
+
+                    /*  Comment:    Clayton Cockrell
+                     *  The Random object in Buzzard would give the same random number to all the 
+                     *  Buzzard objects if their creation was not halted for a little bit of time.
+                     */
+                    Thread.Sleep(20);
                     break;
                 case "pterodactyl":
                     PterodactylControl pCtrl = new PterodactylControl("Images/Enemy/pterodactyl.fly1");
                     i = pCtrl;
+
+                    /*  Comment:    Clayton Cockrell
+                     *  Pterodactyls spawn after a certain number of minutes. I currently have it set
+                     *  to 1 minute. (To change, see PTERODACTYL_SPAWN_MINUTES constant in World class)
+                     */
                     World.Instance.SpawnPterodactyl += pCtrl.NotifySpawn;
                     break;
                 case "egg":
@@ -96,6 +110,10 @@ namespace JoustClient
             JoustModel.Point oCoords = new JoustModel.Point(720, 450);
             WorldObjectFactory("ostrich", oCoords);
 
+            /*  Comment:    Clayton Cockrell
+             *  Pterodactyls start spawning at stage 5. stage is set this for testing
+             *  purposes.
+             */
             int stage = 5;
             control.WorldObj.stage = stage;
             int numBuzzards = 0;

@@ -1,30 +1,32 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JoustModel
 {
     public class Egg : Enemy
     {
+        // Event handlers to notify the view
         public event EventHandler EggMoveEvent;
         public event EventHandler EggStateChange;
         public event EventHandler EggHatched;
         public event EventHandler EggDestroyed;
 
+        // Public property Value (used to determine points awarded upon destroying)
         public override int Value { get; set; }
+
+        // Public instance variables
         public int seconds;
         public int milliseconds;
         public bool mounted;
-
+        // Private instance variables
         private int updateGraphic;
         private bool alreadyHatched;
 
+        // Class Constructor
         public Egg(Point coords)
         {
+            // Initialize variables
             Value = 250;
             updateGraphic = 0;
             seconds = 0;
@@ -36,17 +38,27 @@ namespace JoustModel
             World.Instance.objects.Add(this);
         }
 
+        /// <summary>
+        /// Removes the current object from the List of WorldObjects
+        /// held in the World Singleton.
+        /// </summary>
         public override void Die()
         {
             World.Instance.objects.Remove(this);
         }
 
+        /// <summary>
+        /// Determines the objects next state and fires the appropriate event
+        /// handler to notify the view of the state change.
+        /// </summary>
         public override void Update()
         {
+            // Determine the next state
             state = EnemyState.GetNextState(this);
             state.Setup();
 
             if (state is EggHatchedState) {
+                // Allow the hatched animation to run before notifying
                 if (milliseconds > 30 && !alreadyHatched) {
                     if (EggHatched != null) {
                         EggHatched(this, null);
@@ -55,18 +67,22 @@ namespace JoustModel
                 }
             }
 
+            // Check if the hatched Mik has mounted a Buzzard
             if (mounted) {
                 if (EggDestroyed != null)
                     EggDestroyed(this, null);
                 Die();
             }
 
+            // Slow the rate of updating the graphic
             if (updateGraphic > 3) updateGraphic = 0;
             else updateGraphic++;
 
-            if (EggMoveEvent != null) // Is anyone subscribed?
-                EggMoveEvent(this, null); // Raise event
+            // Always fire the move event
+            if (EggMoveEvent != null)
+                EggMoveEvent(this, null);
 
+            // Slow the rate of updating the graphic
             if (updateGraphic == 0) {
                 if (EggStateChange != null)
                     EggStateChange(this, null);

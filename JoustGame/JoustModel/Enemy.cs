@@ -6,35 +6,45 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace JoustModel {
+
+    /// <summary>
+    /// This is the Class that all enemies in the game
+    /// inherit from getting an EnemyState variable.
+    /// </summary>
     public abstract class Enemy : Entity {
         public EnemyState state;
-        public enum Type { Buzzard, MikRed, MikBlue, MikSilver, Egg, Pterodactyl };
     }
 
+    /// <summary>
+    /// This Class is the base class for all other enemy states. It contains
+    /// a Factory Method that produces the next state.
+    /// </summary>
     public abstract class EnemyState {
+        // Properties used in child states
         public int Angle { get; set; }
         public Enemy StateEnemy { get; set; }
 
-        protected Dictionary<Enemy.Type, string> enemy_imgPath = new Dictionary<Enemy.Type, string>();
+        // Class Constructor
+        public EnemyState() {}
 
-        public EnemyState() {
-            enemy_imgPath.Add(Enemy.Type.Buzzard, "buzzard");
-            enemy_imgPath.Add(Enemy.Type.Egg, "egg");
-            enemy_imgPath.Add(Enemy.Type.Pterodactyl, "pterodactyl");
-            enemy_imgPath.Add(Enemy.Type.MikRed, "mik_red");
-            enemy_imgPath.Add(Enemy.Type.MikBlue, "mik_blue");
-            enemy_imgPath.Add(Enemy.Type.MikSilver, "mik_silver");
-        }
-
+        /// <summary>
+        /// This Factory Method produces the next state for every enemy calling it.
+        /// </summary>
+        /// <param name="e"> Used to determine what states are available to the enemy </param>
+        /// <returns> A new EnemyState Child </returns>
         public static EnemyState GetNextState(Enemy e) {
             Random rand = new Random(DateTime.Now.Millisecond);
             for (int i = 0; i < 999990; i++) { } // Use up time so each Enemy's random updates differently
             int chance = rand.Next(100);
 
             if (e is Buzzard) {
+                /*** Buzzard States ***/
                 Buzzard b = e as Buzzard;
 
+                // *** Check if lost in a joust against the player ***
                 if (b.coords.y > 450 && b.coords.y < 525 && b.coords.x > 650 && b.coords.x < 800) return new BuzzardFleeingState() { StateEnemy = b };
+
+                // *** Check if Buzzard is near the ground of a platform and return new EnemyRunningState like below ***
 
                 if (b.state is EnemyStandingState) {
                     if (chance % 2 == 0) {
@@ -80,7 +90,9 @@ namespace JoustModel {
                 }
                 else if (b.state is BuzzardPickupState) {
                     BuzzardPickupState set_state = b.state as BuzzardPickupState;
+                    // Determine if the Buzzard is close enough to the Mik being picked up
                     if ((set_state.TargetEgg.coords.x - b.coords.x) > -5 && (set_state.TargetEgg.coords.x - b.coords.x) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) > -5) {
+                        // Picked up Mik
                         set_state.TargetEgg.mounted = true;
                         b.droppedEgg = false;
                         return new EnemyStandingState() { StateEnemy = b, Angle = 0 };
@@ -90,14 +102,16 @@ namespace JoustModel {
                     }
                 }
                 else {
+                    // If non of the previous states, set state to Fleeing
                     return new BuzzardFleeingState() { StateEnemy = b };
                 }
             }
             else if (e is Egg) {
+                /*** Egg States ***/
                 Egg egg = e as Egg;
 
                 if (egg.state is EnemyFallingState) {
-                    // TODO: implement when the egg lands on a platform
+                    // *** Implement when the egg lands on a platform ***
                     if (egg.coords.y > 800) return new EnemyStandingState() { Angle = egg.state.Angle, StateEnemy = egg }; // Standing state
                     else return new EnemyFallingState() { Angle = egg.state.Angle, StateEnemy = egg }; // Falling state
                 }
@@ -116,14 +130,13 @@ namespace JoustModel {
                 }
             }
             else if (e is Pterodactyl) {
+                /*** Pterodactyl States ***/
                 Pterodactyl p = e as Pterodactyl;
 
-                // Add charging state to attack nearby player
-                if (p.coords.y > 300 && p.coords.y < 500 && p.coords.x > 600 && p.coords.x < 800) {
-                    return new PterodactylChargeState() { StateEnemy = p };
-                }
+                // *** Add charging state to attack nearby player ***
+                if (p.coords.y > 300 && p.coords.y < 500 && p.coords.x > 600 && p.coords.x < 800) return new PterodactylChargeState() { StateEnemy = p };
 
-                // Add hitbox check to destroy pterodactyl
+                // *** Add hitbox check to destroy pterodactyl ***
                 if (p.coords.y > 450 && p.coords.y < 525 && p.coords.x > 650 && p.coords.x < 800) return new PterodactylDestroyedState() { StateEnemy = p };
 
                 if (p.state is EnemyFallingState) {
@@ -151,10 +164,12 @@ namespace JoustModel {
                     }
                 }
                 else {
+                    // Default is Falling state
                     return new EnemyFallingState() { Angle = p.state.Angle, StateEnemy = p };
                 }
             }
             else {
+                /*** No Know Enemy Default State ***/
                 return new EnemyStandingState() { Angle = 0 };
             }
 
@@ -170,7 +185,7 @@ namespace JoustModel {
                 Buzzard b = StateEnemy as Buzzard;
                 b.speed = 0;
                 b.angle = Angle;
-                b.imagePath = "Images/Enemy/" + enemy_imgPath[Enemy.Type.Buzzard] + "_stand.png";
+                b.imagePath = "Images/Enemy/mik_" + b.Color + "_stand.png";
             }
             else if (StateEnemy is Egg) {
                 Egg e = StateEnemy as Egg;
@@ -186,23 +201,13 @@ namespace JoustModel {
             if (StateEnemy is Buzzard) {
                 Buzzard b = StateEnemy as Buzzard;
                 b.angle = Angle;
-                switch (b.imagePath) {
-                    case "Images/Enemy/mik_red_stand.png":
-                        b.imagePath = "Images/Enemy/mik_red_move1.png";
-                        break;
-                    case "Images/Enemy/mik_red_move1.png":
-                        b.imagePath = "Images/Enemy/mik_red_move2.png";
-                        break;
-                    case "Images/Enemy/mik_red_move2.png":
-                        b.imagePath = "Images/Enemy/mik_red_move3.png";
-                        break;
-                    case "Images/Enemy/mik_red_move3.png":
-                        b.imagePath = "Images/Enemy/mik_red_stand.png";
-                        break;
-                    default:
-                        b.imagePath = "Images/Enemy/mik_red_stand.png";
-                        break;
-                }
+
+                if (b.imagePath.EndsWith("stand.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_move1.png";
+                else if (b.imagePath.EndsWith("move1.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_move2.png";
+                else if (b.imagePath.EndsWith("move2.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_move3.png";
+                else if (b.imagePath.EndsWith("move3.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_stand.png";
+                else b.imagePath = "Images/Enemy/mik_" + b.Color + "_stand.png";
+
             }
         }
     }
@@ -213,7 +218,7 @@ namespace JoustModel {
                 Buzzard b = StateEnemy as Buzzard;
                 b.angle = Angle;
                 b.speed += 0.05;
-                b.imagePath = "Images/Enemy/mik_red_fly1.png";
+                b.imagePath = "Images/Enemy/mik_" + b.Color + "_fly1.png";
             }
             else if (StateEnemy is Pterodactyl) {
                 Pterodactyl p = StateEnemy as Pterodactyl;
@@ -230,19 +235,16 @@ namespace JoustModel {
                 Buzzard b = StateEnemy as Buzzard;
                 b.angle = Angle;
                 b.speed += 0.05;
-                switch (b.imagePath) {
-                    case "Images/Enemy/mik_red_fly1.png":
-                        b.imagePath = "Images/Enemy/mik_red_fly2.png";
-                        break;
-                    default:
-                        b.imagePath = "Images/Enemy/mik_red_fly1.png";
-                        break;
-                }
+
+                if (b.imagePath.EndsWith("fly1.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_fly2.png";
+                else b.imagePath = "Images/Enemy/mik_" + b.Color + "_fly1.png";
+
             }
             else if (StateEnemy is Pterodactyl) {
                 Pterodactyl p = StateEnemy as Pterodactyl;
                 p.angle = Angle;
                 p.speed += 0.05;
+
                 switch (p.imagePath) {
                     case "Images/Enemy/pterodactyl_fly1.png":
                         p.imagePath = "Images/Enemy/pterodactyl_fly2.png";
@@ -376,7 +378,14 @@ namespace JoustModel {
                 Pterodactyl p = StateEnemy as Pterodactyl;
                 p.angle = 0;
                 p.speed = 0;
-                p.imagePath = "";
+                switch (p.imagePath) {
+                    case "Images/Enemy/pterodactyl.die1.png":
+                        p.imagePath = "Images/Enemy/pterodactyl_die2.png";
+                        break;
+                    default:
+                        p.imagePath = "Images/Enemy/pterodactyl_die1.png";
+                        break;
+                }
             }
         }
     }
