@@ -1,17 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    public class StandState : IState
+    public class FallState : IState
     {
         StateMachine stateMachine;
         Ostrich ostrich;
 
-        public StandState(Ostrich ostrich)
+        public FallState(Ostrich ostrich)
         {
             this.ostrich = ostrich;
             this.stateMachine = ostrich.stateMachine;
@@ -19,7 +20,11 @@ namespace JoustModel
 
         public void Update()
         {
-            
+			lock (ostrich.oLock)
+            {
+                ostrich.nSpeed = 50;
+                ostrich.nAngle = 270;
+            }
         }
 
         public void HandleInput(string command)
@@ -48,7 +53,8 @@ namespace JoustModel
             }
         }
 
-        public void Enter() { /* Play animation */ }
+        public void Enter() { }
         public void Exit() { }
     }
 }
+

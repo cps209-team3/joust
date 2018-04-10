@@ -48,6 +48,7 @@
     <Compile Include="Egg.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="FallState.cs" />
     <Compile Include="FlapState.cs" />
     <Compile Include="GameController.cs" />
     <Compile Include="GameControllerTest.cs" />

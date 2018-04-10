@@ -14,20 +14,24 @@ namespace JoustModel
         public int lives;
         public int score;
         public override int Value { get; set; }
+        public string input;
+        public string oLock;
 
         public Ostrich()
         {
+            oLock = "lock";
             Value = 2000;
             lives = 3;
             score = 0;
             speed = 0;
             angle = 0;
-            acceleration = 0;
-            accelerationAngle = 0;
+            nSpeed = 0;
+            nAngle = 0;
             stateMachine = new StateMachine();
             StandState stand = new StandState(this);
             stateMachine.stateDict.Add("flap", new FlapState(this));
             stateMachine.stateDict.Add("stand", stand);
+            stateMachine.stateDict.Add("fall", new FallState(this));
             stateMachine.currentState = stand;
             imagePath = "Images/Player/player_stand.png";
             World.Instance.objects.Add(this);
@@ -44,14 +48,45 @@ namespace JoustModel
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
-            double xAcceleration = acceleration * (Math.Cos(accelerationAngle * Math.PI / 180)) / 30;
-            double yAcceleration = acceleration * (Math.Sin(accelerationAngle * Math.PI / 180)) / 30;
-            double xNew = xSpeed + xAcceleration;
-            double yNew = ySpeed + yAcceleration;
+            //Console.WriteLine("speed: " + Convert.ToString(speed));
+            //Console.WriteLine("angle: " + Convert.ToString(angle));
+            //Console.WriteLine("cos: " + Convert.ToString(Math.Cos(angle * Math.PI / 180)));
+            //Console.WriteLine("sin: " + Convert.ToString(Math.Sin(angle * Math.PI / 180)));
+            //Console.WriteLine(" ");
+            double nXSpeed;
+            double nYSpeed;
+            nXSpeed = nSpeed * (Math.Cos(nAngle * Math.PI / 180));
+            nYSpeed = nSpeed * (Math.Sin(nAngle * Math.PI / 180));
+            //Console.WriteLine(speed);
+            //Console.WriteLine(angle);
+            //Console.WriteLine(acceleration);
+            //Console.WriteLine(accelerationAngle);
+            //Console.WriteLine();
+            double xNew = (xSpeed + nXSpeed) / 50;
+            double yNew = (ySpeed + nYSpeed) / 50;
+            //Console.WriteLine(xSpeed);
+            //Console.WriteLine(xAcceleration);
+            //Console.WriteLine(ySpeed);
+            //Console.WriteLine(yAcceleration);
+            //Console.WriteLine(" ");
+            //Console.WriteLine(xNew);
+            //Console.WriteLine(yNew);
+            //Console.WriteLine(" ");
             speed = Math.Sqrt(Math.Pow(xNew, 2) + Math.Pow(yNew, 2));
-            angle = Math.Atan(yNew / xNew);
+            angle = Math.Atan2(yNew, xNew) * 180 / Math.PI;
+            if (speed > 500) { speed = 500; }
+            lock (oLock)
+            {
+                nSpeed = 0;
+                nAngle = 0;
+            }
+            //Console.WriteLine(yNew);
+            //Console.WriteLine(xNew);
+            //Console.WriteLine(yNew / xNew);
+            //Console.WriteLine();
             coords.x += xNew;
             coords.y -= yNew;
+
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
 
             stateMachine.Update();

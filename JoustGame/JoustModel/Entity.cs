@@ -11,8 +11,8 @@ namespace JoustModel
     {
         public double speed;
         public double angle;
-        public double acceleration;
-        public double accelerationAngle;
+        public double nSpeed;
+        public double nAngle;
         
         public abstract int Value { get; set; }
 

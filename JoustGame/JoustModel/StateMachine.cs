@@ -16,7 +16,7 @@ namespace JoustModel
         public void Clear() { stateDict.Clear(); }
 
 
-        public void Change(string id, params object[] args)
+        public void Change(string id)
         {
             currentState.Exit();
             IState nextState = stateDict[id];
