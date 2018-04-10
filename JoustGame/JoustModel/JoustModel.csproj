@@ -78,5 +78,9 @@
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Saves\HighScores\highscores.txt" />
+    <Content Include="Saves\HighScores\recover.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
