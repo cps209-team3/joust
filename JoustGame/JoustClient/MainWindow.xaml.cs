@@ -24,6 +24,10 @@ namespace JoustClient
     public partial class MainWindow : Window
     {
         public GameController control = new GameController();
+        public int currentEndScore = 199991; // must set this when game end conditions have been met
+        public TextBox namebox = new TextBox();
+        public DispatcherTimer updateTimer;
+        public StateMachine playerStateMachine;
 
         public MainWindow()
         {
@@ -45,11 +49,12 @@ namespace JoustClient
             switch (control)
             {
                 case "ostrich":
-                    Ostrich o = new Ostrich(point);
+                    Ostrich o = worldObject as Ostrich;
                     i = new OstrichControl(o.imagePath);
+                    OstrichControl oC = i as OstrichControl;
+                    o.ostrichMoved += oC.NotifyMoved;
                     break;
                 case "buzzard":
-                    Buzzard b = new Buzzard(point);
                     i = new BuzzardControl(b.imagePath);
                     BuzzardControl iCtrl = i as BuzzardControl;
 
@@ -99,7 +104,35 @@ namespace JoustClient
             }
             Canvas.SetTop(i, point.y);
             Canvas.SetLeft(i, point.x);
-            canvas.Children.Add(i);
+            playerStateMachine = control.WorldRef.player.stateMachine;
+
+            //Title_Screen(null, EventArgs.Empty);
+            //Finish_HighScores(null, EventArgs.Empty);
+            // called when game end conditions have been met
+        }
+
+        private void Canvas_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    // display escape menu here
+                    break;
+                case Key.W:
+                case Key.Up:
+                    Task.Run(() => playerStateMachine.HandleInput("flap"));
+                    break;
+                case Key.A:
+                case Key.Left:
+                    Task.Run(() => playerStateMachine.HandleInput("left"));
+                    break;
+                case Key.D:
+                case Key.Right:
+                    Task.Run(() => playerStateMachine.HandleInput("right"));
+                    break;
+                default:
+                    break;
+            }
         }
 
         public void LoadGameView()
@@ -107,7 +140,9 @@ namespace JoustClient
             // Load Map here
 
             // Get stage num from controls once the proper screens are implemented
-            JoustModel.Point oCoords = new JoustModel.Point(720, 450);
+            Ostrich o = control.CreateWorldObj("Ostrich") as Ostrich;
+            o.coords = new JoustModel.Point(720, 450);
+            control.WorldRef.player = o;
             WorldObjectFactory("ostrich", oCoords);
 
             /*  Comment:    Clayton Cockrell
@@ -123,20 +158,34 @@ namespace JoustClient
 
             for (int i = 0; i < numBuzzards; i++)
             {
-                JoustModel.Point bCoords = new JoustModel.Point((i + 1) * 100, i);
-                WorldObjectFactory("buzzard", bCoords);
+                Buzzard b = control.CreateWorldObj("Buzzard") as Buzzard;
+                b.coords = new JoustModel.Point((i + 1) * 100, i);
+                WorldObjectFactory("buzzard", b);
             }
 
             for (int i = 0; i < numPterodactyls; i++)
             {
-                JoustModel.Point pCoords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                WorldObjectFactory("pterodactyl", pCoords);
+                Pterodactyl p = control.CreateWorldObj("Pterodactyl") as Pterodactyl;
+                p.coords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
+                WorldObjectControlFactory("pterodactyl", p);
             }
 
             for (int i = 0; i < numPlatforms; i++) {
                 JoustModel.Point pCoords = new JoustModel.Point((i + 1) * 300, (i + 1) * 300);
                 WorldObjectFactory("platform", pCoords);
             }
+            
+            updateTimer = new DispatcherTimer(
+                TimeSpan.FromMilliseconds(20), 
+                DispatcherPriority.Render,
+                UpdateTick,
+                Dispatcher.CurrentDispatcher);
+            updateTimer.Start();
+        }
+
+        public void UpdateTick(object sender, EventArgs e)
+        {
+            control.Update();
         }
        
        // title screens
@@ -156,6 +205,11 @@ namespace JoustClient
 
         private void Title_Screen(object sender, EventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Spawn();
+            });
+
             canvas.Children.Clear();
 
             List<Button> btnList = new List<Button>();
@@ -183,13 +237,18 @@ namespace JoustClient
 
         private void Single_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
             List<Button> btnList = new List<Button>();
 
-            Button easy = Make_Button("Easy", 100.0, null);
-            Button medium = Make_Button("Medium", 200.0, null);
-            Button hard = Make_Button("Hard", 300.0, null);
+            Button easy = Make_Button("Easy", 100.0, Easy_Screen);
+            Button medium = Make_Button("Medium", 200.0, Medium_Screen);
+            Button hard = Make_Button("Hard", 300.0, Hard_Screen);
 
             btnList.Add(easy);
             btnList.Add(medium);
@@ -208,12 +267,85 @@ namespace JoustClient
             back.Width = 200;
             canvas.Children.Add(back);
         }
+       
+        private void Finish_HighScores(object sender, EventArgs e)
+        {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
+            canvas.Children.Clear();
+
+            namebox.Height = 50;
+            namebox.Width = 400;
+            Canvas.SetLeft(namebox, 520);
+            Canvas.SetTop(namebox, 280);
+            namebox.Text = "[Name]";
+            namebox.MaxLength = 15;
+            canvas.Children.Add(namebox);
+
+            List<Button> btnList = new List<Button>();
+
+            Button yes = Make_Button("Save score", 300.0, Accept_SaveScore);
+            Button no = Make_Button("Don't save score", 300.0, Title_Screen);
+
+            btnList.Add(yes);
+            btnList.Add(no);
+
+            foreach (Button x in btnList)
+            {
+                x.Height = 50;
+                x.Width = 200;
+                canvas.Children.Add(x);
+            }
+
+            yes.SetValue(Canvas.LeftProperty, 520.0);
+            no.SetValue(Canvas.LeftProperty, 720.0);
+        }
+
+        private void Accept_SaveScore(object sender, RoutedEventArgs e)
+        {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
+            canvas.Children.Clear();
+
+            TextBlock scoreBlock = new TextBlock();
+            scoreBlock.Height = 500;
+            scoreBlock.Width = 400;
+            Canvas.SetLeft(scoreBlock, 620);
+            Canvas.SetTop(scoreBlock, 280);
+            canvas.Children.Add(scoreBlock);
+
+            // FIX
+            Score thisScore = new Score(currentEndScore, namebox.Text);
+            HighScoreManager.Instance.AddScore(thisScore);
+
+            foreach (Score s in HighScoreManager.Instance.AllScores)
+            {
+                scoreBlock.Text += s.Serialize() + "\n";
+            }
+
+            Button back = Make_Button("Title screen", 625.0, Title_Screen);
+            back.SetValue(Canvas.LeftProperty, 620.0);
+            back.Height = 100;
+            back.Width = 200;
+            canvas.Children.Add(back);
+        }
 
         private void Easy_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
-            Button back = Make_Button("Back", 425.0, Title_Screen);
+            Button back = Make_Button("Back", 425.0, Single_Screen);
             back.SetValue(Canvas.LeftProperty, 620.0);
             back.Height = 100;
             back.Width = 200;
@@ -222,9 +354,14 @@ namespace JoustClient
 
         private void Medium_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
-            Button back = Make_Button("Back", 425.0, Title_Screen);
+            Button back = Make_Button("Back", 425.0, Single_Screen);
             back.SetValue(Canvas.LeftProperty, 620.0);
             back.Height = 100;
             back.Width = 200;
@@ -233,9 +370,14 @@ namespace JoustClient
 
         private void Hard_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
-            Button back = Make_Button("Back", 425.0, Title_Screen);
+            Button back = Make_Button("Back", 425.0, Single_Screen);
             back.SetValue(Canvas.LeftProperty, 620.0);
             back.Height = 100;
             back.Width = 200;
@@ -244,6 +386,11 @@ namespace JoustClient
 
         private void Multi_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
             Button back = Make_Button("Back", 425.0, Title_Screen);
@@ -255,6 +402,11 @@ namespace JoustClient
 
         private void Help_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
             List<Button> btnList_help = new List<Button>();
@@ -288,6 +440,11 @@ namespace JoustClient
 
         private void About_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
             TextBlock about = new TextBlock();
@@ -309,6 +466,11 @@ namespace JoustClient
 
         private void HighScores_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
             TextBlock about = new TextBlock();
@@ -317,6 +479,7 @@ namespace JoustClient
             about.Text += "\n\n";
             foreach (Score s in HighScoreManager.Instance.AllScores)
             {
+                // FIX
                 about.Text += "\t" + s.Serialize() + "\n";
             }
             canvas.Children.Add(about);
@@ -330,6 +493,11 @@ namespace JoustClient
 
         private void Player_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
             TextBlock about = new TextBlock();
@@ -339,6 +507,7 @@ namespace JoustClient
             about.Text += "\tEach player controls a knight riding an ostrich. The knight holds a lance above the bird's head.\n\tThe player moves left by pressing the A or Left Arrow key. The player moves right by pressing\n\tthe D or Right Arrow key. If a player moves through the left or right side of the screen, they will\n\tpass through to the opposite side of the screen. If the player presses the W or Up Arrow key,\n\tthe ostrich will flap its wings and gain some height. The rate at which the player flaps the\n\tostrich's wings will control how fast the ostrich ascends or descends.\n";
             canvas.Children.Add(about);
 
+            // FIX
             string newpath = HighScoreManager.Instance.path;
             int indexPos = newpath.IndexOf("\\JoustGame");
             newpath = newpath.Substring(0, indexPos);
@@ -360,6 +529,11 @@ namespace JoustClient
 
         private void Progression_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
             TextBlock about = new TextBlock();
@@ -380,6 +554,11 @@ namespace JoustClient
 
         private void Enemies_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
             List<Button> btnList = new List<Button>();
@@ -409,6 +588,11 @@ namespace JoustClient
 
         private void Buzzard_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
             TextBlock about = new TextBlock();
@@ -439,6 +623,11 @@ namespace JoustClient
 
         private void Egg_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
             TextBlock about = new TextBlock();
@@ -469,6 +658,11 @@ namespace JoustClient
 
         private void Pterodactyl_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
             TextBlock about = new TextBlock();
@@ -499,6 +693,11 @@ namespace JoustClient
 
         private void Scoring_Screen(object sender, RoutedEventArgs e)
         {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
             canvas.Children.Clear();
 
             TextBlock about = new TextBlock();

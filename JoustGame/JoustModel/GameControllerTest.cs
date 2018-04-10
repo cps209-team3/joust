@@ -1,34 +1,50 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using JoustModel;
 
-[TestClass]
+namespace JoustModel
+{
+    [TestClass]
     public class SerialTest
     {
-
-        [TestMethod]
-        public void Save_Default()
-        {
-            GameController game = new GameController();
-            string line;
-            // populate world with objects
-            string result = "Player: [1000, 3, 2, (300,600)] WorldObjects: [platforms: 1, (100,300), false], [Entities: 1, buzzard, (500,700), 3.6, 4.7]";
-            line = game.Load("Save 2018-4-2-5-32-00");
-            Assert.IsTrue(result == line);
-        }
 
         [TestMethod]
         public void Load_Default()
         {
             GameController game = new GameController();
-            string line2save;
-            // the save file needs test data
-            string result = "Player: [1000, 3, 2, (300,600)] WorldObjects: [platforms: 1, (100,300), false], [Entities: 1, buzzard, (500,700), 3.6, 4.7]";
-            line2save = game.Save();
-            Assert.IsTrue(result == line2save);
+            game.Load(DateTime.Now.ToString("17-42-49"));
+            Assert.IsTrue(game.WorldRef.objects.Count == 4);
+            Assert.IsTrue(game.WorldRef.objects[0].coords.x == 5);
+            Assert.IsTrue((game.WorldRef.objects[3] as Buzzard).speed == 100);
+
+        }
+
+        [TestMethod]
+        public void Save_Default()
+        {
+            GameController game = new GameController();
+            string testLine = game.Save();
+            Assert.IsTrue(testLine == "");
+        }
+
+        [TestMethod]
+        public void Save_OneObjEach()
+        {
+            GameController game = new GameController();
+            new Ostrich();
+            new Egg();
+            new Pterodactyl();
+            new Buzzard();
+            new Platform();  
+            new Respawn();
+            new Base();
+            string testLine = game.Save();
+            Assert.IsTrue(testLine == "Ostrich,0,3,0,0,0,0,0,0:Egg,0,0,0,0,0,0:Pterodactyl,0,0,0,0,0,0:Buzzard,0,0,0,0,0,0:Platform,0,0:Respawn,0,0:Base,0,0:");
         }
     }
+}
+
+

@@ -23,5 +23,12 @@ namespace JoustClient
             Height = 75;
             Width = 50;
         }
+
+        public void NotifyMoved(object sender, int e)
+        {
+            Ostrich o = sender as Ostrich;
+            Canvas.SetTop(this, o.coords.y);
+            Canvas.SetLeft(this, o.coords.x);
+        }
     }
 }

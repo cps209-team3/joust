@@ -27,8 +27,7 @@ namespace JoustModel
         private const double SPEED = 3;
         private const double TERMINAL_VELOCITY = 4;
 
-        // Class Constructor
-        public Buzzard(Point coords)
+        public Buzzard()
         {
             // Initialize instance variables
             Value = 500;
@@ -134,14 +133,16 @@ namespace JoustModel
 
         public override string Serialize()
         {
-            return string.Format("Buzzard, {0}, {1}, {2}", this.coords, this.speed, this.angle);
+            return string.Format("Buzzard,{0},{1},{2},{3}", speed, angle, coords.x, coords.y);
         }
 
         public override void Deserialize(string data)
         {
-            //set coords
-            //set speed 
-            //set angle 
+            string[] properties = data.Split(',');
+            speed = Convert.ToDouble(properties[1]); // set speed
+            angle = Convert.ToDouble(properties[2]); // set angle
+            coords.x = Convert.ToDouble(properties[3]); // set x coord
+            coords.y = Convert.ToDouble(properties[4]); // set y coord
         }
     }
 
@@ -151,7 +152,8 @@ namespace JoustModel
         [TestMethod]
         public void TestDie()
         {
-            Buzzard b = new Buzzard(new Point(500, 500));
+            Buzzard b = new Buzzard();
+            b.coords = new Point(500, 500);
             b.Die();
             Assert.AreEqual(new List<WorldObject> { }, World.Instance.objects);
         }

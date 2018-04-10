@@ -13,7 +13,7 @@ namespace JoustModel
 
         // Public property Value (used to determine points awarded upon destroying)
         public override int Value { get; set; }
-
+        
         // Private instance variables
         private bool charging;
         private const double SPEED = 6;
@@ -25,7 +25,7 @@ namespace JoustModel
         private int dieAnimateTime;
 
         // Class Constructor
-        public Pterodactyl(Point coords)
+        public Pterodactyl()
         {
             // Initialize instance variables
             Value = 1000;
@@ -120,14 +120,16 @@ namespace JoustModel
 
         public override string Serialize()
         {
-            return string.Format("Pterodactyl, {0}, {1}, {2}", this.coords, this.speed, this.angle);
+            return string.Format("Pterodactyl,{0},{1},{2},{3}", speed, angle, coords.x, coords.y);
         }
 
         public override void Deserialize(string data)
         {
-            // set coords
-            // set speed
-            // set angle
+            string[] properties = data.Split(',');
+            speed = Convert.ToDouble(properties[1]); // set speed
+            angle = Convert.ToDouble(properties[2]); // set angle
+            coords.x = Convert.ToDouble(properties[3]); // set x coord
+            coords.y = Convert.ToDouble(properties[4]); // set y coord
         }
     }
 
@@ -137,7 +139,8 @@ namespace JoustModel
         [TestMethod]
         public void TestDie()
         {
-            Pterodactyl p = new Pterodactyl(new Point(500, 500));
+            Pterodactyl p = new Pterodactyl();
+            p.coords = new Point(500, 500);
             p.Die();
             Assert.AreEqual(new List<WorldObject> { }, World.Instance.objects);
         }

@@ -6,7 +6,7 @@ using JoustModel;
 
 namespace JoustClient
 {
-    public class BuzzardControl : Image
+    public class BuzzardControl : WorldObjectControl
     {
         // Class Constructor
         public BuzzardControl(string imagePath)

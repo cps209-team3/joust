@@ -14,6 +14,7 @@ namespace JoustModel
 
         // Public instance variables
         public List<WorldObject> objects;
+        public Ostrich player;
         public int stage;
 
         // Handle stage time to spawn pterodactyls

@@ -23,8 +23,8 @@ namespace JoustModel
         private int updateGraphic;
         private bool alreadyHatched;
 
-        // Class Constructor
-        public Egg(Point coords)
+        // Class Constructor        
+        public Egg()
         {
             // Initialize variables
             Value = 250;
@@ -35,6 +35,7 @@ namespace JoustModel
             mounted = false;
             imagePath = "Images/Enemy/egg1.png";
             this.coords = coords;
+
             World.Instance.objects.Add(this);
         }
 
@@ -92,14 +93,16 @@ namespace JoustModel
         //Serialization
         public override string Serialize()
         {
-            return string.Format("Egg, {0}, {1}, {2}", this.coords, this.speed, this.angle);
+            return string.Format("Egg,{0},{1},{2},{3}",speed, angle, coords.x, coords.y);
         }
 
         public override void Deserialize(string data)
         {
-            // set coords
-            // set speed
-            // set angle
+            string[] properties = data.Split(',');
+            speed = Convert.ToDouble(properties[1]); // set speed
+            angle = Convert.ToDouble(properties[2]); // set angle
+            coords.x = Convert.ToDouble(properties[3]); // set x coord
+            coords.y = Convert.ToDouble(properties[4]); // set y coord
         }
     }
 
@@ -109,7 +112,8 @@ namespace JoustModel
         [TestMethod]
         public void TestDie()
         {
-            Egg e = new Egg(new Point(500, 500));
+            Egg e = new Egg();
+            e.coords = new Point(500, 500);
             e.Die();
             Assert.AreEqual(new List<WorldObject> { }, World.Instance.objects);
         }
