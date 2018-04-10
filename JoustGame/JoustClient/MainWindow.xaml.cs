@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -38,6 +39,71 @@ namespace JoustClient
             // This is only here for faster testing
             // If you need a different screen on window load, comment out the line below
             LoadGameView();
+
+            //Title_Screen(null, EventArgs.Empty);
+        }
+        
+        public void WorldObjectFactory(string control, JoustModel.Point point)
+        {
+            Image i;
+            switch (control)
+            {
+                case "ostrich":
+                    Ostrich o = worldObject as Ostrich;
+                    i = new OstrichControl(o.imagePath);
+                    OstrichControl oC = i as OstrichControl;
+                    o.ostrichMoved += oC.NotifyMoved;
+                    break;
+                case "buzzard":
+                    i = new BuzzardControl(b.imagePath);
+                    BuzzardControl iCtrl = i as BuzzardControl;
+
+                    // Used to update the view with model updates
+                    b.BuzzardMoveEvent += iCtrl.NotifyMoved;
+                    b.BuzzardStateChange += iCtrl.NotifyState;
+                    b.BuzzardDropEgg += iCtrl.NotifyDrop;
+                    b.BuzzardDestroyed += iCtrl.NotifyDestroy;
+                    // Used to update all enemies in the world
+                    DispatcherTimer moveTimer = new DispatcherTimer();
+                    moveTimer.Interval = new TimeSpan(0, 0, 0, 0, 33);
+                    moveTimer.Tick += World.Instance.UpdateAllEnemies_Position;
+                    moveTimer.Start();
+
+                    /*  Comment:    Clayton Cockrell
+                     *  The Random object in Buzzard would give the same random number to all the 
+                     *  Buzzard objects if their creation was not halted for a little bit of time.
+                     */
+                    Thread.Sleep(20);
+                    break;
+                case "pterodactyl":
+                    PterodactylControl pCtrl = new PterodactylControl("Images/Enemy/pterodactyl.fly1");
+                    i = pCtrl;
+
+                    /*  Comment:    Clayton Cockrell
+                     *  Pterodactyls spawn after a certain number of minutes. I currently have it set
+                     *  to 1 minute. (To change, see PTERODACTYL_SPAWN_MINUTES constant in World class)
+                     */
+                    World.Instance.SpawnPterodactyl += pCtrl.NotifySpawn;
+                    break;
+                case "egg":
+                    Egg e = new Egg(point);
+                    i = new EggControl(e.imagePath);
+                    break;
+                case "platform":
+                    Platform pl = new Platform(point);
+                    i = new PlatformControl(pl.imagePath);
+                    break;
+                case "respawn":
+                    Respawn r = new Respawn(point);
+                    i = new RespawnControl(r.imagePath);
+                    break;
+                default:
+                    Base ba = new Base(point);
+                    i = new BaseControl(ba.imagePath);
+                    break;
+            }
+            Canvas.SetTop(i, point.y);
+            Canvas.SetLeft(i, point.x);
             playerStateMachine = control.WorldRef.player.stateMachine;
 
             //Title_Screen(null, EventArgs.Empty);
@@ -69,47 +135,6 @@ namespace JoustClient
             }
         }
 
-        public void WorldObjectControlFactory(string control, WorldObject worldObject)
-        {
-            WorldObjectControl i;
-            switch (control)
-            {
-                case "ostrich":
-                    Ostrich o = worldObject as Ostrich;
-                    i = new OstrichControl(o.imagePath);
-                    OstrichControl oC = i as OstrichControl;
-                    o.ostrichMoved += oC.NotifyMoved;
-                    break;
-                case "buzzard":
-                    Buzzard b = worldObject as Buzzard;
-                    i = new BuzzardControl(b.imagePath);
-                    break;
-                case "pterodactyl":
-                    Pterodactyl p = worldObject as Pterodactyl;
-                    i = new PterodactylControl(p.imagePath);
-                    break;
-                case "egg":
-                    Egg e = worldObject as Egg;
-                    i = new EggControl(e.imagePath);
-                    break;
-                case "platform":
-                    Platform pl = worldObject as Platform;
-                    i = new PlatformControl(pl.imagePath);
-                    break;
-                case "respawn":
-                    Respawn r = worldObject as Respawn;
-                    i = new RespawnControl(r.imagePath);
-                    break;
-                default:
-                    Base ba = worldObject as Base;
-                    i = new BaseControl(ba.imagePath);
-                    break;
-            }
-            Canvas.SetTop(i, worldObject.coords.y);
-            Canvas.SetLeft(i, worldObject.coords.x);
-            canvas.Children.Add(i);
-        }
-
         public void LoadGameView()
         {
             // Load Map here
@@ -118,19 +143,24 @@ namespace JoustClient
             Ostrich o = control.CreateWorldObj("Ostrich") as Ostrich;
             o.coords = new JoustModel.Point(720, 450);
             control.WorldRef.player = o;
-            WorldObjectControlFactory("ostrich", o);
+            WorldObjectFactory("ostrich", oCoords);
 
-            int stage = 0;
-            control.WorldRef.stage = stage;
+            /*  Comment:    Clayton Cockrell
+             *  Pterodactyls start spawning at stage 5. stage is set this for testing
+             *  purposes.
+             */
+            int stage = 5;
+            control.WorldObj.stage = stage;
             int numBuzzards = 0;
             int numPterodactyls = 0;
-            control.CalculateNumEnemies(control.WorldRef.stage, ref numBuzzards, ref numPterodactyls);
+            int numPlatforms = 4;
+            control.CalculateNumEnemies(control.WorldObj.stage, ref numBuzzards, ref numPterodactyls);
 
             for (int i = 0; i < numBuzzards; i++)
             {
                 Buzzard b = control.CreateWorldObj("Buzzard") as Buzzard;
-                b.coords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                WorldObjectControlFactory("buzzard", b);
+                b.coords = new JoustModel.Point((i + 1) * 100, i);
+                WorldObjectFactory("buzzard", b);
             }
 
             for (int i = 0; i < numPterodactyls; i++)
@@ -139,6 +169,12 @@ namespace JoustClient
                 p.coords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
                 WorldObjectControlFactory("pterodactyl", p);
             }
+
+            for (int i = 0; i < numPlatforms; i++) {
+                JoustModel.Point pCoords = new JoustModel.Point((i + 1) * 300, (i + 1) * 300);
+                WorldObjectFactory("platform", pCoords);
+            }
+            
             updateTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(20), 
                 DispatcherPriority.Render,
@@ -231,7 +267,7 @@ namespace JoustClient
             back.Width = 200;
             canvas.Children.Add(back);
         }
-
+       
         private void Finish_HighScores(object sender, EventArgs e)
         {
             Task.Run(() =>

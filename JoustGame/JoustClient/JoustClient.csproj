@@ -170,5 +170,9 @@
     <Resource Include="Images\Player\player_stand.png" />
     <Resource Include="Images\Player\player_stop.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Enemy\pterodactyl_die1.png" />
+    <Resource Include="Images\Enemy\pterodactyl_die2.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
