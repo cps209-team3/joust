@@ -47,11 +47,7 @@ namespace JoustModel
             // Implement the Deserialization of scores
             throw new NotImplementedException();
         }
-
-        public string Serialize() {
-            // Implement the Serialization of scores
-            throw new NotImplementedException();
-        }
+        
     }
 
 }

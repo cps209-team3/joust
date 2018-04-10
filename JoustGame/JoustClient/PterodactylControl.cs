@@ -68,7 +68,8 @@ namespace JoustClient
         /// </summary>
         public void NotifySpawn(object sender, EventArgs e) {
             if (!spawned) {
-                Pterodactyl p = new Pterodactyl(new JoustModel.Point(0, 0)); // *** Set this to a respawn platform ***
+                Pterodactyl p = new Pterodactyl();
+                p.coords = new Point(0, 0); // *** Set this to a respawn platform ***
                 PterodactylControl pCtrl = new PterodactylControl(p.imagePath);
 
                 // Subscribe to the event handlers

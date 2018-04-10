@@ -34,7 +34,7 @@ namespace JoustModel
             alreadyHatched = false;
             mounted = false;
             imagePath = "Images/Enemy/egg1.png";
-            this.coords = coords;
+            coords = new Point(0, 0);
 
             World.Instance.objects.Add(this);
         }

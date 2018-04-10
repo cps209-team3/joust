@@ -59,7 +59,8 @@ namespace JoustClient
 
             Point p = new Point(0, egg.coords.y - 70);
             // Create a new Buzzard
-            Buzzard b = new Buzzard(p);
+            Buzzard b = new Buzzard();
+            b.coords = p;
             b.angle = 0;
             b.droppedEgg = true;
             // Set state to Pickup state

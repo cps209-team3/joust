@@ -40,7 +40,7 @@ namespace JoustModel
             // Start out in falling state
             state = new EnemyFallingState() { StateEnemy = this, Angle = (int)angle };
             imagePath = "Images/Enemy/pterodactyl_fly1.png";
-            this.coords = coords;
+            coords = new Point(0, 0);
             World.Instance.objects.Add(this);
         }
 

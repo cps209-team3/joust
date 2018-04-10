@@ -9,7 +9,7 @@ namespace JoustClient
     public class BuzzardControl : WorldObjectControl
     {
         // Class Constructor
-        public BuzzardControl(string imagePath)
+        public BuzzardControl(string imagePath) : base(imagePath) 
         {
             Height = 75;
             Width = 50;
@@ -59,7 +59,8 @@ namespace JoustClient
         public void NotifyDrop(object sender, EventArgs e) {
             Buzzard buzzard = sender as Buzzard;
             // Create a new Egg
-            Egg egg = new Egg(buzzard.coords);
+            Egg egg = new Egg();
+            egg.coords = buzzard.coords;
 
             // Set to a downwards angle
             if (buzzard.angle > 180) egg.angle = buzzard.angle;

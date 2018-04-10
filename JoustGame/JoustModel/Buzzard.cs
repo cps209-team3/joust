@@ -55,7 +55,7 @@ namespace JoustModel
                     break;
             }
             imagePath = "Images/Enemy/mik_" + color + "_stand.png";
-            this.coords = coords;
+            coords = new Point(0, 0);
             World.Instance.objects.Add(this);
         }
 
