@@ -32,7 +32,7 @@ namespace JoustModel
 
         public override string Serialize()
         {
-            return string.Format("Buzzard,{0},{1},{2},{3}", this.speed, this.angle, this.coords.x, this.coords.y);
+            return string.Format("Buzzard,{0},{1},{2},{3}", speed, angle, coords.x, coords.y);
         }
 
         public override void Deserialize(string data)
