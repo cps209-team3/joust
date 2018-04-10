@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JoustClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="1440" Loaded="Window_Loaded">
-    <Canvas x:Name="canvas" KeyDown="Canvas_KeyDown">
+        Title="MainWindow" Height="900" Width="1440" Loaded="Window_Loaded" KeyDown="Canvas_KeyDown">
+    <Canvas x:Name="canvas">
         
     </Canvas>
 </Window>

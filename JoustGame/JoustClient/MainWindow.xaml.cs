@@ -26,6 +26,7 @@ namespace JoustClient
         public int currentEndScore = 199991; // must set this when game end conditions have been met
         public TextBox namebox = new TextBox();
         public DispatcherTimer updateTimer;
+        public StateMachine playerStateMachine;
 
         public MainWindow()
         {
@@ -37,6 +38,7 @@ namespace JoustClient
             // This is only here for faster testing
             // If you need a different screen on window load, comment out the line below
             LoadGameView();
+            playerStateMachine = control.WorldRef.player.stateMachine;
 
             //Title_Screen(null, EventArgs.Empty);
             //Finish_HighScores(null, EventArgs.Empty);
@@ -45,7 +47,6 @@ namespace JoustClient
 
         private void Canvas_KeyDown(object sender, KeyEventArgs e)
         {
-            StateMachine s = control.WorldRef.player.stateMachine;
             switch (e.Key)
             {
                 case Key.Escape:
@@ -53,15 +54,15 @@ namespace JoustClient
                     break;
                 case Key.W:
                 case Key.Up:
-                    s.HandleInput("flap");
+                    Task.Run(() => playerStateMachine.HandleInput("flap"));
                     break;
                 case Key.A:
                 case Key.Left:
-                    s.HandleInput("left");
+                    Task.Run(() => playerStateMachine.HandleInput("left"));
                     break;
                 case Key.D:
                 case Key.Right:
-                    s.HandleInput("right");
+                    Task.Run(() => playerStateMachine.HandleInput("right"));
                     break;
                 default:
                     break;
