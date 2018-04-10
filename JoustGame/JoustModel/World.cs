@@ -42,7 +42,7 @@ namespace JoustModel
         /// objects in the World and executes their Update method if a Buzzard, Egg,
         /// or a Pterodactyl.
         /// </summary>
-        public void UpdateAllEnemies_Position(object sender, EventArgs e) {
+        public void UpdateAllEnemies_Position() {
             try {
                 foreach (WorldObject obj in objects) {
                     Buzzard buzzardObj = obj as Buzzard;

@@ -24,6 +24,7 @@ namespace JoustModel
                 if (entity != null)
                 {
                     entity.Update();
+                    World.Instance.UpdateAllEnemies_Position();
                 }
             }
         }
