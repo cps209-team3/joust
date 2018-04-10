@@ -32,7 +32,7 @@ namespace JoustModel
 
         public override string Serialize()
         {
-            return string.Format("Pterodactyl,{0},{1},{2},{3},{4},{5}", speed, angle, coords.x, coords.y, acceleration, accelerationAngle);
+            return string.Format("Pterodactyl,{0},{1},{2},{3}", speed, angle, coords.x, coords.y);
         }
 
         public override void Deserialize(string data)
@@ -42,8 +42,6 @@ namespace JoustModel
             angle = Convert.ToDouble(properties[2]); // set angle
             coords.x = Convert.ToDouble(properties[3]); // set x coord
             coords.y = Convert.ToDouble(properties[4]); // set y coord
-            acceleration = Convert.ToDouble(properties[5]); // set acceleration
-            accelerationAngle = Convert.ToDouble(properties[6]); // set accelerationAngle
         }
     }
 
