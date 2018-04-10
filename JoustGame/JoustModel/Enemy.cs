@@ -82,6 +82,7 @@ namespace JoustModel {
                     BuzzardPickupState set_state = b.state as BuzzardPickupState;
                     if ((set_state.TargetEgg.coords.x - b.coords.x) > -5 && (set_state.TargetEgg.coords.x - b.coords.x) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) > -5) {
                         set_state.TargetEgg.mounted = true;
+                        b.droppedEgg = false;
                         return new EnemyStandingState() { StateEnemy = b, Angle = 0 };
                     }
                     else {
@@ -112,6 +113,45 @@ namespace JoustModel {
                         egg.seconds++;
                         return new EnemyStandingState() { Angle = 0, StateEnemy = egg }; // Standing state
                     }
+                }
+            }
+            else if (e is Pterodactyl) {
+                Pterodactyl p = e as Pterodactyl;
+
+                // Add charging state to attack nearby player
+                if (p.coords.y > 300 && p.coords.y < 500 && p.coords.x > 600 && p.coords.x < 800) {
+                    return new PterodactylChargeState() { StateEnemy = p };
+                }
+
+                // Add hitbox check to destroy pterodactyl
+                if (p.coords.y > 450 && p.coords.y < 525 && p.coords.x > 650 && p.coords.x < 800) return new PterodactylDestroyedState() { StateEnemy = p };
+
+                if (p.state is EnemyFallingState) {
+                    switch (p.state.Angle) {
+                        case 270:
+                            if (chance % 10 < 3 || p.coords.y > 800) return new EnemyFlappingState() { Angle = 90, StateEnemy = p }; // Flapping up state
+                            else if (chance % 2 == 0) return new EnemyFallingState() { Angle = 315, StateEnemy = p }; // Falling right state
+                            else return new EnemyFallingState() { Angle = 225, StateEnemy = p }; // Falling left state
+
+                        default:
+                            if (chance < 3) return new EnemyFallingState() { Angle = 270, StateEnemy = p }; // Falling down state
+                            else return new EnemyFallingState() { Angle = p.state.Angle, StateEnemy = p };
+                    }
+                }
+                else if (p.state is EnemyFlappingState) {
+                    switch (p.state.Angle) {
+                        case 90:
+                            if (chance / 10 < 2 && chance % 10 < 4 || p.coords.y < 10) return new EnemyFallingState() { Angle = 270, StateEnemy = p }; // Falling down state
+                            else if (chance % 2 == 0) return new EnemyFlappingState() { Angle = 45, StateEnemy = p }; // Flapping right state
+                            else return new EnemyFlappingState() { Angle = 135, StateEnemy = p }; // Flapping left state
+
+                        default:
+                            if (chance < 2 || p.coords.y < 10) return new EnemyFlappingState() { Angle = 90, StateEnemy = p }; // Flapping up state
+                            else return new EnemyFlappingState() { Angle = p.state.Angle, StateEnemy = p };
+                    }
+                }
+                else {
+                    return new EnemyFallingState() { Angle = p.state.Angle, StateEnemy = p };
                 }
             }
             else {
@@ -175,6 +215,12 @@ namespace JoustModel {
                 b.speed += 0.05;
                 b.imagePath = "Images/Enemy/mik_red_fly1.png";
             }
+            else if (StateEnemy is Pterodactyl) {
+                Pterodactyl p = StateEnemy as Pterodactyl;
+                p.angle = Angle;
+                p.speed += 0.05;
+                p.imagePath = "Images/Enemy/pterodactyl_fly1.png";
+            }
         }
     }
 
@@ -190,6 +236,19 @@ namespace JoustModel {
                         break;
                     default:
                         b.imagePath = "Images/Enemy/mik_red_fly1.png";
+                        break;
+                }
+            }
+            else if (StateEnemy is Pterodactyl) {
+                Pterodactyl p = StateEnemy as Pterodactyl;
+                p.angle = Angle;
+                p.speed += 0.05;
+                switch (p.imagePath) {
+                    case "Images/Enemy/pterodactyl_fly1.png":
+                        p.imagePath = "Images/Enemy/pterodactyl_fly2.png";
+                        break;
+                    default:
+                        p.imagePath = "Images/Enemy/pterodactyl_fly1.png";
                         break;
                 }
             }
@@ -222,8 +281,6 @@ namespace JoustModel {
         public override void Setup() {
             if (StateEnemy is Buzzard) {
                 Buzzard b = StateEnemy as Buzzard;
-
-                Trace.WriteLine("(" + b.coords.x + ", " + b.coords.y + ") -> (" + TargetEgg.coords.x + ", " + TargetEgg.coords.y + ")");
 
                 if (b.coords.x < TargetEgg.coords.x) { 
                     b.angle = 180;
@@ -309,6 +366,44 @@ namespace JoustModel {
                 else e.imagePath = "Images/Enemy/egg4.png";
 
                 if (e.milliseconds > 50) e.milliseconds = 50;
+            }
+        }
+    }
+
+    public class PterodactylDestroyedState : EnemyState {
+        public override void Setup() {
+            if (StateEnemy is Pterodactyl) {
+                Pterodactyl p = StateEnemy as Pterodactyl;
+                p.angle = 0;
+                p.speed = 0;
+                p.imagePath = "";
+            }
+        }
+    }
+
+    public class PterodactylChargeState : EnemyState {
+        public override void Setup() {
+            if (StateEnemy is Pterodactyl) {
+                Pterodactyl p = StateEnemy as Pterodactyl;
+                try {
+                    Point playerCoords = new Point(0, 0);
+                    foreach (WorldObject obj in World.Instance.objects) {
+                        if (obj is Ostrich) {
+                            Ostrich o = obj as Ostrich;
+                            playerCoords = o.coords;
+                        }
+                    }
+
+                    double x = (p.coords.x - playerCoords.x);
+                    double y = (p.coords.y - playerCoords.y);
+                    p.angle = Math.Atan(x / y);
+
+                    if (x < 0) p.angle += 180;
+                    p.imagePath = "Images/Enemy/pterodactyl_charge.png";
+                }
+                catch (InvalidOperationException op) {
+                    Trace.WriteLine(op.Message);
+                }
             }
         }
     }

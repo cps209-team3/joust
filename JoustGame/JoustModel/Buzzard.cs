@@ -73,8 +73,6 @@ namespace JoustModel
                 }
             }
 
-            Trace.WriteLine(state.GetType().ToString());
-
             prevAngle = angle;
 
             if (updateGraphic > 3) updateGraphic = 0;

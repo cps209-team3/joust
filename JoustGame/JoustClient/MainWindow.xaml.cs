@@ -62,8 +62,9 @@ namespace JoustClient
                     moveTimer.Start();
                     break;
                 case "pterodactyl":
-                    Pterodactyl p = new Pterodactyl(point);
-                    i = new PterodactylControl(p.imagePath);
+                    PterodactylControl pCtrl = new PterodactylControl("Images/Enemy/pterodactyl.fly1");
+                    i = pCtrl;
+                    World.Instance.SpawnPterodactyl += pCtrl.NotifySpawn;
                     break;
                 case "egg":
                     Egg e = new Egg(point);
@@ -95,7 +96,7 @@ namespace JoustClient
             JoustModel.Point oCoords = new JoustModel.Point(720, 450);
             WorldObjectFactory("ostrich", oCoords);
 
-            int stage = 0;
+            int stage = 5;
             control.WorldObj.stage = stage;
             int numBuzzards = 0;
             int numPterodactyls = 0;
