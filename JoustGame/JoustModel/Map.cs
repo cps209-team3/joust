@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace JoustModel
 {
-    public class Map// : ISerializable
+    public class Map : ISerializable
     {
         public List<Platform> platforms = new List<Platform>();
         public int numOfPlats;
@@ -13,7 +13,7 @@ namespace JoustModel
         
         public string Serialize()
         {
-            return string.Format("Map,{0},{1}", this.numOfPlats, this.numOfRespawns);
+            return string.Format("Map,{0},{1}", numOfPlats, numOfRespawns);
         }
 
         // Set coords to value read from file
