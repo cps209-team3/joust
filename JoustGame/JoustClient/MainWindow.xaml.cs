@@ -48,13 +48,13 @@ namespace JoustClient
             Image i;
             switch (objControl)
             {
-                case "ostrich":
+                case "Ostrich":
                     Ostrich o = worldObject as Ostrich;
                     i = new OstrichControl(o.imagePath);
                     OstrichControl oC = i as OstrichControl;
                     o.ostrichMoved += oC.NotifyMoved;
                     break;
-                case "buzzard":
+                case "Buzzard":
                     Buzzard b = worldObject as Buzzard;
                     i = new BuzzardControl(b.imagePath);
                     BuzzardControl bC = i as BuzzardControl;
@@ -76,7 +76,7 @@ namespace JoustClient
                      */
                     Thread.Sleep(20);
                     break;
-                case "pterodactyl":
+                case "Pterodactyl":
                     PterodactylControl pCtrl = new PterodactylControl("Images/Enemy/pterodactyl.fly1");
                     i = pCtrl;
 
@@ -86,17 +86,17 @@ namespace JoustClient
                      */
                     World.Instance.SpawnPterodactyl += pCtrl.NotifySpawn;
                     break;
-                case "egg":
+                case "Egg":
                     Egg e = worldObject as Egg;
                     i = new EggControl(e.imagePath);
                     EggControl eC = i as EggControl;
                     break;
-                case "platform":
+                case "Platform":
                     Platform pl = worldObject as Platform;
                     i = new PlatformControl(pl.imagePath);
                     PlatformControl pC = i as PlatformControl;
                     break;
-                case "respawn":
+                case "Respawn":
                     Respawn r = worldObject as Respawn;
                     i = new RespawnControl(r.imagePath);
                     RespawnControl rC = i as RespawnControl;
@@ -144,53 +144,67 @@ namespace JoustClient
         public void LoadGameView(object sender, EventArgs e)
         {
             canvas.Children.Clear();
+            canvas.Background = Brushes.Black;
 
             // Load Map here
 
             // Get stage num from controls once the proper screens are implemented
             Ostrich o = control.CreateWorldObj("Ostrich") as Ostrich;
-            o.coords = new JoustModel.Point(720, 450);
+            o.coords = new JoustModel.Point(720, 707);
             control.WorldRef.player = o;
-            WorldObjectControlFactory("ostrich", o);
+            WorldObjectControlFactory("Ostrich", o);
 
             /*  Comment:    Clayton Cockrell
              *  Pterodactyls start spawning at stage 5. stage is set this for testing
              *  purposes.
              */
 
-            int stage = 5;
+            int stage = 1;
             control.WorldRef.stage = stage;
             int numBuzzards = 0;
             int numPterodactyls = 0;
-            int numPlatforms = 0;
             control.CalculateNumEnemies(control.WorldRef.stage, ref numBuzzards, ref numPterodactyls);
+
+            InitiateEntity("Platform", 100, 300);
+            InitiateEntity("Platform", 700, 500);
+            InitiateEntity("Platform", 500, 300);
+            InitiateEntity("Platform", 950, 200);
+            InitiateEntity("Respawn", 700, 100);
+            InitiateEntity("Respawn", 1100, 600);
+            InitiateEntity("Respawn", 200, 600);
+            InitiateEntity("Base", 375, 775);
+
+
 
             for (int i = 0; i < numBuzzards; i++)
             {
-                Buzzard b = control.CreateWorldObj("Buzzard") as Buzzard;
-                b.coords = new JoustModel.Point((i + 1) * 100, i);
-                WorldObjectControlFactory("buzzard", b);
+                InitiateEntity("Buzzard", 100, 300);
             }
 
             for (int i = 0; i < numPterodactyls; i++)
             {
-                Pterodactyl p = control.CreateWorldObj("Pterodactyl") as Pterodactyl;
-                p.coords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                WorldObjectControlFactory("pterodactyl", p);
+                InitiateEntity("Pterodactyl", 300, 300);
             }
 
-            for (int i = 0; i < numPlatforms; i++) {
-                Platform pl = control.CreateWorldObj("Platform") as Platform;
-                pl.coords = new JoustModel.Point((i + 1) * 300, (i + 1) * 300);
-                WorldObjectControlFactory("platform", pl);
-            }
-            
+
+
+
+
+
             updateTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(20), 
                 DispatcherPriority.Render,
                 UpdateTick,
                 Dispatcher.CurrentDispatcher);
             updateTimer.Start();
+        }
+
+        public void InitiateEntity(string type, double x, double y)
+        {
+            WorldObject obj = control.CreateWorldObj(type);
+            obj.coords.x = x;
+            obj.coords.y = y;
+            WorldObjectControlFactory(type, obj);
         }
 
         public void UpdateTick(object sender, EventArgs e)
