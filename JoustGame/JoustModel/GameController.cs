@@ -17,16 +17,23 @@ namespace JoustModel
 
         public void Update()
         {
-            // Update everything 30 times per second (subject to change)
-            foreach(WorldObject worldObject in WorldRef.objects)
+            try
             {
-                Entity entity = worldObject as Entity;
-                if (entity != null)
+                // Update everything 30 times per second (subject to change)
+                foreach (WorldObject worldObject in WorldRef.objects)
                 {
-                    entity.Update();
-                    World.Instance.UpdateAllEnemies_Position();
+                    Entity entity = worldObject as Entity;
+                    if (entity != null)
+                    {
+                        entity.Update();
+                        World.Instance.UpdateAllEnemies_Position();
+                    }
                 }
             }
+            catch (InvalidOperationException)
+            {
+                return;
+            } 
         }
 
         public void CalculateNumEnemies(int stage, ref int numBuzzards, ref int numPterodactyls)
