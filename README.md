@@ -11,6 +11,8 @@ to an upwards velocity. A single wing flap will increase the ostrich's upward sp
 
 ## Work completed
 Clayton
+* Artwork
+* Enemy Behavior
 
 Jacob
 * Object Model
@@ -25,6 +27,8 @@ Sandeep
 
 ## Known Issues
 Clayton
+* Enemys block the main thread sometimes
+* Updating enemies needs to be optimized
 
 Jacob
 * User shouldn't be able to move up repeatedly
