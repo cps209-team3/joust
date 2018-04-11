@@ -8,7 +8,6 @@ to an upwards velocity. A single wing flap will increase the ostrich's upward sp
 * Left - Pressing the A or left arrow key
 * Right - Pressing the D or right arrow key
 * Up - Pressing the W or up arrow key
-* Down - Gravity
 
 ## Work completed
 Clayton
