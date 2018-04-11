@@ -45,6 +45,7 @@ Sandeep
 * will need to design title screens and in-game menu
 
 ## Recording
+https://youtu.be/I2DPDyWvyrA
 
 ## Expenses
 | Developer | Total Time Spent |
