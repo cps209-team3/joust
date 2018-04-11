@@ -13,16 +13,16 @@ Up - Pressing the W or up arrow key
 Down - Gravity
 
 ## Work completed
-Clayton  
+Clayton
 
-Jacob  
+Jacob
 
-JD  
+JD
 
-Sandeep  
-• High scores designed and implemented  
-• Sounds designed and partially implemented  
-• Title Screens designed implemented  
+Sandeep
+• High scores designed and implemented
+• Sounds designed and partially implemented
+• Title Screens designed implemented
 
 ## Known Issues
 Clayton
@@ -39,7 +39,9 @@ Sandeep
 ## Recording
 
 ## Expenses
-Clayton: 15:15  
-Jacob: 26:43  
-JD: 9:40  
-Sandeep: 20:04  
+| Developer | Total Time Spent |
+|-----------|------------------|
+| Clayton | 15:15 |
+| Jacob | 26:43 |
+| JD | 9:40 |
+| Sandeep | 20:04 |
