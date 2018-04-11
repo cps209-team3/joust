@@ -107,6 +107,7 @@ namespace JoustClient
                     BaseControl baC = i as BaseControl;
                     break;
             }
+            canvas.Children.Add(i);
             Canvas.SetTop(i, worldObject.coords.y);
             Canvas.SetLeft(i, worldObject.coords.x);
             playerStateMachine = control.WorldRef.player.stateMachine;
@@ -140,8 +141,10 @@ namespace JoustClient
             }
         }
 
-        public void LoadGameView()
+        public void LoadGameView(object sender, EventArgs e)
         {
+            canvas.Children.Clear();
+
             // Load Map here
 
             // Get stage num from controls once the proper screens are implemented
@@ -154,6 +157,7 @@ namespace JoustClient
              *  Pterodactyls start spawning at stage 5. stage is set this for testing
              *  purposes.
              */
+
             int stage = 5;
             control.WorldRef.stage = stage;
             int numBuzzards = 0;
@@ -194,7 +198,7 @@ namespace JoustClient
             control.Update();
         }
        
-       // title screens
+       // Title screens
         private Button Make_Button(string content, double top, RoutedEventHandler eventx)
         {
             Button btnReturn = new Button();
@@ -351,7 +355,17 @@ namespace JoustClient
 
             canvas.Children.Clear();
 
-            LoadGameView();
+            Button back = Make_Button("Back", 425.0, Single_Screen);
+            back.SetValue(Canvas.LeftProperty, 620.0);
+            back.Height = 100;
+            back.Width = 200;
+            canvas.Children.Add(back);
+
+            Button game = Make_Button("Start Game", 200.0, LoadGameView);
+            game.SetValue(Canvas.LeftProperty, 620.0);
+            game.Height = 100;
+            game.Width = 200;
+            canvas.Children.Add(game);
 
             /*
             Button back = Make_Button("Back", 425.0, Single_Screen);
@@ -375,6 +389,12 @@ namespace JoustClient
             back.Height = 100;
             back.Width = 200;
             canvas.Children.Add(back);
+
+            Button game = Make_Button("Start Game", 200.0, LoadGameView);
+            game.SetValue(Canvas.LeftProperty, 620.0);
+            game.Height = 100;
+            game.Width = 200;
+            canvas.Children.Add(game);
         }
 
         private void Hard_Screen(object sender, RoutedEventArgs e)
@@ -391,6 +411,12 @@ namespace JoustClient
             back.Height = 100;
             back.Width = 200;
             canvas.Children.Add(back);
+
+            Button game = Make_Button("Start Game", 200.0, LoadGameView);
+            game.SetValue(Canvas.LeftProperty, 620.0);
+            game.Height = 100;
+            game.Width = 200;
+            canvas.Children.Add(game);
         }
 
         private void Multi_Screen(object sender, RoutedEventArgs e)
