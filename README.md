@@ -19,6 +19,8 @@ Jacob
 * Player Controls
 
 JD
+* Base Level
+* Save/Load
 
 Sandeep
 * High scores designed and implemented
@@ -35,6 +37,7 @@ Jacob
 * Player moves too slow
 
 JD
+* No known issues
 
 Sandeep
 * messy High score manager class needs revision
