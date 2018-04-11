@@ -57,11 +57,11 @@ namespace JoustModel
 
         public void Load(string filename)
         {
-            string loadedLine = System.IO.File.ReadAllText(string.Format(@"{0}.txt", filename)); // Where should the game save files be put?
+            string loadedLine = System.IO.File.ReadAllText(string.Format(@"GameSaves/{0}.txt", filename)); // Where should the game save files be put?
             string[] savedObjects = loadedLine.Split(':');
             foreach (string savedObj in savedObjects)
             {
-                if (savedObj.Length > 0)
+                if (savedObj != "\r\n" && savedObj.Length > 0)
                 {
                     string type = savedObj.Substring(0, savedObj.IndexOf(","));
                     WorldObject obj = CreateWorldObj(type);

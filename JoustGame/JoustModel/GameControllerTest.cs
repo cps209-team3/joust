@@ -42,7 +42,7 @@ namespace JoustModel
             new Respawn();
             new Base();
             string testLine = game.Save();
-            Assert.IsTrue(testLine == "Ostrich,0,3,0,0,0,0,0,0:Egg,0,0,0,0,0,0:Pterodactyl,0,0,0,0,0,0:Buzzard,0,0,0,0,0,0:Platform,0,0:Respawn,0,0:Base,0,0:");
+            Assert.IsTrue(testLine == "Ostrich,0,3,0,0,0,0:Egg,0,0,0,0:Pterodactyl,0,315,0,0:Buzzard,3,0,0,0:Platform,0,0:Respawn,0,0:Base,0,0:");
         }
     }
 }
