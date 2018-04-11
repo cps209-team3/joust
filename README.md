@@ -20,9 +20,9 @@ Jacob
 JD
 
 Sandeep
-• High scores designed and implemented
-• Sounds designed and partially implemented
-• Title Screens designed implemented
+* High scores designed and implemented
+* Sounds designed and partially implemented
+* Title Screens designed implemented
 
 ## Known Issues
 Clayton
@@ -32,9 +32,9 @@ Jacob
 JD
 
 Sandeep
-• messy High score manager class needs revision
-• don't know if sounds work in-game
-• will need to design title screens and in-game menu
+* messy High score manager class needs revision
+* don't know if sounds work in-game
+* will need to design title screens and in-game menu
 
 ## Recording
 
