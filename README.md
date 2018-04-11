@@ -52,5 +52,5 @@ https://youtu.be/I2DPDyWvyrA
 |-----------|------------------|
 | Clayton | 15:15 |
 | Jacob | 27:43 |
-| JD | 9:40 |
+| JD | 11:40 |
 | Sandeep | 20:04 |
