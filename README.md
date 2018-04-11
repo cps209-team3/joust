@@ -16,6 +16,8 @@ Down - Gravity
 Clayton
 
 Jacob
+* Object Model
+* Player Controls
 
 JD
 
@@ -28,6 +30,8 @@ Sandeep
 Clayton
 
 Jacob
+* User shouldn't be able to move up repeatedly
+* Player moves too slow
 
 JD
 
