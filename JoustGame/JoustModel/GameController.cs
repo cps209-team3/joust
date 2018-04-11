@@ -19,7 +19,7 @@ namespace JoustModel
         {
             try
             {
-                // Update everything 30 times per second (subject to change)
+                // Update everything 50 times per second (subject to change)
                 foreach (WorldObject worldObject in WorldRef.objects)
                 {
                     Entity entity = worldObject as Entity;
