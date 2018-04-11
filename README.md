@@ -50,7 +50,7 @@ https://youtu.be/I2DPDyWvyrA
 ## Expenses
 | Developer | Total Time Spent |
 |-----------|------------------|
-| Clayton | 15:15 |
+| Clayton | 31:15 |
 | Jacob | 27:43 |
 | JD | 11:40 |
 | Sandeep | 20:04 |
