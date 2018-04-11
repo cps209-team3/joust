@@ -43,10 +43,11 @@ namespace JoustClient
             Title_Screen(null, EventArgs.Empty);
         }
         
-        public void WorldObjectControlFactory(string objControl, WorldObject worldObject)
+        public void WorldObjectControlFactory(WorldObject worldObject)
         {
+            string woString = worldObject.ToString();
             Image i;
-            switch (objControl)
+            switch (woString)
             {
                 case "Ostrich":
                     Ostrich o = worldObject as Ostrich;
@@ -141,7 +142,7 @@ namespace JoustClient
             }
         }
 
-        public void LoadGameView(object sender, EventArgs e)
+        public void NewGame(object sender, EventArgs e)
         {
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
@@ -149,48 +150,39 @@ namespace JoustClient
             // Load Map here
 
             // Get stage num from controls once the proper screens are implemented
-            Ostrich o = control.CreateWorldObj("Ostrich") as Ostrich;
-            o.coords = new JoustModel.Point(720, 707);
+            Ostrich o = InitiateWorldObject("Ostrich", 720, 707) as Ostrich;
             control.WorldRef.player = o;
-            WorldObjectControlFactory("Ostrich", o);
 
             /*  Comment:    Clayton Cockrell
              *  Pterodactyls start spawning at stage 5. stage is set this for testing
              *  purposes.
              */
 
-            int stage = 1;
+            int stage = 0;
             control.WorldRef.stage = stage;
             int numBuzzards = 0;
             int numPterodactyls = 0;
             control.CalculateNumEnemies(control.WorldRef.stage, ref numBuzzards, ref numPterodactyls);
 
-            InitiateEntity("Platform", 100, 300);
-            InitiateEntity("Platform", 700, 500);
-            InitiateEntity("Platform", 500, 300);
-            InitiateEntity("Platform", 950, 200);
-            InitiateEntity("Respawn", 700, 100);
-            InitiateEntity("Respawn", 1100, 600);
-            InitiateEntity("Respawn", 200, 600);
-            InitiateEntity("Base", 375, 775);
-
-
-
+            InitiateWorldObject("Platform", 100, 300);
+            InitiateWorldObject("Platform", 700, 500);
+            InitiateWorldObject("Platform", 500, 300);
+            InitiateWorldObject("Platform", 950, 200);
+            InitiateWorldObject("Respawn", 700, 100);
+            InitiateWorldObject("Respawn", 1100, 600);
+            InitiateWorldObject("Respawn", 200, 600);
+            InitiateWorldObject("Base", 375, 775);
+            
             for (int i = 0; i < numBuzzards; i++)
             {
-                InitiateEntity("Buzzard", 100, 300);
+                InitiateWorldObject("Buzzard", 100, 300);
             }
 
             for (int i = 0; i < numPterodactyls; i++)
             {
-                InitiateEntity("Pterodactyl", 300, 300);
+                InitiateWorldObject("Pterodactyl", 300, 300);
             }
-
-
-
-
-
-
+            
             updateTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(20), 
                 DispatcherPriority.Render,
@@ -199,12 +191,13 @@ namespace JoustClient
             updateTimer.Start();
         }
 
-        public void InitiateEntity(string type, double x, double y)
+        public WorldObject InitiateWorldObject(string type, double x, double y)
         {
             WorldObject obj = control.CreateWorldObj(type);
             obj.coords.x = x;
             obj.coords.y = y;
-            WorldObjectControlFactory(type, obj);
+            WorldObjectControlFactory(obj);
+            return obj;
         }
 
         public void UpdateTick(object sender, EventArgs e)
@@ -375,7 +368,7 @@ namespace JoustClient
             back.Width = 200;
             canvas.Children.Add(back);
 
-            Button game = Make_Button("Start Game", 200.0, LoadGameView);
+            Button game = Make_Button("Start Game", 200.0, NewGame);
             game.SetValue(Canvas.LeftProperty, 620.0);
             game.Height = 100;
             game.Width = 200;
@@ -404,7 +397,7 @@ namespace JoustClient
             back.Width = 200;
             canvas.Children.Add(back);
 
-            Button game = Make_Button("Start Game", 200.0, LoadGameView);
+            Button game = Make_Button("Start Game", 200.0, NewGame);
             game.SetValue(Canvas.LeftProperty, 620.0);
             game.Height = 100;
             game.Width = 200;
@@ -426,7 +419,7 @@ namespace JoustClient
             back.Width = 200;
             canvas.Children.Add(back);
 
-            Button game = Make_Button("Start Game", 200.0, LoadGameView);
+            Button game = Make_Button("Start Game", 200.0, NewGame);
             game.SetValue(Canvas.LeftProperty, 620.0);
             game.Height = 100;
             game.Width = 200;

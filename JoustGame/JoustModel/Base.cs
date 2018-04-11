@@ -24,5 +24,10 @@ namespace JoustModel
             coords.x = Convert.ToDouble(properties[1]); // set x coord
             coords.y = Convert.ToDouble(properties[2]); // set y coord
         }
+
+        public override string ToString()
+        {
+            return "Base";
+        }
     }
 }

@@ -144,6 +144,11 @@ namespace JoustModel
             coords.x = Convert.ToDouble(properties[3]); // set x coord
             coords.y = Convert.ToDouble(properties[4]); // set y coord
         }
+
+        public override string ToString()
+        {
+            return "Buzzard";
+        }
     }
 
     [TestClass]

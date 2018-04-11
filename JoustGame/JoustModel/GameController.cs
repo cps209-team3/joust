@@ -51,7 +51,6 @@ namespace JoustModel
             {
                 Buzzard b = new Buzzard();
                 b.coords = new Point(500, 500);
-                WorldRef.objects.Add(b);
             }
         }
 
