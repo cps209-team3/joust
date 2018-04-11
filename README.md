@@ -47,6 +47,6 @@ Sandeep
 | Developer | Total Time Spent |
 |-----------|------------------|
 | Clayton | 15:15 |
-| Jacob | 26:43 |
+| Jacob | 27:43 |
 | JD | 9:40 |
 | Sandeep | 20:04 |
