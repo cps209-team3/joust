@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace JoustModel
 {
@@ -56,7 +57,9 @@ namespace JoustModel
 
         public void Load(string filename)
         {
-            string loadedLine = System.IO.File.ReadAllText(string.Format(@"GameSaves/{0}.txt", filename)); // Where should the game save files be put?
+            StreamReader rd = new StreamReader("../../Saves/GameSaves/" + filename);
+            string loadedLine = rd.ReadLine();
+            //string loadedLine = System.IO.File.ReadAllText(string.Format(@"GameSaves/{0}.txt", filename)); // Where should the game save files be put?
             string[] savedObjects = loadedLine.Split(':');
             foreach (string savedObj in savedObjects)
             {
@@ -78,7 +81,7 @@ namespace JoustModel
                 line2save += obj.Serialize() + ':';
             }
 
-            string path = string.Format(@"{0}.txt", filename);
+            string path = string.Format(@"../../Saves/GameSaves/{0}.txt", filename);
             System.IO.File.WriteAllText(path, line2save); 
             return line2save;
         }
