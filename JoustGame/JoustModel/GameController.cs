@@ -57,9 +57,7 @@ namespace JoustModel
 
         public void Load(string filename)
         {
-            StreamReader rd = new StreamReader("../../Saves/GameSaves/" + filename);
-            string loadedLine = rd.ReadLine();
-            //string loadedLine = System.IO.File.ReadAllText(string.Format(@"GameSaves/{0}.txt", filename)); // Where should the game save files be put?
+            string loadedLine = System.IO.File.ReadAllText(string.Format(@"../../Saves/GameSaves/{0}.txt", filename));
             string[] savedObjects = loadedLine.Split(':');
             foreach (string savedObj in savedObjects)
             {

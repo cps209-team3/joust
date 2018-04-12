@@ -15,6 +15,7 @@ namespace JoustModel
         public void Load_Default()
         {
             GameController game = new GameController();
+            World.Instance.objects.Clear();
             game.Load(DateTime.Now.ToString("17-42-49"));
             Assert.IsTrue(game.WorldRef.objects.Count == 4);
             Assert.IsTrue(game.WorldRef.objects[0].coords.x == 5);
@@ -26,6 +27,7 @@ namespace JoustModel
         public void Save_Default()
         {
             GameController game = new GameController();
+            World.Instance.objects.Clear();
             string testLine = game.Save();
             Assert.IsTrue(testLine == "");
         }
@@ -34,6 +36,7 @@ namespace JoustModel
         public void Save_OneObjEach()
         {
             GameController game = new GameController();
+            World.Instance.objects.Clear();
             new Ostrich();
             new Egg();
             new Pterodactyl();
