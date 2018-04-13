@@ -200,5 +200,14 @@
     <Resource Include="Images\Enemy\pterodactyl_die1.png" />
     <Resource Include="Images\Enemy\pterodactyl_die2.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Sprites\player_fly1.png" />
+    <Resource Include="Sprites\player_fly2.png" />
+    <Resource Include="Sprites\player_move1.png" />
+    <Resource Include="Sprites\player_move2.png" />
+    <Resource Include="Sprites\player_move3.png" />
+    <Resource Include="Sprites\player_stand.png" />
+    <Resource Include="Sprites\player_stop.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

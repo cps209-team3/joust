@@ -111,7 +111,6 @@ namespace JoustClient
             canvas.Children.Add(i);
             Canvas.SetTop(i, worldObject.coords.y);
             Canvas.SetLeft(i, worldObject.coords.x);
-            playerStateMachine = control.WorldRef.player.stateMachine;
 
             //Title_Screen(null, EventArgs.Empty);
             //Finish_HighScores(null, EventArgs.Empty);
@@ -150,8 +149,9 @@ namespace JoustClient
             // Load Map here
 
             // Get stage num from controls once the proper screens are implemented
-            Ostrich o = InitiateWorldObject("Ostrich", 720, 707) as Ostrich;
+            Ostrich o = InitiateWorldObject("Ostrich", 720, 450) as Ostrich;
             control.WorldRef.player = o;
+            playerStateMachine = control.WorldRef.player.stateMachine;
 
             /*  Comment:    Clayton Cockrell
              *  Pterodactyls start spawning at stage 5. stage is set this for testing
@@ -173,15 +173,15 @@ namespace JoustClient
             InitiateWorldObject("Respawn", 200, 600);
             InitiateWorldObject("Base", 375, 775);
             
-            for (int i = 0; i < numBuzzards; i++)
-            {
-                InitiateWorldObject("Buzzard", 100, 300);
-            }
+            //for (int i = 0; i < numBuzzards; i++)
+            //{
+            //    InitiateWorldObject("Buzzard", 100, 300);
+            //}
 
-            for (int i = 0; i < numPterodactyls; i++)
-            {
-                InitiateWorldObject("Pterodactyl", 300, 300);
-            }
+            //for (int i = 0; i < numPterodactyls; i++)
+            //{
+            //    InitiateWorldObject("Pterodactyl", 300, 300);
+            //}
             
             updateTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(20), 
