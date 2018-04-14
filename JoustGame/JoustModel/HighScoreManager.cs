@@ -10,8 +10,9 @@ namespace JoustModel
     {
         // must be set with the "Load" method
         public List<Score> AllScores { get; set; }
-        public int lowestScore = 0;
+        public Score lowestScore;
         public string path = "";
+        public int lineCount;
 
         private HighScoreManager()
         {
@@ -20,6 +21,8 @@ namespace JoustModel
 
             if (!(indexPos == -1))
             {
+                // just in case condition; if, for example, exe gets moved or something
+
                 newpath = newpath.Substring(0, indexPos);
                 newpath += "\\JoustModel\\Saves\\HighScores\\highscores.txt";
             }
@@ -31,8 +34,8 @@ namespace JoustModel
             }
 
             this.path = newpath;
-            this.AllScores = HighScoreManager.Load(this.path);
-            this.lowestScore = replaceLow(this.AllScores);
+            this.AllScores = Load(this.path);
+            this.replaceLow();
         }
 
         private static HighScoreManager instance = new HighScoreManager();
@@ -43,56 +46,61 @@ namespace JoustModel
 
         public void AddScore(Score newScore)
         {
+            if (AllScores.Count < 10)
+            {
+                this.AllScores.Add(newScore);
+            }
+            else if (newScore.points >= lowestScore.points)
+            {
+                this.AllScores.Remove(lowestScore);
+                this.AllScores.Add(newScore);
+            }
+            this.AllScores = OrderList(this.AllScores.OrderBy(o => o.points).ToList());
+            this.Save();
+        }
+
+        public void FindLines()
+        {
+            this.lineCount = File.ReadLines(this.path).Count();
+        }
+
+        public void Save()
+        {
             // when a player's score is created, the points attribute is 
             // checked to see if it is less than the lowestScore. If it is, 
             // it replaces that score
             // 
             // calls the Load method to update the list here
 
-            if (newScore.points >= this.lowestScore)
+            File.WriteAllText(this.path, String.Empty);
+            foreach (Score newScore in this.AllScores)
             {
+                StreamWriter sw = File.AppendText(this.path);
 
-                int lineCount = File.ReadLines(this.path).Count();
-
-                if (lineCount < 10)
+                using (sw)
                 {
-                    StreamWriter sw = File.AppendText(this.path);
-
-                    using (sw)
+                    if (lineCount == 0)
                     {
-                        if (lineCount == 0)
-                        {
-                            sw.Write(newScore.points.ToString() + "," + newScore.username);
-                        }
-                        else
-                        {
-                            sw.WriteLine("");
-                            sw.Write(newScore.points.ToString() + "," + newScore.username);
-                        }
+                        sw.Write(newScore.points.ToString() + "," + newScore.username);
                     }
-
-                    this.AllScores = HighScoreManager.Load(this.path);
-                    HighScoreManager.Instance.replaceLow();
-                }
-                else if (lineCount == 10)
-                {
-                    string[] lines = File.ReadAllLines(this.path);
-                    for (int i = 0; i < lines.Length; i++)
+                    else
                     {
-                        string[] splitted = lines[i].Split(',');
-                        if (Convert.ToInt32(splitted[0]) == this.lowestScore)
-                        {
-                            lines[i] = newScore.points.ToString() + "," + newScore.username;
-                        }
+                        sw.WriteLine("");
+                        sw.Write(newScore.points.ToString() + "," + newScore.username);
                     }
-                    File.WriteAllLines(this.path, lines);
-                    this.AllScores = HighScoreManager.Load(this.path);
-                    HighScoreManager.Instance.replaceLow();
                 }
+                this.replaceLow();
+                this.FindLines();
+                HighScoreManager.Load(this.path);
             }
         }
 
-        private static  List<Score> Load(string filepath)
+        private string[] GetText()
+        {
+            return File.ReadAllLines(this.path);
+        }
+
+        private static List<Score> Load(string filepath)
         {
             // line by line will split the txt file and return a 
             // list of the top ten scores. called by the AddScore
@@ -122,12 +130,10 @@ namespace JoustModel
                         toReturn.Add(toAdd);
                     }
                 }
-                toReturn = HighScoreManager.OrderList(toReturn);
+                toReturn = OrderList(toReturn);
                 return toReturn;
             }
         }
-
-
 
         private static List<Score> OrderList(List<Score> listToOrder)
         {
@@ -138,29 +144,32 @@ namespace JoustModel
 
         public void replaceLow()
         {
-            int lineCount = File.ReadLines(this.path).Count();
-            if (lineCount > 0)
+            if (this.AllScores.Count > 0)
             {
-                this.lowestScore = this.AllScores[this.AllScores.Count - 1].points;
+                Score compare = this.AllScores[0];
+                foreach (Score s in this.AllScores)
+                {
+                    if (s.points < compare.points)
+                    {
+                        compare = s;
+                    }
+                }
+
+                this.lowestScore = compare;
             }
         }
 
-        public int replaceLow(List<Score> listScores)
+        public void testReset_pathChange()
         {
-            int lineCount = File.ReadLines(this.path).Count();
-            if (lineCount > 0)
-            {
-                return listScores[listScores.Count - 1].points;
-            }
-
-            return 0;
-        }
-
-        public void testReset()
-        {
-            this.lowestScore = 0;
+            this.lowestScore = null;
             this.AllScores = new List<Score>();
 
+            string newpath = this.path;
+            int indexPos = newpath.IndexOf("\\highscores.txt");
+            newpath = newpath.Substring(0, indexPos);
+            newpath += "\\test.txt";
+
+            this.path = newpath;
             File.WriteAllText(this.path, String.Empty);
         }
     }
