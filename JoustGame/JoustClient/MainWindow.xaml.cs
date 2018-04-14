@@ -38,7 +38,7 @@ namespace JoustClient
         {
             // This is only here for faster testing
             // If you need a different screen on window load, comment out the line below
-            //LoadGameView();
+            //NewGame();
 
             Title_Screen(null, EventArgs.Empty);
         }
@@ -141,10 +141,24 @@ namespace JoustClient
             }
         }
 
+        public void SaveGame(object sender, RoutedEventArgs e)
+        {
+            control.Save();
+        }
+
         public void NewGame(object sender, EventArgs e)
         {
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
+            Button saveBtn = new Button();
+            saveBtn.Content = "Save";
+            saveBtn.Click += new RoutedEventHandler(SaveGame);
+            canvas.Children.Add(saveBtn);
+
+
+            
+            
+
 
             // Load Map here
 
@@ -172,17 +186,17 @@ namespace JoustClient
             InitiateWorldObject("Respawn", 1100, 600);
             InitiateWorldObject("Respawn", 200, 600);
             InitiateWorldObject("Base", 375, 775);
-            
-            //for (int i = 0; i < numBuzzards; i++)
-            //{
-            //    InitiateWorldObject("Buzzard", 100, 300);
-            //}
 
-            //for (int i = 0; i < numPterodactyls; i++)
-            //{
-            //    InitiateWorldObject("Pterodactyl", 300, 300);
-            //}
-            
+            for (int i = 0; i < numBuzzards; i++)
+            {
+                InitiateWorldObject("Buzzard", 100, 300);
+            }
+
+            for (int i = 0; i < numPterodactyls; i++)
+            {
+                InitiateWorldObject("Pterodactyl", 300, 300);
+            }
+
             updateTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(20), 
                 DispatcherPriority.Render,
