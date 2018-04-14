@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace JoustModel
 {
@@ -17,15 +18,23 @@ namespace JoustModel
 
         public void Update()
         {
-            // Update everything 30 times per second (subject to change)
-            foreach(WorldObject worldObject in WorldRef.objects)
+            try
             {
-                Entity entity = worldObject as Entity;
-                if (entity != null)
+                // Update everything 50 times per second (subject to change)
+                foreach (WorldObject worldObject in WorldRef.objects)
                 {
-                    entity.Update();
+                    Entity entity = worldObject as Entity;
+                    if (entity != null)
+                    {
+                        entity.Update();
+                        World.Instance.UpdateAllEnemies_Position();
+                    }
                 }
             }
+            catch (InvalidOperationException)
+            {
+                return;
+            } 
         }
 
         public void CalculateNumEnemies(int stage, ref int numBuzzards, ref int numPterodactyls)
@@ -43,24 +52,23 @@ namespace JoustModel
             {
                 Buzzard b = new Buzzard();
                 b.coords = new Point(500, 500);
-                WorldRef.objects.Add(b);
             }
         }
 
-        //public string Load(string filename)
-        //{
-        //    string loadedLine = System.IO.File.ReadAllText(string.Format(@"{0}.txt", filename));
-        //    string[] savedObjects = loadedLine.Split(':');
-        //    foreach (string savedObj in savedObjects)
-        //    {
-        //        if (savedObj.Length > 0)
-        //        {
-        //            string type = savedObj.Substring(0, savedObj.IndexOf(","));
-        //            WorldObject obj = CreateWorldObj(type);
-        //            obj.Deserialize(savedObj);
-        //        }
-        //    }
-        //}
+        public void Load(string filename)
+        {
+            string loadedLine = System.IO.File.ReadAllText(string.Format(@"../../Saves/GameSaves/{0}.txt", filename));
+            string[] savedObjects = loadedLine.Split(':');
+            foreach (string savedObj in savedObjects)
+            {
+                if (savedObj != "\r\n" && savedObj.Length > 0)
+                {
+                    string type = savedObj.Substring(0, savedObj.IndexOf(","));
+                    WorldObject obj = CreateWorldObj(type);
+                    obj.Deserialize(savedObj);
+                }
+            }
+        }
 
         public string Save()
         {
@@ -71,7 +79,7 @@ namespace JoustModel
                 line2save += obj.Serialize() + ':';
             }
 
-            string path = string.Format(@"{0}.txt", filename);
+            string path = string.Format(@"../../Saves/GameSaves/{0}.txt", filename);
             System.IO.File.WriteAllText(path, line2save); 
             return line2save;
         }

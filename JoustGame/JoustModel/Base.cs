@@ -14,7 +14,7 @@ namespace JoustModel
 
         public override string Serialize()
         {
-            return string.Format("Base, {0}", this.coords);
+            return string.Format("Base,{0},{1}", coords.x, coords.y);
         }
 
         // Set coords to value read from file
@@ -23,6 +23,11 @@ namespace JoustModel
             string[] properties = data.Split(',');
             coords.x = Convert.ToDouble(properties[1]); // set x coord
             coords.y = Convert.ToDouble(properties[2]); // set y coord
+        }
+
+        public override string ToString()
+        {
+            return "Base";
         }
     }
 }

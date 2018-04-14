@@ -9,7 +9,6 @@ namespace JoustModel
     public class Respawn : Platform
     {
         public string respawnImagePath = "Images/Platform/platform_respawn1.png";
-        
         public Respawn() : base()
         {
             imagePath = "Images/Platform/platform_short2.png";
@@ -26,6 +25,11 @@ namespace JoustModel
             string[] properties = data.Split(',');
             coords.x = Convert.ToDouble(properties[1]); // set x coord
             coords.y = Convert.ToDouble(properties[2]); // set y coord
+        }
+
+        public override string ToString()
+        {
+            return "Respawn";
         }
     }
 }

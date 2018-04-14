@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -38,14 +39,11 @@ namespace JoustClient
         {
             // This is only here for faster testing
             // If you need a different screen on window load, comment out the line below
-            LoadGameView();
-            playerStateMachine = control.WorldRef.player.stateMachine;
+            //LoadGameView();
 
-            //Title_Screen(null, EventArgs.Empty);
-            //Finish_HighScores(null, EventArgs.Empty);
-            // called when game end conditions have been met
+            Title_Screen(null, EventArgs.Empty);
         }
-
+        
         private void Canvas_KeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
@@ -99,62 +97,121 @@ namespace JoustClient
             }
         }
 
-        public void WorldObjectControlFactory(string control, WorldObject worldObject)
+        public void WorldObjectControlFactory(WorldObject worldObject)
         {
-<<<<<<< Updated upstream
-            WorldObjectControl i;
-            switch (control)
+            string woString = worldObject.ToString();
+            Image i;
+            switch (woString)
             {
-                case "ostrich":
+                case "Ostrich":
                     Ostrich o = worldObject as Ostrich;
                     i = new OstrichControl(o.imagePath);
                     OstrichControl oC = i as OstrichControl;
                     o.ostrichMoved += oC.NotifyMoved;
                     break;
-                case "buzzard":
+                case "Buzzard":
                     Buzzard b = worldObject as Buzzard;
                     i = new BuzzardControl(b.imagePath);
+                    BuzzardControl bC = i as BuzzardControl;
+
+                    // Used to update the view with model updates
+                    b.BuzzardMoveEvent += bC.NotifyMoved;
+                    b.BuzzardStateChange += bC.NotifyState;
+                    b.BuzzardDropEgg += bC.NotifyDrop;
+                    b.BuzzardDestroyed += bC.NotifyDestroy;
+                    // Used to update all enemies in the world
+                    //DispatcherTimer moveTimer = new DispatcherTimer();
+                    //moveTimer.Interval = new TimeSpan(0, 0, 0, 0, 33);
+                    //moveTimer.Tick += World.Instance.UpdateAllEnemies_Position;
+                    //moveTimer.Start();
+
+                    /*  Comment:    Clayton Cockrell
+                     *  The Random object in Buzzard would give the same random number to all the 
+                     *  Buzzard objects if their creation was not halted for a little bit of time.
+                     */
+                    Thread.Sleep(20);
                     break;
-                case "pterodactyl":
-                    Pterodactyl p = worldObject as Pterodactyl;
-                    i = new PterodactylControl(p.imagePath);
+                case "Pterodactyl":
+                    PterodactylControl pCtrl = new PterodactylControl("Images/Enemy/pterodactyl.fly1");
+                    i = pCtrl;
+
+                    /*  Comment:    Clayton Cockrell
+                     *  Pterodactyls spawn after a certain number of minutes. I currently have it set
+                     *  to 1 minute. (To change, see PTERODACTYL_SPAWN_MINUTES constant in World class)
+                     */
+                    World.Instance.SpawnPterodactyl += pCtrl.NotifySpawn;
                     break;
-                case "egg":
+                case "Egg":
                     Egg e = worldObject as Egg;
                     i = new EggControl(e.imagePath);
+                    EggControl eC = i as EggControl;
                     break;
-                case "platform":
+                case "Platform":
                     Platform pl = worldObject as Platform;
                     i = new PlatformControl(pl.imagePath);
+                    PlatformControl pC = i as PlatformControl;
                     break;
-                case "respawn":
+                case "Respawn":
                     Respawn r = worldObject as Respawn;
                     i = new RespawnControl(r.imagePath);
+                    RespawnControl rC = i as RespawnControl;
                     break;
                 default:
                     Base ba = worldObject as Base;
                     i = new BaseControl(ba.imagePath);
+                    BaseControl baC = i as BaseControl;
                     break;
             }
+            canvas.Children.Add(i);
             Canvas.SetTop(i, worldObject.coords.y);
             Canvas.SetLeft(i, worldObject.coords.x);
-            canvas.Children.Add(i);
+
+            //Title_Screen(null, EventArgs.Empty);
+            //Finish_HighScores(null, EventArgs.Empty);
+            // called when game end conditions have been met
         }
-=======
+
+        private void Canvas_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    // display escape menu here
+                    break;
+                case Key.W:
+                case Key.Up:
+                    Task.Run(() => playerStateMachine.HandleInput("flap"));
+                    break;
+                case Key.A:
+                case Key.Left:
+                    Task.Run(() => playerStateMachine.HandleInput("left"));
+                    break;
+                case Key.D:
+                case Key.Right:
+                    Task.Run(() => playerStateMachine.HandleInput("right"));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void NewGame(object sender, EventArgs e)
+        {
             flapLock = false;
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
->>>>>>> Stashed changes
 
-        public void LoadGameView()
-        {
             // Load Map here
 
             // Get stage num from controls once the proper screens are implemented
-            Ostrich o = control.CreateWorldObj("Ostrich") as Ostrich;
-            o.coords = new JoustModel.Point(720, 450);
+            Ostrich o = InitiateWorldObject("Ostrich", 720, 450) as Ostrich;
             control.WorldRef.player = o;
-            WorldObjectControlFactory("ostrich", o);
+            playerStateMachine = control.WorldRef.player.stateMachine;
+
+            /*  Comment:    Clayton Cockrell
+             *  Pterodactyls start spawning at stage 5. stage is set this for testing
+             *  purposes.
+             */
 
             int stage = 0;
             control.WorldRef.stage = stage;
@@ -162,21 +219,6 @@ namespace JoustClient
             int numPterodactyls = 0;
             control.CalculateNumEnemies(control.WorldRef.stage, ref numBuzzards, ref numPterodactyls);
 
-<<<<<<< Updated upstream
-            for (int i = 0; i < numBuzzards; i++)
-            {
-                Buzzard b = control.CreateWorldObj("Buzzard") as Buzzard;
-                b.coords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                WorldObjectControlFactory("buzzard", b);
-            }
-
-            for (int i = 0; i < numPterodactyls; i++)
-            {
-                Pterodactyl p = control.CreateWorldObj("Pterodactyl") as Pterodactyl;
-                p.coords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
-                WorldObjectControlFactory("pterodactyl", p);
-            }
-=======
             InitiateWorldObject("Platform", 100, 300);
             InitiateWorldObject("Platform", 700, 500);
             InitiateWorldObject("Platform", 500, 300);
@@ -189,14 +231,13 @@ namespace JoustClient
             //for (int i = 0; i < numBuzzards; i++)
             //{
             //    InitiateWorldObject("Buzzard", 100, 300);
-            //}9i
+            //}
 
             //for (int i = 0; i < numPterodactyls; i++)
             //{
             //    InitiateWorldObject("Pterodactyl", 300, 300);
             //}
             
->>>>>>> Stashed changes
             updateTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(5), 
                 DispatcherPriority.Render,
@@ -205,12 +246,21 @@ namespace JoustClient
             updateTimer.Start();
         }
 
+        public WorldObject InitiateWorldObject(string type, double x, double y)
+        {
+            WorldObject obj = control.CreateWorldObj(type);
+            obj.coords.x = x;
+            obj.coords.y = y;
+            WorldObjectControlFactory(obj);
+            return obj;
+        }
+
         public void UpdateTick(object sender, EventArgs e)
         {
             control.Update();
         }
        
-       // title screens
+       // Title screens
         private Button Make_Button(string content, double top, RoutedEventHandler eventx)
         {
             Button btnReturn = new Button();
@@ -289,7 +339,7 @@ namespace JoustClient
             back.Width = 200;
             canvas.Children.Add(back);
         }
-
+       
         private void Finish_HighScores(object sender, EventArgs e)
         {
             Task.Run(() =>
@@ -372,6 +422,19 @@ namespace JoustClient
             back.Height = 100;
             back.Width = 200;
             canvas.Children.Add(back);
+
+            Button game = Make_Button("Start Game", 200.0, NewGame);
+            game.SetValue(Canvas.LeftProperty, 620.0);
+            game.Height = 100;
+            game.Width = 200;
+            canvas.Children.Add(game);
+
+            /*
+            Button back = Make_Button("Back", 425.0, Single_Screen);
+            back.SetValue(Canvas.LeftProperty, 620.0);
+            back.Height = 100;
+            back.Width = 200;
+            canvas.Children.Add(back);*/
         }
 
         private void Medium_Screen(object sender, RoutedEventArgs e)
@@ -388,6 +451,12 @@ namespace JoustClient
             back.Height = 100;
             back.Width = 200;
             canvas.Children.Add(back);
+
+            Button game = Make_Button("Start Game", 200.0, NewGame);
+            game.SetValue(Canvas.LeftProperty, 620.0);
+            game.Height = 100;
+            game.Width = 200;
+            canvas.Children.Add(game);
         }
 
         private void Hard_Screen(object sender, RoutedEventArgs e)
@@ -404,6 +473,12 @@ namespace JoustClient
             back.Height = 100;
             back.Width = 200;
             canvas.Children.Add(back);
+
+            Button game = Make_Button("Start Game", 200.0, NewGame);
+            game.SetValue(Canvas.LeftProperty, 620.0);
+            game.Height = 100;
+            game.Width = 200;
+            canvas.Children.Add(game);
         }
 
         private void Multi_Screen(object sender, RoutedEventArgs e)

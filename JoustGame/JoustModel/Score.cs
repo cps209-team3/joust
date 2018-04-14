@@ -8,7 +8,7 @@ using System.IO;
 namespace JoustModel
 {
 
-    public class Score
+    public class Score : ISerializable
     {
         // when the user loses the game, a screen pops 
         // up to ask for a username. using the game's score
@@ -42,6 +42,12 @@ namespace JoustModel
                 return false;
             }
         }
+
+        public void Deserialize(string data) {
+            // Implement the Deserialization of scores
+            throw new NotImplementedException();
+        }
+        
     }
 
 }
