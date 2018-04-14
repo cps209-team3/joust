@@ -171,30 +171,6 @@ namespace JoustClient
             // called when game end conditions have been met
         }
 
-        private void Canvas_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Escape:
-                    // display escape menu here
-                    break;
-                case Key.W:
-                case Key.Up:
-                    Task.Run(() => playerStateMachine.HandleInput("flap"));
-                    break;
-                case Key.A:
-                case Key.Left:
-                    Task.Run(() => playerStateMachine.HandleInput("left"));
-                    break;
-                case Key.D:
-                case Key.Right:
-                    Task.Run(() => playerStateMachine.HandleInput("right"));
-                    break;
-                default:
-                    break;
-            }
-        }
-
         public void SaveGame(object sender, RoutedEventArgs e)
         {
             control.Save();
