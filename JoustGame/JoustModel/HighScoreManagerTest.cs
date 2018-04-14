@@ -14,7 +14,7 @@ namespace JoustModel
         [TestMethod]
         public void TestScoreCreation()
         {
-            HighScoreManager.Instance.testReset();
+            HighScoreManager.Instance.testReset_pathChange();
 
             List<Score> testList = new List<Score>();
 
