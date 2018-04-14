@@ -27,6 +27,7 @@ namespace JoustClient
         public TextBox namebox = new TextBox();
         public DispatcherTimer updateTimer;
         public StateMachine playerStateMachine;
+        public bool flapLock;
 
         public MainWindow()
         {
@@ -45,6 +46,39 @@ namespace JoustClient
             // called when game end conditions have been met
         }
 
+        private void Canvas_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    //show escape menu
+                    break;
+                case Key.W:
+                case Key.Up:
+                    if (!flapLock)
+                    {
+                        Task.Run(() => playerStateMachine.HandleInput("flap"));
+                    }
+                    flapLock = true;
+                    Task.Run(() =>
+                    {
+                        Thread.Sleep(100);
+                        flapLock = false;
+                    });
+                    break;
+                case Key.A:
+                case Key.Left:
+                    control.WorldRef.player.leftDown = false;
+                    break;
+                case Key.D:
+                case Key.Right:
+                    control.WorldRef.player.rightDown = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private void Canvas_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
@@ -52,17 +86,13 @@ namespace JoustClient
                 case Key.Escape:
                     // display escape menu here
                     break;
-                case Key.W:
-                case Key.Up:
-                    Task.Run(() => playerStateMachine.HandleInput("flap"));
-                    break;
                 case Key.A:
                 case Key.Left:
-                    Task.Run(() => playerStateMachine.HandleInput("left"));
+                    control.WorldRef.player.leftDown = true;
                     break;
                 case Key.D:
                 case Key.Right:
-                    Task.Run(() => playerStateMachine.HandleInput("right"));
+                    control.WorldRef.player.rightDown = true;
                     break;
                 default:
                     break;
@@ -71,6 +101,7 @@ namespace JoustClient
 
         public void WorldObjectControlFactory(string control, WorldObject worldObject)
         {
+<<<<<<< Updated upstream
             WorldObjectControl i;
             switch (control)
             {
@@ -109,6 +140,11 @@ namespace JoustClient
             Canvas.SetLeft(i, worldObject.coords.x);
             canvas.Children.Add(i);
         }
+=======
+            flapLock = false;
+            canvas.Children.Clear();
+            canvas.Background = Brushes.Black;
+>>>>>>> Stashed changes
 
         public void LoadGameView()
         {
@@ -126,6 +162,7 @@ namespace JoustClient
             int numPterodactyls = 0;
             control.CalculateNumEnemies(control.WorldRef.stage, ref numBuzzards, ref numPterodactyls);
 
+<<<<<<< Updated upstream
             for (int i = 0; i < numBuzzards; i++)
             {
                 Buzzard b = control.CreateWorldObj("Buzzard") as Buzzard;
@@ -139,8 +176,29 @@ namespace JoustClient
                 p.coords = new JoustModel.Point((i + 1) * 50, (i + 1) * 50);
                 WorldObjectControlFactory("pterodactyl", p);
             }
+=======
+            InitiateWorldObject("Platform", 100, 300);
+            InitiateWorldObject("Platform", 700, 500);
+            InitiateWorldObject("Platform", 500, 300);
+            InitiateWorldObject("Platform", 950, 200);
+            InitiateWorldObject("Respawn", 700, 100);
+            InitiateWorldObject("Respawn", 1100, 600);
+            InitiateWorldObject("Respawn", 200, 600);
+            InitiateWorldObject("Base", 375, 775);
+            
+            //for (int i = 0; i < numBuzzards; i++)
+            //{
+            //    InitiateWorldObject("Buzzard", 100, 300);
+            //}9i
+
+            //for (int i = 0; i < numPterodactyls; i++)
+            //{
+            //    InitiateWorldObject("Pterodactyl", 300, 300);
+            //}
+            
+>>>>>>> Stashed changes
             updateTimer = new DispatcherTimer(
-                TimeSpan.FromMilliseconds(20), 
+                TimeSpan.FromMilliseconds(5), 
                 DispatcherPriority.Render,
                 UpdateTick,
                 Dispatcher.CurrentDispatcher);
