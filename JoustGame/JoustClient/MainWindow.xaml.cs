@@ -160,16 +160,11 @@ namespace JoustClient
             control.Load(fileName);
 
             // refresh method
-            for(int i = 0; i < canvas.Children.Count; i++)
-            {
-                Console.WriteLine("element = " + canvas.Children[i]);
-                if (canvas.Children[i].ToString().Split('.')[0] == "JoustClient")
-                {
-                    canvas.Children.RemoveAt(i);
-                }
-            }
+            canvas.Children.Clear();
+            StartGameScreen(sender, e);
             foreach (WorldObject obj in control.WorldRef.objects)
             {
+                // set player
                 if (obj.ToString() == "Ostrich")
                 {
                     control.WorldRef.player = (obj as Ostrich);
@@ -183,24 +178,7 @@ namespace JoustClient
 
         public void NewGame(object sender, EventArgs e)
         {
-            canvas.Children.Clear();
-            canvas.Background = Brushes.Black;
-            Button saveBtn = new Button();
-            saveBtn.Content = "Save";
-            saveBtn.Click += new RoutedEventHandler(SaveGame);
-            canvas.Children.Add(saveBtn);
-
-            TextBox loadName = new TextBox();
-            loadName.Name = "LoadName";
-            loadName.Text = "file2load";
-            loadName.Margin = new Thickness(0, 20, 0, 0);
-            canvas.Children.Add(loadName);
-
-            Button loadBtn = new Button();
-            loadBtn.Content = "Load";
-            loadBtn.Click += new RoutedEventHandler(LoadGame);
-            loadBtn.Margin = new Thickness(0, 40, 0, 0);
-            canvas.Children.Add(loadBtn);
+            StartGameScreen(sender, e);
 
             // Load Map here
 
@@ -274,6 +252,28 @@ namespace JoustClient
             }
 
             return btnReturn;
+        }
+
+        private void StartGameScreen(object sender, EventArgs e)
+        {
+            canvas.Children.Clear();
+            canvas.Background = Brushes.Black;
+            Button saveBtn = new Button();
+            saveBtn.Content = "Save";
+            saveBtn.Click += new RoutedEventHandler(SaveGame);
+            canvas.Children.Add(saveBtn);
+
+            TextBox loadName = new TextBox();
+            loadName.Name = "LoadName";
+            loadName.Text = "file2load";
+            loadName.Margin = new Thickness(0, 20, 0, 0);
+            canvas.Children.Add(loadName);
+
+            Button loadBtn = new Button();
+            loadBtn.Content = "Load";
+            loadBtn.Click += new RoutedEventHandler(LoadGame);
+            loadBtn.Margin = new Thickness(0, 40, 0, 0);
+            canvas.Children.Add(loadBtn);
         }
 
         private void Title_Screen(object sender, EventArgs e)
