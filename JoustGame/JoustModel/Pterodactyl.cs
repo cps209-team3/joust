@@ -38,7 +38,7 @@ namespace JoustModel
             chargeTime = 0;
             dieAnimateTime = 0;
             // Start out in falling state
-            state = new EnemyFallingState() { StateEnemy = this, Angle = (int)angle };
+            state = new EnemyFallingState(this) { StateEnemy = this, Angle = (int)angle };
             imagePath = "Images/Enemy/pterodactyl_fly1.png";
             coords = new Point(0, 0);
             World.Instance.objects.Add(this);
@@ -62,7 +62,7 @@ namespace JoustModel
             if (!charging) {
                 // Determine the next state
                 state = EnemyState.GetNextState(this);
-                state.Setup();
+                state.Update();
             }
 
             if (state is EnemyFlappingState) {

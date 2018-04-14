@@ -19,6 +19,7 @@ namespace JoustModel
 
         // Public instance variables
         public bool droppedEgg;
+        public StateMachine stateMachine;
         // Private instance variables
         private string color;
         private int updateGraphic;
@@ -37,7 +38,15 @@ namespace JoustModel
             prevAngle = angle;
             droppedEgg = false;
             // Starting state is standing
-            state = new EnemyStandingState();
+            state = new EnemyStandingState(this);
+            stateMachine = new StateMachine();
+            EnemyStandingState stand = new EnemyStandingState(this);
+            stateMachine.stateDict.Add("flap", new EnemyFlappingState(this));
+            stateMachine.stateDict.Add("stand", stand);
+            stateMachine.stateDict.Add("fall", new EnemyFallingState(this));
+            stateMachine.stateDict.Add("run", new EnemyRunningState(this));
+            stateMachine.currentState = stand;
+
             // Determine the color of the Mik
             Random rand = new Random();
             switch (rand.Next(3)) {
@@ -76,7 +85,7 @@ namespace JoustModel
         {
             // Determine the next state
             state = EnemyState.GetNextState(this);
-            state.Setup();
+            state.Update();
             
             if (state is EnemyFlappingState) {
                 // "Gravity" purposes

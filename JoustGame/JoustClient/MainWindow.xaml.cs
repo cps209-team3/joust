@@ -171,30 +171,6 @@ namespace JoustClient
             // called when game end conditions have been met
         }
 
-        private void Canvas_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Escape:
-                    // display escape menu here
-                    break;
-                case Key.W:
-                case Key.Up:
-                    Task.Run(() => playerStateMachine.HandleInput("flap"));
-                    break;
-                case Key.A:
-                case Key.Left:
-                    Task.Run(() => playerStateMachine.HandleInput("left"));
-                    break;
-                case Key.D:
-                case Key.Right:
-                    Task.Run(() => playerStateMachine.HandleInput("right"));
-                    break;
-                default:
-                    break;
-            }
-        }
-
         public void NewGame(object sender, EventArgs e)
         {
             flapLock = false;
@@ -208,12 +184,7 @@ namespace JoustClient
             control.WorldRef.player = o;
             playerStateMachine = control.WorldRef.player.stateMachine;
 
-            /*  Comment:    Clayton Cockrell
-             *  Pterodactyls start spawning at stage 5. stage is set this for testing
-             *  purposes.
-             */
-
-            int stage = 0;
+            int stage = 1;
             control.WorldRef.stage = stage;
             int numBuzzards = 0;
             int numPterodactyls = 0;
@@ -228,10 +199,10 @@ namespace JoustClient
             InitiateWorldObject("Respawn", 200, 600);
             InitiateWorldObject("Base", 375, 775);
             
-            //for (int i = 0; i < numBuzzards; i++)
-            //{
-            //    InitiateWorldObject("Buzzard", 100, 300);
-            //}
+            for (int i = 0; i < numBuzzards; i++)
+            {
+                InitiateWorldObject("Buzzard", 100, 300);
+            }
 
             //for (int i = 0; i < numPterodactyls; i++)
             //{

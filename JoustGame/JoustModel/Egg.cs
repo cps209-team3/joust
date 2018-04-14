@@ -56,7 +56,7 @@ namespace JoustModel
         {
             // Determine the next state
             state = EnemyState.GetNextState(this);
-            state.Setup();
+            state.Update();
 
             if (state is EggHatchedState) {
                 // Allow the hatched animation to run before notifying

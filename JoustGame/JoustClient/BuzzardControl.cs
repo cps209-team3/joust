@@ -66,7 +66,7 @@ namespace JoustClient
             if (buzzard.angle > 180) egg.angle = buzzard.angle;
             else egg.angle = buzzard.angle + 180;
             egg.speed = buzzard.speed;
-            egg.state = new EnemyFallingState() { Angle = buzzard.state.Angle, StateEnemy = egg };
+            egg.state = new EnemyFallingState(egg) { Angle = buzzard.state.Angle, StateEnemy = egg };
 
             // Create a new EggControl
             EggControl eCtrl = new EggControl(egg.imagePath);
