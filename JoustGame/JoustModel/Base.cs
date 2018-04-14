@@ -9,6 +9,7 @@ namespace JoustModel
     {
         public Base() : base()
         {
+            type = "Base";
             imagePath = "Images/Platform/platform_bottom.png";
         }
 

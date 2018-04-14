@@ -27,6 +27,7 @@ namespace JoustModel
         public Egg()
         {
             // Initialize variables
+            type = "Egg";
             Value = 250;
             updateGraphic = 0;
             seconds = 0;

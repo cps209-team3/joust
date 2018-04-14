@@ -10,6 +10,9 @@ namespace JoustModel
         public List<Platform> platforms = new List<Platform>();
         public int numOfPlats;
         public int numOfRespawns;
+        public int score;
+        public int lives;
+
         
         public string Serialize()
         {
