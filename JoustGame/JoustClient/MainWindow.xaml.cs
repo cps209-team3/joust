@@ -28,6 +28,7 @@ namespace JoustClient
         public TextBox namebox = new TextBox();
         public DispatcherTimer updateTimer;
         public StateMachine playerStateMachine;
+        public bool flapLock;
 
         public MainWindow()
         {
@@ -43,6 +44,59 @@ namespace JoustClient
             Title_Screen(null, EventArgs.Empty);
         }
         
+        private void Canvas_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    //show escape menu
+                    break;
+                case Key.W:
+                case Key.Up:
+                    if (!flapLock)
+                    {
+                        Task.Run(() => playerStateMachine.HandleInput("flap"));
+                    }
+                    flapLock = true;
+                    Task.Run(() =>
+                    {
+                        Thread.Sleep(100);
+                        flapLock = false;
+                    });
+                    break;
+                case Key.A:
+                case Key.Left:
+                    control.WorldRef.player.leftDown = false;
+                    break;
+                case Key.D:
+                case Key.Right:
+                    control.WorldRef.player.rightDown = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void Canvas_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    // display escape menu here
+                    break;
+                case Key.A:
+                case Key.Left:
+                    control.WorldRef.player.leftDown = true;
+                    break;
+                case Key.D:
+                case Key.Right:
+                    control.WorldRef.player.rightDown = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public void WorldObjectControlFactory(WorldObject worldObject)
         {
             string woString = worldObject.ToString();
@@ -143,6 +197,7 @@ namespace JoustClient
 
         public void NewGame(object sender, EventArgs e)
         {
+            flapLock = false;
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
 
@@ -184,7 +239,7 @@ namespace JoustClient
             //}
             
             updateTimer = new DispatcherTimer(
-                TimeSpan.FromMilliseconds(20), 
+                TimeSpan.FromMilliseconds(5), 
                 DispatcherPriority.Render,
                 UpdateTick,
                 Dispatcher.CurrentDispatcher);

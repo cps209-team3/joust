@@ -16,6 +16,8 @@ namespace JoustModel
         public override int Value { get; set; }
         public string input;
         public string oLock;
+        public bool leftDown;
+        public bool rightDown;
 
         public Ostrich()
         {
@@ -34,6 +36,8 @@ namespace JoustModel
             stateMachine.stateDict.Add("fall", new FallState(this));
             stateMachine.currentState = stand;
             imagePath = "Images/Player/player_stand.png";
+            leftDown = false;
+            rightDown = false;
             World.Instance.objects.Add(this);
         }
 
@@ -62,8 +66,8 @@ namespace JoustModel
             //Console.WriteLine(acceleration);
             //Console.WriteLine(accelerationAngle);
             //Console.WriteLine();
-            double xNew = (xSpeed + nXSpeed) / 50;
-            double yNew = (ySpeed + nYSpeed) / 50;
+            double xNew = (xSpeed + nXSpeed) / 100;
+            double yNew = (ySpeed + nYSpeed) / 100;
             //Console.WriteLine(xSpeed);
             //Console.WriteLine(xAcceleration);
             //Console.WriteLine(ySpeed);
@@ -74,7 +78,7 @@ namespace JoustModel
             //Console.WriteLine(" ");
             speed = Math.Sqrt(Math.Pow(xNew, 2) + Math.Pow(yNew, 2));
             angle = Math.Atan2(yNew, xNew) * 180 / Math.PI;
-            if (speed > 500) { speed = 500; }
+            if (speed > 1000) { speed = 1000; }
             lock (oLock)
             {
                 nSpeed = 0;
@@ -90,6 +94,19 @@ namespace JoustModel
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
 
             stateMachine.Update();
+        }
+
+        public void MoveLeftRight()
+        {
+            
+            if (leftDown && !rightDown)
+            {
+                Task.Run(() => stateMachine.HandleInput("left"));
+            }
+            else if (rightDown && !leftDown)
+            {
+                Task.Run(() => stateMachine.HandleInput("right"));
+            }
         }
 
         // Serialization
