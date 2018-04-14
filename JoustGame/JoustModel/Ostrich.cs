@@ -19,6 +19,7 @@ namespace JoustModel
 
         public Ostrich()
         {
+            type = "Ostrich";
             oLock = "lock";
             Value = 2000;
             lives = 3;

@@ -145,6 +145,41 @@ namespace JoustClient
         {
             control.Save();
         }
+        public void LoadGame(object sender, RoutedEventArgs e)
+        {
+            string fileName = "";
+            foreach (UIElement element in canvas.Children)
+            {
+                if ((element as FrameworkElement).Name == "LoadName")
+                {
+                    fileName = (element as TextBox).Text;
+                }
+            }
+            control.WorldRef.objects.Clear();
+            
+            control.Load(fileName);
+
+            // refresh method
+            for(int i = 0; i < canvas.Children.Count; i++)
+            {
+                Console.WriteLine("element = " + canvas.Children[i]);
+                if (canvas.Children[i].ToString().Split('.')[0] == "JoustClient")
+                {
+                    canvas.Children.RemoveAt(i);
+                }
+            }
+            foreach (WorldObject obj in control.WorldRef.objects)
+            {
+                if (obj.ToString() == "Ostrich")
+                {
+                    control.WorldRef.player = (obj as Ostrich);
+                    playerStateMachine = control.WorldRef.player.stateMachine;
+                    Console.WriteLine("player has been set");
+                }
+                WorldObjectControlFactory(obj);
+            }
+            // end refresh method
+        }
 
         public void NewGame(object sender, EventArgs e)
         {
@@ -155,10 +190,17 @@ namespace JoustClient
             saveBtn.Click += new RoutedEventHandler(SaveGame);
             canvas.Children.Add(saveBtn);
 
+            TextBox loadName = new TextBox();
+            loadName.Name = "LoadName";
+            loadName.Text = "file2load";
+            loadName.Margin = new Thickness(0, 20, 0, 0);
+            canvas.Children.Add(loadName);
 
-            
-            
-
+            Button loadBtn = new Button();
+            loadBtn.Content = "Load";
+            loadBtn.Click += new RoutedEventHandler(LoadGame);
+            loadBtn.Margin = new Thickness(0, 40, 0, 0);
+            canvas.Children.Add(loadBtn);
 
             // Load Map here
 

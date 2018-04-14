@@ -10,6 +10,7 @@ namespace JoustModel
     {
         public Platform()
         {
+            type = "Platform";
             imagePath = "Images/Platform/platform_short1.png";
             World.Instance.objects.Add(this);
         }
