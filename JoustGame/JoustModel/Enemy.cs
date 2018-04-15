@@ -33,7 +33,7 @@ namespace JoustModel {
         /// </summary>
         /// <param name="e"> Used to determine what states are available to the enemy </param>
         /// <returns> A new EnemyState Child </returns>
-        public static EnemyState GetNextState(Enemy e) {
+        public static void GetNextState(Enemy e) {
             Random rand = new Random(DateTime.Now.Millisecond);
             for (int i = 0; i < 999990; i++) { }
             int chance = rand.Next(100);
@@ -43,90 +43,89 @@ namespace JoustModel {
                 Buzzard b = e as Buzzard;
 
                 // *** Check if lost in a joust against the player ***
-                if (b.coords.y > 450 && b.coords.y < 525 && b.coords.x > 650 && b.coords.x < 800) return new BuzzardFleeingState(b) { StateEnemy = b };
+                if (b.coords.y > 450 && b.coords.y < 525 && b.coords.x > 650 && b.coords.x < 800) b.stateMachine.Change("flee");
 
                 // *** Check if Buzzard is near the ground of a platform and return new EnemyRunningState like below ***
 
-                if (b.state is EnemyStandingState) {
+                if (b.stateMachine.currentState is EnemyStandingState) {
                     if (chance % 2 == 0) {
-                        if (chance % 10 < 5) return new EnemyRunningState(b) { Angle = 0, StateEnemy = b }; // Running right state
-                        else return new EnemyRunningState(b) { Angle = 180, StateEnemy = b }; // Running left state
+                        if (chance % 10 < 5) b.stateMachine.Change("run_right");
+                        else b.stateMachine.Change("run_right");
                     }
                     else {
-                        return new EnemyFlappingState(b) { Angle = 90, StateEnemy = b }; // Flapping up state
+                        b.stateMachine.Change("flap");
                     }
                 }
-                else if (b.state is EnemyRunningState) {
-                    if (chance < 2) return new EnemyStandingState(b) { Angle = b.state.Angle, StateEnemy = b }; // Standing state
-                    else if (chance < 99) return new EnemyRunningState(b) { Angle = b.state.Angle, StateEnemy = b }; // Running in same direction state
-
-                    b.state.Angle += 180;
-                    if (b.state.Angle > 360) b.state.Angle -= 360;
-
-                    return new EnemyRunningState(b) { Angle = b.state.Angle, StateEnemy = b }; // Running in opposite direction state
+                else if (b.stateMachine.currentState is EnemyRunningState) {
+                    if (chance < 2) {
+                        b.stateMachine.Change("stand");
+                    }
+                    else if (chance == 99) {
+                        EnemyState enemySt = b.stateMachine.currentState as EnemyState;
+                        if (enemySt.Angle == 0) b.stateMachine.Change("run_left");
+                        else b.stateMachine.Change("run_right");
+                    }
                 }
-                else if (b.state is EnemyFlappingState) {
-                    switch (b.state.Angle) {
+                else if (b.stateMachine.currentState is EnemyFlappingState) {
+                    EnemyState enemySt = b.stateMachine.currentState as EnemyState;
+                    switch (enemySt.Angle) {
                         case 90:
-                            if (chance / 10 < 2 && chance % 10 < 4 || b.coords.y < 10) return new EnemyFallingState(b) { Angle = 270, StateEnemy = b }; // Falling down state
-                            else if (chance % 2 == 0) return new EnemyFlappingState(b) { Angle = 45, StateEnemy = b }; // Flapping right state
-                            else return new EnemyFlappingState(b) { Angle = 135, StateEnemy = b }; // Flapping left state
-
+                            if (chance / 10 < 2 && chance % 10 < 4 || b.coords.y < 10) b.stateMachine.Change("fall");
+                            else if (chance % 2 == 0) b.stateMachine.Change("flap_right");
+                            else b.stateMachine.Change("flap_left");
+                            break;
                         default:
-                            if (chance < 2 || b.coords.y < 10) return new EnemyFlappingState(b) { Angle = 90, StateEnemy = b }; // Flapping up state
-                            else return new EnemyFlappingState(b) { Angle = b.state.Angle, StateEnemy = b };
+                            if (chance < 2 || b.coords.y < 10) b.stateMachine.Change("flap");
+                            break;
                     }
                 }
-                else if (b.state is EnemyFallingState) {
-                    switch (b.state.Angle) {
+                else if (b.stateMachine.currentState is EnemyFallingState) {
+                    EnemyState enemySt = b.stateMachine.currentState as EnemyState;
+                    switch (enemySt.Angle) {
                         case 270:
-                            if (chance % 10 < 3 || b.coords.y > 800) return new EnemyFlappingState(b) { Angle = 90, StateEnemy = b }; // Flapping up state
-                            else if (chance % 2 == 0) return new EnemyFallingState(b) { Angle = 315, StateEnemy = b }; // Falling right state
-                            else return new EnemyFallingState(b) { Angle = 225, StateEnemy = b }; // Falling left state
-
+                            if (chance % 10 < 3 || b.coords.y > 800) b.stateMachine.Change("flap");
+                            else if (chance % 2 == 0) b.stateMachine.Change("fall_right");
+                            else b.stateMachine.Change("fall_left");
+                            break;
                         default:
-                            if (chance < 3) return new EnemyFallingState(b) { Angle = 270, StateEnemy = b }; // Falling down state
-                            else return new EnemyFallingState(b) { Angle = b.state.Angle, StateEnemy = b };
+                            if (chance < 3) b.stateMachine.Change("fall");
+                            break;
                     }
                 }
-                else if (b.state is BuzzardPickupState) {
-                    BuzzardPickupState set_state = b.state as BuzzardPickupState;
+                else if (b.stateMachine.currentState is BuzzardPickupState) {
+                    BuzzardPickupState set_state = b.stateMachine.currentState as BuzzardPickupState;
                     // Determine if the Buzzard is close enough to the Mik being picked up
                     if ((set_state.TargetEgg.coords.x - b.coords.x) > -5 && (set_state.TargetEgg.coords.x - b.coords.x) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) > -5) {
                         // Picked up Mik
                         set_state.TargetEgg.mounted = true;
                         b.droppedEgg = false;
-                        return new EnemyStandingState(b) { StateEnemy = b, Angle = 0 };
-                    }
-                    else {
-                        return new BuzzardPickupState(b) { StateEnemy = b, Angle = b.state.Angle, TargetEgg = set_state.TargetEgg };
+                        b.stateMachine.Change("stand");
                     }
                 }
                 else {
-                    // If non of the previous states, set state to Fleeing
-                    return new BuzzardFleeingState(b) { StateEnemy = b };
+                    // If none of the previous states, set state to Fleeing
+                    b.stateMachine.Change("flee");
                 }
             }
             else if (e is Egg) {
                 /*** Egg States ***/
                 Egg egg = e as Egg;
 
-                if (egg.state is EnemyFallingState) {
+                if (egg.stateMachine.currentState is EnemyFallingState) {
                     // *** Implement when the egg lands on a platform ***
-                    if (egg.coords.y > 800) return new EnemyStandingState(egg) { Angle = egg.state.Angle, StateEnemy = egg }; // Standing state
-                    else return new EnemyFallingState(egg) { Angle = egg.state.Angle, StateEnemy = egg }; // Falling state
+                    if (egg.coords.y > 800) egg.stateMachine.Change("stand");
                 }
                 else {
                     if (egg.seconds > 800) {
-                        return new EggHatchedState(egg) { StateEnemy = egg }; // Egg has hatched state
+                        egg.stateMachine.Change("hatched");
                     }
                     else if (egg.seconds > 600) {
                         egg.seconds++;
-                        return new EggHatchingState(egg) { StateEnemy = egg }; // Egg is hatching state
+                        egg.stateMachine.Change("hatching");
                     }
                     else {
                         egg.seconds++;
-                        return new EnemyStandingState(egg) { Angle = 0, StateEnemy = egg }; // Standing state
+                        egg.stateMachine.Change("stand");
                     }
                 }
             }
@@ -135,62 +134,44 @@ namespace JoustModel {
                 Pterodactyl p = e as Pterodactyl;
 
                 // *** Add charging state to attack nearby player ***
-                if (p.coords.y > 300 && p.coords.y < 500 && p.coords.x > 600 && p.coords.x < 800) return new PterodactylChargeState(p) { StateEnemy = p };
+                if (p.coords.y > 300 && p.coords.y < 500 && p.coords.x > 600 && p.coords.x < 800) p.stateMachine.Change("charge");
 
                 // *** Add hitbox check to destroy pterodactyl ***
-                if (p.coords.y > 450 && p.coords.y < 525 && p.coords.x > 650 && p.coords.x < 800) return new PterodactylDestroyedState(p) { StateEnemy = p };
+                if (p.coords.y > 450 && p.coords.y < 525 && p.coords.x > 650 && p.coords.x < 800) p.stateMachine.Change("destroyed");
 
-                if (p.state is EnemyFallingState) {
-                    switch (p.state.Angle) {
+                if (p.stateMachine.currentState is EnemyFallingState) {
+                    EnemyState enemySt = p.stateMachine.currentState as EnemyState;
+                    switch (enemySt.Angle) {
                         case 270:
-                            if (chance % 10 < 3 || p.coords.y > 800) return new EnemyFlappingState(p) { Angle = 90, StateEnemy = p }; // Flapping up state
-                            else if (chance % 2 == 0) return new EnemyFallingState(p) { Angle = 315, StateEnemy = p }; // Falling right state
-                            else return new EnemyFallingState(p) { Angle = 225, StateEnemy = p }; // Falling left state
-
+                            if (chance % 10 < 3 || p.coords.y > 800) p.stateMachine.Change("flap");
+                            else if (chance % 2 == 0) p.stateMachine.Change("fall_right");
+                            else p.stateMachine.Change("fall_left");
+                            break;
                         default:
-                            if (chance < 3) return new EnemyFallingState(p) { Angle = 270, StateEnemy = p }; // Falling down state
-                            else return new EnemyFallingState(p) { Angle = p.state.Angle, StateEnemy = p };
+                            if (chance < 3) p.stateMachine.Change("fall");
+                            break;
                     }
                 }
-                else if (p.state is EnemyFlappingState) {
-                    switch (p.state.Angle) {
+                else if (p.stateMachine.currentState is EnemyFlappingState) {
+                    EnemyState enemySt = p.stateMachine.currentState as EnemyState;
+                    switch (enemySt.Angle) {
                         case 90:
-                            if (chance / 10 < 2 && chance % 10 < 4 || p.coords.y < 10) return new EnemyFallingState(p) { Angle = 270, StateEnemy = p }; // Falling down state
-                            else if (chance % 2 == 0) return new EnemyFlappingState(p) { Angle = 45, StateEnemy = p }; // Flapping right state
-                            else return new EnemyFlappingState(p) { Angle = 135, StateEnemy = p }; // Flapping left state
-
+                            if (chance / 10 < 2 && chance % 10 < 4 || p.coords.y < 10) p.stateMachine.Change("fall");
+                            else if (chance % 2 == 0) p.stateMachine.Change("flap_right");
+                            else p.stateMachine.Change("flap_left");
+                            break;
                         default:
-                            if (chance < 2 || p.coords.y < 10) return new EnemyFlappingState(p) { Angle = 90, StateEnemy = p }; // Flapping up state
-                            else return new EnemyFlappingState(p) { Angle = p.state.Angle, StateEnemy = p };
+                            if (chance < 2 || p.coords.y < 10) p.stateMachine.Change("flap");
+                            break;
                     }
                 }
-                else {
-                    // Default is Falling state
-                    return new EnemyFallingState(p) { Angle = p.state.Angle, StateEnemy = p };
-                }
             }
-            else {
-                /*** No Know Enemy Default State ***/
-                return new EnemyStandingState(e) { Angle = 0 };
-            }
-
         }
 
-        public void Update() {
-            
-        }
-
-        public void HandleInput(string data) {
-            
-        }
-
-        public void Enter() {
-            
-        }
-
-        public void Exit() {
-            
-        }
+        public virtual void Update() { }
+        public virtual void HandleInput(string data) { }
+        public virtual void Enter() { }
+        public virtual void Exit() { }
     }
 
 
@@ -202,7 +183,7 @@ namespace JoustModel {
             stateMachine = StateEnemy.stateMachine;
         }
 
-        public new void Update() {
+        public override void Update() {
             if (StateEnemy is Buzzard) {
                 Buzzard b = StateEnemy as Buzzard;
                 b.speed = 0;
@@ -217,11 +198,12 @@ namespace JoustModel {
             }
         }
 
-        public new void HandleInput(string command) {
+        public override void HandleInput(string command) {
             switch (command) {
                 case "flap":
                 case "run_left":
                 case "run_right":
+                case "stand":
                     stateMachine.Change(command);
                     break;
                 default:
@@ -229,8 +211,8 @@ namespace JoustModel {
             }
         }
 
-        public new void Enter() { }
-        public new void Exit() { }
+        public override void Enter() { }
+        public override void Exit() { }
     }
 
     public class EnemyRunningState : EnemyState {
@@ -241,20 +223,20 @@ namespace JoustModel {
             stateMachine = StateEnemy.stateMachine;
         }
 
-        public new void Update() {
+        public override void Update() {
             if (StateEnemy is Buzzard) {
                 Buzzard b = StateEnemy as Buzzard;
                 b.angle = Angle;
 
-                if (b.imagePath.EndsWith("stand.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_move1.png";
-                else if (b.imagePath.EndsWith("move1.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_move2.png";
-                else if (b.imagePath.EndsWith("move2.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_move3.png";
-                else if (b.imagePath.EndsWith("move3.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_stand.png";
+                if (b.imagePath.EndsWith("stand.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_move3.png";
+                else if (b.imagePath.EndsWith("move3.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_move2.png";
+                else if (b.imagePath.EndsWith("move2.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_move1.png";
+                else if (b.imagePath.EndsWith("move1.png")) b.imagePath = "Images/Enemy/mik_" + b.Color + "_stand.png";
                 else b.imagePath = "Images/Enemy/mik_" + b.Color + "_stand.png";
             }
         }
 
-        public new void HandleInput(string command) {
+        public override void HandleInput(string command) {
             switch (command) {
                 case "stand":
                 case "run_left":
@@ -266,8 +248,8 @@ namespace JoustModel {
             }
         }
 
-        public new void Enter() { }
-        public new void Exit() { }
+        public override void Enter() { }
+        public override void Exit() { }
     }
 
     public class EnemyFallingState : EnemyState {
@@ -278,7 +260,7 @@ namespace JoustModel {
             stateMachine = StateEnemy.stateMachine;
         }
 
-        public new void Update() {
+        public override void Update() {
             if (StateEnemy is Buzzard) {
                 Buzzard b = StateEnemy as Buzzard;
                 b.angle = Angle;
@@ -291,14 +273,21 @@ namespace JoustModel {
                 p.speed += 0.05;
                 p.imagePath = "Images/Enemy/pterodactyl_fly1.png";
             }
+            else if (StateEnemy is Egg) {
+                Egg egg = StateEnemy as Egg;
+                egg.angle = Angle;
+                egg.speed = 5;
+                egg.imagePath = "Images/Enemy/egg1.png";
+            }
         }
 
-        public new void HandleInput(string command) {
+        public override void HandleInput(string command) {
             switch (command) {
                 case "fall":
                 case "fall_left":
                 case "fall_right":
                 case "flap":
+                case "stand":
                     stateMachine.Change(command);
                     break;
                 default:
@@ -306,8 +295,8 @@ namespace JoustModel {
             }
         }
 
-        public new void Enter() { }
-        public new void Exit() { }
+        public override void Enter() { }
+        public override void Exit() { }
     }
 
     public class EnemyFlappingState : EnemyState {
@@ -318,7 +307,7 @@ namespace JoustModel {
             stateMachine = StateEnemy.stateMachine;
         }
 
-        public new void Update() {
+        public override void Update() {
             if (StateEnemy is Buzzard) {
                 Buzzard b = StateEnemy as Buzzard;
                 b.angle = Angle;
@@ -344,7 +333,7 @@ namespace JoustModel {
             }
         }
 
-        public new void HandleInput(string command) {
+        public override void HandleInput(string command) {
             switch (command) {
                 case "fall":
                 case "flap_left":
@@ -357,8 +346,8 @@ namespace JoustModel {
             }
         }
 
-        public new void Enter() { }
-        public new void Exit() { }
+        public override void Enter() { }
+        public override void Exit() { }
     }
 
     public class BuzzardFleeingState : EnemyState {
@@ -369,7 +358,7 @@ namespace JoustModel {
             stateMachine = StateEnemy.stateMachine;
         }
 
-        public new void Update() {
+        public override void Update() {
             if (StateEnemy is Buzzard) {
                 Buzzard b = StateEnemy as Buzzard;
                 b.speed = 5;
@@ -387,9 +376,9 @@ namespace JoustModel {
             }
         }
 
-        public new void HandleInput(string command) { }
-        public new void Enter() { }
-        public new void Exit() { }
+        public override void HandleInput(string command) {}
+        public override void Enter() { }
+        public override void Exit() { }
     }
 
     public class BuzzardPickupState : EnemyState {
@@ -401,9 +390,10 @@ namespace JoustModel {
             stateMachine = StateEnemy.stateMachine;
         }
 
-        public new void Update() {
+        public override void Update() {
             if (StateEnemy is Buzzard) {
                 Buzzard b = StateEnemy as Buzzard;
+                TargetEgg = b.pickupEgg;
 
                 if (TargetEgg != null) {
                     if (b.coords.x < TargetEgg.coords.x) {
@@ -455,7 +445,7 @@ namespace JoustModel {
             }
         }
 
-        public new void HandleInput(string command) {
+        public override void HandleInput(string command) {
             switch (command) {
                 case "flee":
                 case "stand":
@@ -466,8 +456,8 @@ namespace JoustModel {
             }
         }
 
-        public new void Enter() { }
-        public new void Exit() { }
+        public override void Enter() { }
+        public override void Exit() { }
     }
 
     public class EggHatchingState : EnemyState {
@@ -478,7 +468,7 @@ namespace JoustModel {
             stateMachine = StateEnemy.stateMachine;
         }
 
-        public new void Update() {
+        public override void Update() {
             if (StateEnemy is Egg) {
                 Egg e = StateEnemy as Egg;
                 e.angle = 0;
@@ -501,9 +491,9 @@ namespace JoustModel {
             }
         }
 
-        public new void HandleInput(string command) { }
-        public new void Enter() { }
-        public new void Exit() { }
+        public override void HandleInput(string command) { }
+        public override void Enter() { }
+        public override void Exit() { }
     }
 
     public class EggHatchedState : EnemyState {
@@ -514,7 +504,7 @@ namespace JoustModel {
             stateMachine = StateEnemy.stateMachine;
         }
 
-        public new void Update() {
+        public override void Update() {
             if (StateEnemy is Egg) {
                 Egg e = StateEnemy as Egg;
                 e.angle = 0;
@@ -529,9 +519,9 @@ namespace JoustModel {
             }
         }
 
-        public new void HandleInput(string command) { }
-        public new void Enter() { }
-        public new void Exit() { }
+        public override void HandleInput(string command) { }
+        public override void Enter() { }
+        public override void Exit() { }
     }
 
     public class PterodactylDestroyedState : EnemyState {
@@ -542,7 +532,7 @@ namespace JoustModel {
             stateMachine = StateEnemy.stateMachine;
         }
 
-        public new void Update() {
+        public override void Update() {
             if (StateEnemy is Pterodactyl) {
                 Pterodactyl p = StateEnemy as Pterodactyl;
                 p.angle = 0;
@@ -558,9 +548,9 @@ namespace JoustModel {
             }
         }
 
-        public new void HandleInput(string command) { }
-        public new void Enter() { }
-        public new void Exit() { }
+        public override void HandleInput(string command) { }
+        public override void Enter() { }
+        public override void Exit() { }
     }
 
     public class PterodactylChargeState : EnemyState {
@@ -571,7 +561,7 @@ namespace JoustModel {
             stateMachine = StateEnemy.stateMachine;
         }
 
-        public new void Update() {
+        public override void Update() {
             if (StateEnemy is Pterodactyl) {
                 Pterodactyl p = StateEnemy as Pterodactyl;
                 try {
@@ -596,8 +586,8 @@ namespace JoustModel {
             }
         }
 
-        public new void HandleInput(string command) { }
-        public new void Enter() { }
-        public new void Exit() { }
+        public override void HandleInput(string command) { }
+        public override void Enter() { }
+        public override void Exit() { }
     }
 }

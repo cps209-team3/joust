@@ -45,14 +45,7 @@ namespace JoustModel
         public void UpdateAllEnemies_Position() {
             try {
                 foreach (WorldObject obj in objects) {
-                    Buzzard buzzardObj = obj as Buzzard;
-                    if (buzzardObj != null) {
-                        buzzardObj.Update();
-                    }
-                    Egg eggObj = obj as Egg;
-                    if (eggObj != null) {
-                        eggObj.Update();
-                    }
+
 
                     // Used to keep track of the stage time for spawning the Pterodactyls
                     stageTimeFrame++;

@@ -19,7 +19,7 @@ namespace JoustModel
 
         // Public instance variables
         public bool droppedEgg;
-        public StateMachine stateMachine;
+        public Egg pickupEgg;
         // Private instance variables
         private string color;
         private int updateGraphic;
@@ -38,13 +38,20 @@ namespace JoustModel
             prevAngle = angle;
             droppedEgg = false;
             // Starting state is standing
-            state = new EnemyStandingState(this);
             stateMachine = new StateMachine();
             EnemyStandingState stand = new EnemyStandingState(this);
-            stateMachine.stateDict.Add("flap", new EnemyFlappingState(this));
             stateMachine.stateDict.Add("stand", stand);
-            stateMachine.stateDict.Add("fall", new EnemyFallingState(this));
-            stateMachine.stateDict.Add("run", new EnemyRunningState(this));
+            stateMachine.stateDict.Add("run_right", new EnemyRunningState(this) { Angle = 0 });
+            stateMachine.stateDict.Add("run_left", new EnemyRunningState(this) { Angle = 180 });
+            stateMachine.stateDict.Add("flap", new EnemyFlappingState(this) { Angle = 90 });
+            stateMachine.stateDict.Add("flap_right", new EnemyFlappingState(this) { Angle = 45 });
+            stateMachine.stateDict.Add("flap_left", new EnemyFlappingState(this) { Angle = 135 });
+            stateMachine.stateDict.Add("fall", new EnemyFallingState(this) { Angle = 270 });
+            stateMachine.stateDict.Add("fall_right", new EnemyFallingState(this) { Angle = 315 });
+            stateMachine.stateDict.Add("fall_left", new EnemyFallingState(this) { Angle = 225 });
+            stateMachine.stateDict.Add("flee", new BuzzardFleeingState(this));
+            stateMachine.stateDict.Add("pickup", new BuzzardPickupState(this));
+
             stateMachine.currentState = stand;
 
             // Determine the color of the Mik
@@ -84,27 +91,27 @@ namespace JoustModel
         public override void Update()
         {
             // Determine the next state
-            state = EnemyState.GetNextState(this);
-            state.Update();
+            EnemyState.GetNextState(this);
+            stateMachine.currentState.Update();
             
-            if (state is EnemyFlappingState) {
+            if (stateMachine.currentState is EnemyFlappingState) {
                 // "Gravity" purposes
                 if (speed > TERMINAL_VELOCITY) {
                     if (prevAngle == 225 || prevAngle == 270 || prevAngle == 315) speed = 0.05;
                     else speed = TERMINAL_VELOCITY;
                 }
             }
-            else if (state is EnemyFallingState) {
+            else if (stateMachine.currentState is EnemyFallingState) {
                 // "Gravity" purposes
                 if (speed > TERMINAL_VELOCITY) {
                     if (prevAngle == 45 || prevAngle == 90 || prevAngle == 135) speed = 0.05;
                     else speed = TERMINAL_VELOCITY;
                 }
             }
-            else if (state is EnemyRunningState) {
+            else if (stateMachine.currentState is EnemyRunningState) {
                 speed = SPEED;
             }
-            else if (state is BuzzardFleeingState) {
+            else if (stateMachine.currentState is BuzzardFleeingState) {
                 // When the Buzzard has been hit, it drops an egg and
                 // flies to the left side. Destroy the Buzzard when
                 // close enough to the edge of the screen.

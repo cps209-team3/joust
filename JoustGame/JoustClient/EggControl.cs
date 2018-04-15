@@ -64,8 +64,9 @@ namespace JoustClient
             b.angle = 0;
             b.droppedEgg = true;
             // Set state to Pickup state
-            b.state = new BuzzardPickupState(b) { Angle = (int)b.angle, TargetEgg = egg, StateEnemy = b };
-            b.state.Update();
+            b.stateMachine.Change("pickup");
+            b.pickupEgg = egg;
+            b.stateMachine.currentState.Update();
             // Create a new BuzzardControl
             BuzzardControl eCtrl = new BuzzardControl(b.imagePath);
             // Subscribe to event handlers

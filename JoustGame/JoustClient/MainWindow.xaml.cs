@@ -28,7 +28,7 @@ namespace JoustClient
         public TextBox namebox = new TextBox();
         public DispatcherTimer updateTimer;
         public StateMachine playerStateMachine;
-        public bool flapLock;
+        public static bool flapLock;
 
         public MainWindow()
         {
@@ -60,6 +60,7 @@ namespace JoustClient
                     flapLock = true;
                     Task.Run(() =>
                     {
+                        PlaySounds.Instance.Play_Flap();
                         Thread.Sleep(100);
                         flapLock = false;
                     });

@@ -41,11 +41,13 @@ namespace JoustClient
                 Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative));
             }
             else if (o.stateMachine.Current is FlapState) {
-                Task.Run(() => {
-                    Dispatcher.Invoke(() => Source = new BitmapImage(new Uri("Sprites/player_fly2.png", UriKind.Relative)));
-                    Thread.Sleep(900);
-                    Dispatcher.Invoke(() => Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative)));
-                });
+                if (MainWindow.flapLock) {
+                    Task.Run(() => {
+                        Dispatcher.Invoke(() => Source = new BitmapImage(new Uri("Sprites/player_fly2.png", UriKind.Relative)));
+                        Thread.Sleep(900);
+                        Dispatcher.Invoke(() => Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative)));
+                    });
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -61,12 +62,11 @@ namespace JoustClient
             // Create a new Egg
             Egg egg = new Egg();
             egg.coords = buzzard.coords;
-
-            // Set to a downwards angle
-            if (buzzard.angle > 180) egg.angle = buzzard.angle;
-            else egg.angle = buzzard.angle + 180;
             egg.speed = buzzard.speed;
-            egg.state = new EnemyFallingState(egg) { Angle = buzzard.state.Angle, StateEnemy = egg };
+
+            if (buzzard.angle > 90 && buzzard.angle < 270) egg.stateMachine.Change("fall_left");
+            else if (buzzard.angle > 270 && buzzard.angle < 90) egg.stateMachine.Change("fall_right");
+            else egg.stateMachine.Change("fall");
 
             // Create a new EggControl
             EggControl eCtrl = new EggControl(egg.imagePath);
@@ -80,6 +80,9 @@ namespace JoustClient
             Canvas.SetLeft(eCtrl, egg.coords.x);
             Canvas canvas = Parent as Canvas;
             canvas.Children.Add(eCtrl);
+            Task.Run(() => {
+                PlaySounds.Instance.Play_Drop();
+            });
         }
 
         /// <summary>
