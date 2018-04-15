@@ -185,7 +185,7 @@ namespace JoustClient
             control.WorldRef.player = o;
             playerStateMachine = control.WorldRef.player.stateMachine;
 
-            int stage = 1;
+            int stage = 5;
             control.WorldRef.stage = stage;
             int numBuzzards = 0;
             int numPterodactyls = 0;

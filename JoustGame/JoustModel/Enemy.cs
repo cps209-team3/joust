@@ -83,7 +83,7 @@ namespace JoustModel {
                     EnemyState enemySt = b.stateMachine.currentState as EnemyState;
                     switch (enemySt.Angle) {
                         case 270:
-                            if (chance % 10 < 3 || b.coords.y > 800) b.stateMachine.Change("flap");
+                            if (chance % 10 < 3 || b.coords.y > 600) b.stateMachine.Change("flap");
                             else if (chance % 2 == 0) b.stateMachine.Change("fall_right");
                             else b.stateMachine.Change("fall_left");
                             break;
@@ -113,7 +113,7 @@ namespace JoustModel {
 
                 if (egg.stateMachine.currentState is EnemyFallingState) {
                     // *** Implement when the egg lands on a platform ***
-                    if (egg.coords.y > 800) egg.stateMachine.Change("stand");
+                    if (egg.coords.y > 750) egg.stateMachine.Change("stand");
                 }
                 else {
                     if (egg.seconds > 800) {

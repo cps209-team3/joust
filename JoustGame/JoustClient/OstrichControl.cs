@@ -19,10 +19,15 @@ namespace JoustClient
 {
     public class OstrichControl : WorldObjectControl
     {
+        private string currentMove;
+        private static string THE_LOCK = "lockme";
         public OstrichControl(string imagePath) : base(imagePath)
         {
             Height = 75;
             Width = 50;
+            lock (THE_LOCK) {
+                currentMove = "Sprites/player_stand.png";
+            }
         }
 
         public void NotifyMoved(object sender, int e)
@@ -35,7 +40,23 @@ namespace JoustClient
             else if (o.rightDown) LayoutTransform = new ScaleTransform() { ScaleX = 1 };
 
             if (o.stateMachine.Current is StandState) {
-                Source = new BitmapImage(new Uri(o.imagePath, UriKind.Relative));
+                if (o.leftDown || o.rightDown) {
+                    lock (THE_LOCK) {
+                        if (currentMove.EndsWith("stand.png")) currentMove = "Sprites/player_move3.png";
+                        else if (currentMove.EndsWith("move3.png")) currentMove = "Sprites/player_move2.png";
+                        else if (currentMove.EndsWith("move2.png")) currentMove = "Sprites/player_move1.png";
+                        else currentMove = "Sprites/player_stand.png";
+                    }
+
+                    Task.Run(() => {
+                        lock (THE_LOCK) {
+                            Dispatcher.Invoke(() => Source = new BitmapImage(new Uri(currentMove, UriKind.Relative)));
+                        }
+                    });
+                }
+                else {
+                    Source = new BitmapImage(new Uri(o.imagePath, UriKind.Relative));
+                }
             }
             else if (o.stateMachine.Current is FallState) {
                 Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative));
