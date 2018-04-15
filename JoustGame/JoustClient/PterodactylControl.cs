@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -60,6 +61,10 @@ namespace JoustClient
         public void NotifyDestroy(object sender, EventArgs e) {
             Canvas canvas = Parent as Canvas;
             canvas.Children.Remove(this);
+
+            Task.Run(() => {
+                PlaySounds.Instance.Play_Drop();
+            });
         }
 
         /// <summary>
@@ -82,6 +87,10 @@ namespace JoustClient
                 Canvas canvas = Parent as Canvas;
                 canvas.Children.Add(pCtrl);
                 spawned = true;
+
+                Task.Run(() => {
+                    PlaySounds.Instance.Play_Spawn();
+                });
             }
         }
     }

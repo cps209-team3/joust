@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JoustModel
@@ -13,9 +14,10 @@ namespace JoustModel
 
         // Public property Value (used to determine points awarded upon destroying)
         public override int Value { get; set; }
-        
+
+        // Public instance variables
+        public bool charging;
         // Private instance variables
-        private bool charging;
         private const double SPEED = 6;
         private const double TERMINAL_VELOCITY = 7;
         private double prevAngle;
@@ -103,10 +105,11 @@ namespace JoustModel
             }
             else if (stateMachine.currentState is PterodactylChargeState) {
                 // Don't allow the state to change when charging
+                Trace.WriteLine("Charging: " + chargeTime);
                 charging = true;
                 chargeTime++;
                 speed = 10;
-                if (chargeTime > 40) {
+                if (chargeTime > 50) {
                     charging = false;
                     chargeTime = 0;
                 }

@@ -134,7 +134,7 @@ namespace JoustModel {
                 Pterodactyl p = e as Pterodactyl;
 
                 // *** Add charging state to attack nearby player ***
-                if (p.coords.y > 300 && p.coords.y < 500 && p.coords.x > 600 && p.coords.x < 800) p.stateMachine.Change("charge");
+                if (p.coords.y > 300 && p.coords.y < 450 && p.coords.x > 600 && p.coords.x < 700) p.stateMachine.Change("charge");
 
                 // *** Add hitbox check to destroy pterodactyl ***
                 if (p.coords.y > 450 && p.coords.y < 525 && p.coords.x > 650 && p.coords.x < 800) p.stateMachine.Change("destroyed");
@@ -143,7 +143,7 @@ namespace JoustModel {
                     EnemyState enemySt = p.stateMachine.currentState as EnemyState;
                     switch (enemySt.Angle) {
                         case 270:
-                            if (chance % 10 < 3 || p.coords.y > 800) p.stateMachine.Change("flap");
+                            if (chance % 10 < 3 || p.coords.y > 700) p.stateMachine.Change("flap");
                             else if (chance % 2 == 0) p.stateMachine.Change("fall_right");
                             else p.stateMachine.Change("fall_left");
                             break;
@@ -163,6 +163,12 @@ namespace JoustModel {
                         default:
                             if (chance < 2 || p.coords.y < 10) p.stateMachine.Change("flap");
                             break;
+                    }
+                }
+                else if (p.stateMachine.currentState is PterodactylChargeState) {
+                    if (p.coords.y <= 300 && p.coords.y >= 450 && p.coords.x <= 600 && p.coords.x >= 700) {
+                        Trace.WriteLine("Change to Flap State");
+                        p.stateMachine.Change("flap");
                     }
                 }
             }

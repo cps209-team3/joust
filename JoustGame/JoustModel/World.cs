@@ -42,31 +42,22 @@ namespace JoustModel
         /// objects in the World and executes their Update method if a Buzzard, Egg,
         /// or a Pterodactyl.
         /// </summary>
-        public void UpdateAllEnemies_Position() {
+        public void TrackTime() {
             try {
-                foreach (WorldObject obj in objects) {
-
-
-                    // Used to keep track of the stage time for spawning the Pterodactyls
-                    stageTimeFrame++;
-                    if (stageTimeFrame == 500) {
-                        stageTimeSeconds++;
-                        stageTimeFrame = 0;
-                    }
-                    if (stageTimeSeconds == 60) {
-                        stageTimeMinutes++;
-                        stageTimeSeconds = 0;
-                    }
-                    if (stageTimeMinutes == PTERODACTYL_SPAWN_MINUTES) {
-                        stageTimeMinutes = 0;
-                        if (SpawnPterodactyl != null)
-                            SpawnPterodactyl(Instance, null);
-                    }
-
-                    Pterodactyl pterodactylObj = obj as Pterodactyl;
-                    if (pterodactylObj != null) {
-                        pterodactylObj.Update();
-                    }
+                // Used to keep track of the stage time for spawning the Pterodactyls
+                stageTimeFrame++;
+                if (stageTimeFrame == 200) {
+                    stageTimeSeconds++;
+                    stageTimeFrame = 0;
+                }
+                if (stageTimeSeconds == 60) {
+                    stageTimeMinutes++;
+                    stageTimeSeconds = 0;
+                }
+                if (stageTimeMinutes == PTERODACTYL_SPAWN_MINUTES) {
+                    stageTimeMinutes = 0;
+                    if (SpawnPterodactyl != null)
+                        SpawnPterodactyl(Instance, null);
                 }
             } catch (InvalidOperationException op) {
                 // This exception was being thrown when I added to the objects 
