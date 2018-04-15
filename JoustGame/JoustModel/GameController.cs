@@ -37,8 +37,9 @@ namespace JoustModel
             } 
         }
 
-        public void CalculateNumEnemies(int stage, ref int numBuzzards, ref int numPterodactyls)
+        public void CalculateNumEnemies(ref int numBuzzards, ref int numPterodactyls)
         {
+            int stage = WorldRef.stage;
             numBuzzards = stage + 3;
             if (stage >= 5)
             {

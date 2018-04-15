@@ -171,39 +171,46 @@ namespace JoustClient
             // called when game end conditions have been met
         }
 
-        private void Canvas_KeyDown(object sender, KeyEventArgs e)
+        public void NotifyWon(object sender, int e)
         {
-            switch (e.Key)
+            int stage = control.WorldRef.stage;
+            if (stage == 99)
             {
-                case Key.Escape:
-                    // display escape menu here
-                    break;
-                case Key.W:
-                case Key.Up:
-                    Task.Run(() => playerStateMachine.HandleInput("flap"));
-                    break;
-                case Key.A:
-                case Key.Left:
-                    Task.Run(() => playerStateMachine.HandleInput("left"));
-                    break;
-                case Key.D:
-                case Key.Right:
-                    Task.Run(() => playerStateMachine.HandleInput("right"));
-                    break;
-                default:
-                    break;
+                stage = 0;
             }
+            else
+            {
+                stage += 1;
+            }
+            control.WorldRef.stage = stage;
+            TextBlock EndStage = new TextBlock();
+            Canvas.SetTop(EndStage, 425);
+            EndStage.Height = 50;
+            EndStage.Foreground = new SolidColorBrush(Colors.White);
+            EndStage.Text = "WAVE CLEARED!";
+            canvas.Children.Add(EndStage);
+            Task.Run(() =>
+            {
+                Thread.Sleep(1000);
+                Dispatcher.Invoke(() => EndStage.Text = "3");
+                Thread.Sleep(1000);
+                Dispatcher.Invoke(() => EndStage.Text = "2");
+                Thread.Sleep(1000);
+                Dispatcher.Invoke(() => EndStage.Text = "1");
+                Thread.Sleep(1000);
+                Dispatcher.Invoke(() => EndStage.Text = String.Format("WAVE {0}", Convert.ToString(stage)));
+                Thread.Sleep(1000);
+                SpawnEnemies();
+            });
         }
 
         public void NewGame(object sender, EventArgs e)
         {
+            control.WorldRef.win += this.NotifyWon;
             flapLock = false;
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
-
-            // Load Map here
-
-            // Get stage num from controls once the proper screens are implemented
+            
             Ostrich o = InitiateWorldObject("Ostrich", 720, 450) as Ostrich;
             control.WorldRef.player = o;
             playerStateMachine = control.WorldRef.player.stateMachine;
@@ -213,11 +220,10 @@ namespace JoustClient
              *  purposes.
              */
 
-            int stage = 0;
-            control.WorldRef.stage = stage;
-            int numBuzzards = 0;
-            int numPterodactyls = 0;
-            control.CalculateNumEnemies(control.WorldRef.stage, ref numBuzzards, ref numPterodactyls);
+            // Get stage num from controls once the proper screens are implemented
+            control.WorldRef.stage = 0;
+
+            SpawnEnemies();
 
             InitiateWorldObject("Platform", 100, 300);
             InitiateWorldObject("Platform", 700, 500);
@@ -227,23 +233,30 @@ namespace JoustClient
             InitiateWorldObject("Respawn", 1100, 600);
             InitiateWorldObject("Respawn", 200, 600);
             InitiateWorldObject("Base", 375, 775);
-            
-            //for (int i = 0; i < numBuzzards; i++)
-            //{
-            //    InitiateWorldObject("Buzzard", 100, 300);
-            //}
 
-            //for (int i = 0; i < numPterodactyls; i++)
-            //{
-            //    InitiateWorldObject("Pterodactyl", 300, 300);
-            //}
-            
             updateTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(5), 
                 DispatcherPriority.Render,
                 UpdateTick,
                 Dispatcher.CurrentDispatcher);
             updateTimer.Start();
+        }
+
+        public void SpawnEnemies()
+        {
+            int numBuzzards = 0;
+            int numPterodactyls = 0;
+            control.CalculateNumEnemies(ref numBuzzards, ref numPterodactyls);
+
+            for (int i = 0; i < numBuzzards; i++)
+            {
+                InitiateWorldObject("Buzzard", 100, 300);
+            }
+
+            for (int i = 0; i < numPterodactyls; i++)
+            {
+                InitiateWorldObject("Pterodactyl", 300, 300);
+            }
         }
 
         public WorldObject InitiateWorldObject(string type, double x, double y)

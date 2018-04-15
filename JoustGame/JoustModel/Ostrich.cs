@@ -79,11 +79,8 @@ namespace JoustModel
             speed = Math.Sqrt(Math.Pow(xNew, 2) + Math.Pow(yNew, 2));
             angle = Math.Atan2(yNew, xNew) * 180 / Math.PI;
             if (speed > 1000) { speed = 1000; }
-            lock (oLock)
-            {
-                nSpeed = 0;
-                nAngle = 0;
-            }
+            nSpeed = 0;
+            nAngle = 0;
             //Console.WriteLine(yNew);
             //Console.WriteLine(xNew);
             //Console.WriteLine(yNew / xNew);
