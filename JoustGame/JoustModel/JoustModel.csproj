@@ -84,7 +84,6 @@
     <Compile Include="EmptyState.cs" />
     <Compile Include="PlaySounds.cs" />
     <Compile Include="Score.cs" />
-    <Compile Include="Hitbox.cs" />
     <Compile Include="Ostrich.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="Point.cs" />

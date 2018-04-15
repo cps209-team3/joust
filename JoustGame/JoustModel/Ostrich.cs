@@ -22,8 +22,8 @@ namespace JoustModel
 
         public Ostrich()
         {
-            hitbox.height = 75;
-            hitbox.width = 50;
+            height = 75;
+            width = 50;
             cheatMode = false;
             type = "Ostrich";
             oLock = "lock";
@@ -58,7 +58,14 @@ namespace JoustModel
         public override void Update()
         {
             // Check for collisions
-            CheckCollision();
+            Point collisionPoint = CheckCollision();
+            if (collisionPoint != null)
+            {
+                Console.WriteLine("Collision detected by ostrich at " + collisionPoint.x + "," + collisionPoint.y);
+            }
+            // This is returning where on the entity the collision is happening
+            
+            
             
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
@@ -98,8 +105,6 @@ namespace JoustModel
             //Console.WriteLine();
             coords.x += xNew;
             coords.y -= yNew;
-            hitbox.xPos = coords.x;
-            hitbox.yPos = coords.y;
 
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
 
