@@ -9,24 +9,26 @@ namespace JoustModel
 {
     public class Hitbox
     {
+
         public double width;
         public double height;
+        public double xPos;
+        public double yPos;
 
-        public Hitbox(int width, int height)
+        public Hitbox(double width, double height, double x, double y)
         {
             this.width = width;
             this.height = height;
+            xPos = x;
+            yPos = y;
         }
 
-        public Hitbox CheckCollisions()
+        public WorldObject CheckCollisions(WorldObject wo)
         {
-            foreach (WorldObject wo in World.Instance.objects)
-            {
-                // if hitboxes intersect return this one
-                if (false)
-                {
-                    return wo.hitbox;
-                }
+            if (xPos < wo.coords.x + wo.hitbox.width && xPos + width > wo.coords.x && yPos < wo.coords.y + wo.hitbox.height && height + yPos > wo.coords.y)
+            {   
+                // collision detected with "wo"
+                return wo;
             }
             // return null if no collisions
             return null;
@@ -36,6 +38,7 @@ namespace JoustModel
     [TestClass]
     public class HitboxTest
     {
+        /*
         [TestMethod]
         public void TestNoCollision()
         {
@@ -63,5 +66,6 @@ namespace JoustModel
             World.Instance.objects.Add(b);
             Assert.AreEqual(b.hitbox, a.hitbox.CheckCollisions());
         }
+        */
     }
 }

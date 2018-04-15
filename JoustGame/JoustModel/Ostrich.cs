@@ -21,6 +21,8 @@ namespace JoustModel
 
         public Ostrich()
         {
+            hitbox.height = 75;
+            hitbox.width = 50;
             type = "Ostrich";
             oLock = "lock";
             Value = 2000;
@@ -47,9 +49,12 @@ namespace JoustModel
             World.Instance.objects.Remove(this);
         }
 
+
         public override void Update()
         {
             // Check for collisions
+            CheckCollision();
+            
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
@@ -91,6 +96,8 @@ namespace JoustModel
             //Console.WriteLine();
             coords.x += xNew;
             coords.y -= yNew;
+            hitbox.xPos = coords.x;
+            hitbox.yPos = coords.y;
 
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
 

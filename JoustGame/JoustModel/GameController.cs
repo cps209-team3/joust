@@ -24,11 +24,14 @@ namespace JoustModel
                 foreach (WorldObject worldObject in WorldRef.objects)
                 {
                     Entity entity = worldObject as Entity;
+                    
                     if (entity != null)
                     {
+                        
                         entity.Update();
                         World.Instance.UpdateAllEnemies_Position();
                     }
+
                 }
             }
             catch (InvalidOperationException)

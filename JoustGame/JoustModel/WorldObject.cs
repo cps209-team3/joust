@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Shapes;
+using System.Drawing;
 
 namespace JoustModel
 {
@@ -11,7 +11,7 @@ namespace JoustModel
     {
         public Point coords = new Point(0,0);
         //public Hitbox hitbox;
-        public Rectangle hitbox;
+        public Hitbox hitbox = new Hitbox(0, 0, 0, 0);
         public string imagePath;
         public string type;
 

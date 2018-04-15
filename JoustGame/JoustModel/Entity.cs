@@ -13,13 +13,31 @@ namespace JoustModel
         public double angle;
         public double nSpeed;
         public double nAngle;
-        
+
         public abstract int Value { get; set; }
 
         public abstract void Die();
 
         public abstract void Update();
-    }
+
+        public void CheckCollision()
+        {
+            foreach (WorldObject wo in World.Instance.objects)
+            {
+                if (wo.ToString() != this.ToString()) // Don't collide with itself!
+                {
+                    WorldObject objHit = hitbox.CheckCollisions(wo);
+                    if (objHit != null)
+                    {
+                        // Collision detected!
+                        Console.WriteLine("Collision detected between " + this.ToString() + " and " + objHit.ToString());
+                    }
+                }
+
+            }
+        }
+    }    
+        
 
     [TestClass]
     public class EntityTest

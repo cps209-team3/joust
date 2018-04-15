@@ -30,6 +30,8 @@ namespace JoustModel
         public Buzzard()
         {
             // Initialize instance variables
+            hitbox.height = 75;
+            hitbox.width = 50;
             type = "Buzzard";
             Value = 500;
             speed = SPEED;
@@ -75,6 +77,9 @@ namespace JoustModel
         /// </summary>
         public override void Update()
         {
+            // Check Collision
+            CheckCollision();
+
             // Determine the next state
             state = EnemyState.GetNextState(this);
             state.Setup();

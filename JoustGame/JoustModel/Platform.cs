@@ -10,6 +10,8 @@ namespace JoustModel
     {
         public Platform()
         {
+            hitbox.width = 300;
+            hitbox.height = 30;
             type = "Platform";
             imagePath = "Images/Platform/platform_short1.png";
             World.Instance.objects.Add(this);
