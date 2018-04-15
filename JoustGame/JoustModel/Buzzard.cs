@@ -30,6 +30,7 @@ namespace JoustModel
         public Buzzard()
         {
             // Initialize instance variables
+            type = "Buzzard";
             Value = 500;
             speed = SPEED;
             angle = 0;

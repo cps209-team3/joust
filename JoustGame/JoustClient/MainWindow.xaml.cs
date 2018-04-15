@@ -39,7 +39,7 @@ namespace JoustClient
         {
             // This is only here for faster testing
             // If you need a different screen on window load, comment out the line below
-            //LoadGameView();
+            //NewGame();
 
             Title_Screen(null, EventArgs.Empty);
         }
@@ -204,6 +204,42 @@ namespace JoustClient
             });
         }
 
+        public void SaveGame(object sender, RoutedEventArgs e)
+        {
+            control.Save();
+        }
+        public void LoadGame(object sender, RoutedEventArgs e)
+        {
+            string fileName = "";
+            foreach (UIElement element in canvas.Children)
+            {
+                if ((element as FrameworkElement).Name == "LoadName")
+                {
+                    fileName = (element as TextBox).Text;
+                }
+            }
+            control.WorldRef.objects.Clear();
+            
+            control.Load(fileName);
+
+            // refresh method
+
+            canvas.Children.Clear();
+            StartGameScreen(sender, e);
+            foreach (WorldObject obj in control.WorldRef.objects)
+            {
+                // set player
+                if (obj.ToString() == "Ostrich")
+                {
+                    control.WorldRef.player = (obj as Ostrich);
+                    playerStateMachine = control.WorldRef.player.stateMachine;
+                    Console.WriteLine("player has been set");
+                }
+                WorldObjectControlFactory(obj);
+            }
+            // end refresh method
+        }
+
         public void NewGame(object sender, EventArgs e)
         {
             control.WorldRef.win += this.NotifyWon;
@@ -211,6 +247,11 @@ namespace JoustClient
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
             
+            StartGameScreen(sender, e);
+
+            // Load Map here
+
+            // Get stage num from controls once the proper screens are implemented
             Ostrich o = InitiateWorldObject("Ostrich", 720, 450) as Ostrich;
             control.WorldRef.player = o;
             playerStateMachine = control.WorldRef.player.stateMachine;
@@ -233,7 +274,7 @@ namespace JoustClient
             InitiateWorldObject("Respawn", 1100, 600);
             InitiateWorldObject("Respawn", 200, 600);
             InitiateWorldObject("Base", 375, 775);
-
+            
             updateTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(5), 
                 DispatcherPriority.Render,
@@ -286,6 +327,28 @@ namespace JoustClient
             }
 
             return btnReturn;
+        }
+
+        private void StartGameScreen(object sender, EventArgs e)
+        {
+            canvas.Children.Clear();
+            canvas.Background = Brushes.Black;
+            Button saveBtn = new Button();
+            saveBtn.Content = "Save";
+            saveBtn.Click += new RoutedEventHandler(SaveGame);
+            canvas.Children.Add(saveBtn);
+
+            TextBox loadName = new TextBox();
+            loadName.Name = "LoadName";
+            loadName.Text = "file2load";
+            loadName.Margin = new Thickness(0, 20, 0, 0);
+            canvas.Children.Add(loadName);
+
+            Button loadBtn = new Button();
+            loadBtn.Content = "Load";
+            loadBtn.Click += new RoutedEventHandler(LoadGame);
+            loadBtn.Margin = new Thickness(0, 40, 0, 0);
+            canvas.Children.Add(loadBtn);
         }
 
         private void Title_Screen(object sender, EventArgs e)
