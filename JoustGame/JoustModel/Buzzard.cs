@@ -60,6 +60,7 @@ namespace JoustModel
             imagePath = "Images/Enemy/mik_" + color + "_stand.png";
             coords = new Point(0, 0);
             World.Instance.objects.Add(this);
+            World.Instance.enemies.Add(this);
         }
 
         /// <summary>
@@ -69,6 +70,8 @@ namespace JoustModel
         public override void Die()
         {
             World.Instance.objects.Remove(this);
+            World.Instance.enemies.Remove(this);
+            World.Instance.CheckWin();
         }
 
         /// <summary>

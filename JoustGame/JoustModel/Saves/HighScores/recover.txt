@@ -1,3 +1,0 @@
-50, sandy
-100, sandeep
-234, hamilton
