@@ -108,7 +108,6 @@ namespace JoustModel
 
         public void MoveLeftRight()
         {
-            
             if (leftDown && !rightDown)
             {
                 Task.Run(() => stateMachine.HandleInput("left"));

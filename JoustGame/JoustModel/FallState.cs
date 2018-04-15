@@ -20,7 +20,7 @@ namespace JoustModel
 
         public void Update()
         {
-            ostrich.nSpeed = 100;
+            ostrich.nSpeed = 200;
             ostrich.nAngle = 270;
             ostrich.MoveLeftRight();
         }
@@ -33,12 +33,12 @@ namespace JoustModel
                     stateMachine.Change("flap");
                     break;
                 case "left":
-                    ostrich.nSpeed = 600;
-                    ostrich.nAngle = 180;
+                    ostrich.nSpeed = 632;
+                    ostrich.nAngle = 198;
                     break;
                 case "right":
-                    ostrich.nSpeed = 600;
-                    ostrich.nAngle = 0;
+                    ostrich.nSpeed = 632;
+                    ostrich.nAngle = 341;
                     break;
                 default:
                     break;
