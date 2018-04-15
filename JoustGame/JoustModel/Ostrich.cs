@@ -18,9 +18,11 @@ namespace JoustModel
         public string oLock;
         public bool leftDown;
         public bool rightDown;
+        public bool cheatMode;
 
         public Ostrich()
         {
+            cheatMode = false;
             type = "Ostrich";
             oLock = "lock";
             Value = 2000;
@@ -44,7 +46,10 @@ namespace JoustModel
 
         public override void Die()
         {
-            World.Instance.objects.Remove(this);
+            if (!cheatMode)
+            {
+                World.Instance.objects.Remove(this);
+            }
         }
 
         public override void Update()

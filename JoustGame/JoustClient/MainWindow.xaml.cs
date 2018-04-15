@@ -29,6 +29,7 @@ namespace JoustClient
         public DispatcherTimer updateTimer;
         public StateMachine playerStateMachine;
         public bool flapLock;
+        public bool cheatMode;
 
         public MainWindow()
         {
@@ -255,6 +256,10 @@ namespace JoustClient
             Ostrich o = InitiateWorldObject("Ostrich", 720, 450) as Ostrich;
             control.WorldRef.player = o;
             playerStateMachine = control.WorldRef.player.stateMachine;
+            if (cheatMode)
+            {
+                o.cheatMode = true;
+            }
 
             /*  Comment:    Clayton Cockrell
              *  Pterodactyls start spawning at stage 5. stage is set this for testing
