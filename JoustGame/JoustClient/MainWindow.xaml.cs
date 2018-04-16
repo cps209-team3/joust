@@ -210,6 +210,10 @@ namespace JoustClient
             control.WorldRef.stage = stage;
             TextBlock EndStage = new TextBlock();
             Canvas.SetTop(EndStage, 425);
+            Canvas.SetLeft(EndStage, 550);
+            Canvas.SetLeft(EndStage, 790);
+            EndStage.HorizontalAlignment = HorizontalAlignment.Center;
+            EndStage.FontSize = 32;
             EndStage.Height = 50;
             EndStage.Foreground = new SolidColorBrush(Colors.White);
             EndStage.Text = "WAVE CLEARED!";
@@ -226,6 +230,7 @@ namespace JoustClient
                 Dispatcher.Invoke(() => EndStage.Text = String.Format("WAVE {0}", Convert.ToString(stage)));
                 Thread.Sleep(1000);
                 SpawnEnemies();
+                canvas.Children.Remove(EndStage);
             });
         }
 
