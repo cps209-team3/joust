@@ -47,6 +47,11 @@ namespace JoustModel
 
         public void Enter() { }
         public void Exit() { }
+
+        public override string ToString()
+        {
+            return "fall";
+        }
     }
 }
 

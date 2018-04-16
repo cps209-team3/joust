@@ -26,7 +26,6 @@ namespace JoustModel
             width = 50;
             cheatMode = false;
             type = "Ostrich";
-            oLock = "lock";
             Value = 2000;
             lives = 3;
             score = 0;
@@ -69,9 +68,7 @@ namespace JoustModel
                 {
                     stateMachine.Change("stand");
                 }
-
             }
-           
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
@@ -83,12 +80,12 @@ namespace JoustModel
             double yNew = (ySpeed + nYSpeed) / 100;
             speed = Math.Sqrt(Math.Pow(xNew, 2) + Math.Pow(yNew, 2));
             angle = Math.Atan2(yNew, xNew) * 180 / Math.PI;
-            if (speed > 1000) { speed = 1000; }
+            if (speed > 1000 && stateMachine.currentState.ToString() == "fall") { speed = 1000; }
+            else if (speed > 1200 && stateMachine.currentState.ToString() == "flap") { speed = 1200; }
             nSpeed = 0;
             nAngle = 0;
             coords.x += xNew;
             coords.y -= yNew;
-
 
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
 

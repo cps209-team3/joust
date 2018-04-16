@@ -25,11 +25,11 @@ namespace JoustModel
                     stateMachine.Change("flap");
                     break;
                 case "left":
-                    ostrich.nSpeed = 500;
+                    ostrich.nSpeed = 600;
                     ostrich.nAngle = 180;
                     break;
                 case "right":
-                    ostrich.nSpeed = 500;
+                    ostrich.nSpeed = 600;
                     ostrich.nAngle = 0;
                     break;
                 default:
@@ -37,7 +37,12 @@ namespace JoustModel
             }
         }
 
-        public void Enter() { /* Play animation */ }
+        public void Enter() { }
         public void Exit() { }
+
+        public override string ToString()
+        {
+            return "stand";
+        }
     }
 }

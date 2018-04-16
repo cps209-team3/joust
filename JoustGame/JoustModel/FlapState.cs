@@ -31,12 +31,12 @@ namespace JoustModel
             switch (command)
             {
                 case "left":
-                    ostrich.nSpeed = 600;
-                    ostrich.nAngle = 180;
+                    ostrich.nSpeed = 1166;
+                    ostrich.nAngle = 120;
                     break;
                 case "right":
-                    ostrich.nSpeed = 600;
-                    ostrich.nAngle = 0;
+                    ostrich.nSpeed = 1166;
+                    ostrich.nAngle = 60;
                     break;
                 default:
                     break;
@@ -46,5 +46,10 @@ namespace JoustModel
         public void Enter() { }
 
         public void Exit() { }
+
+        public override string ToString()
+        {
+            return "flap";
+        }
     }
 }
