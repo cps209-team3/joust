@@ -57,45 +57,21 @@ namespace JoustModel
 
         public override void Update()
         {
-            // Check for collisions
             CheckCollision();
-            
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
-            //Console.WriteLine("speed: " + Convert.ToString(speed));
-            //Console.WriteLine("angle: " + Convert.ToString(angle));
-            //Console.WriteLine("cos: " + Convert.ToString(Math.Cos(angle * Math.PI / 180)));
-            //Console.WriteLine("sin: " + Convert.ToString(Math.Sin(angle * Math.PI / 180)));
-            //Console.WriteLine(" ");
             double nXSpeed;
             double nYSpeed;
             nXSpeed = nSpeed * (Math.Cos(nAngle * Math.PI / 180));
             nYSpeed = nSpeed * (Math.Sin(nAngle * Math.PI / 180));
-            //Console.WriteLine(speed);
-            //Console.WriteLine(angle);
-            //Console.WriteLine(acceleration);
-            //Console.WriteLine(accelerationAngle);
-            //Console.WriteLine();
             double xNew = (xSpeed + nXSpeed) / 100;
             double yNew = (ySpeed + nYSpeed) / 100;
-            //Console.WriteLine(xSpeed);
-            //Console.WriteLine(xAcceleration);
-            //Console.WriteLine(ySpeed);
-            //Console.WriteLine(yAcceleration);
-            //Console.WriteLine(" ");
-            //Console.WriteLine(xNew);
-            //Console.WriteLine(yNew);
-            //Console.WriteLine(" ");
             speed = Math.Sqrt(Math.Pow(xNew, 2) + Math.Pow(yNew, 2));
             angle = Math.Atan2(yNew, xNew) * 180 / Math.PI;
             if (speed > 1000) { speed = 1000; }
             nSpeed = 0;
             nAngle = 0;
-            //Console.WriteLine(yNew);
-            //Console.WriteLine(xNew);
-            //Console.WriteLine(yNew / xNew);
-            //Console.WriteLine();
             coords.x += xNew;
             coords.y -= yNew;
             hitbox.xPos = coords.x;

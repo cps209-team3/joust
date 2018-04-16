@@ -16,7 +16,7 @@ namespace JoustModel
 
         public void Update()
         {
-            ostrich.nSpeed = 800;
+            ostrich.nSpeed = 1000;
             ostrich.nAngle = 90;
             Task.Run(() =>
             {
