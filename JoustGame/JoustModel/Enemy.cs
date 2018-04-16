@@ -15,11 +15,19 @@ namespace JoustModel {
         {
             // Check Collision
             WorldObject objHit = CheckCollision();
-            if (objHit != null)
+            if (objHit != null && stateMachine.currentState.ToString() != "JoustModel.BuzzardFleeingState") // special case for sleeing, fix later. 
             {
                 if (objHit.ToString() == "Ostrich")
                 {
-                    this.stateMachine.Change("flee");
+                    if (this.coords.y > objHit.coords.y)
+                    {
+                        this.stateMachine.Change("flee");
+                    }
+                    else
+                    {
+                        (objHit as Ostrich).Die();
+                    }
+                    
                 }
                 else
                 {

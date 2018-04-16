@@ -10,7 +10,6 @@ namespace JoustModel
     public abstract class WorldObject : ISerializable
     {
         public Point coords = new Point(0,0);
-        //public Hitbox hitbox;
         public int height;
         public int width;
         public string imagePath;
