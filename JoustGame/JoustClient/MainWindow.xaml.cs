@@ -32,6 +32,11 @@ namespace JoustClient
         public static bool flapLock;
         public bool cheatMode;
 
+        // This makes flying create fewer threads
+        // to change the animation which makes the
+        // game run better
+        private OstrichControl ostrichCtrl;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -63,7 +68,9 @@ namespace JoustClient
                     Task.Run(() =>
                     {
                         PlaySounds.Instance.Play_Flap();
+                        Dispatcher.Invoke(() => ostrichCtrl.Source = new BitmapImage(new Uri("Sprites/player_fly2.png", UriKind.Relative)));
                         Thread.Sleep(100);
+                        Dispatcher.Invoke(() => ostrichCtrl.Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative)));
                         flapLock = false;
                     });
                     break;
@@ -109,8 +116,8 @@ namespace JoustClient
                 case "Ostrich":
                     Ostrich o = worldObject as Ostrich;
                     i = new OstrichControl(o.imagePath);
-                    OstrichControl oC = i as OstrichControl;
-                    o.ostrichMoved += oC.NotifyMoved;
+                    ostrichCtrl = i as OstrichControl;
+                    o.ostrichMoved += ostrichCtrl.NotifyMoved;
                     break;
                 case "Buzzard":
                     Buzzard b = worldObject as Buzzard;
@@ -251,7 +258,7 @@ namespace JoustClient
             }
 
             // Get stage num from controls once the proper screens are implemented
-            control.WorldRef.stage = 0;
+            control.WorldRef.stage = 5;
 
             SpawnEnemies();
 
