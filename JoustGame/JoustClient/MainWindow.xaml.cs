@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Drawing;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -29,6 +30,7 @@ namespace JoustClient
         public DispatcherTimer updateTimer;
         public StateMachine playerStateMachine;
         public static bool flapLock;
+        public bool cheatMode;
 
         public MainWindow()
         {
@@ -39,7 +41,7 @@ namespace JoustClient
         {
             // This is only here for faster testing
             // If you need a different screen on window load, comment out the line below
-            //LoadGameView();
+            //NewGame();
 
             Title_Screen(null, EventArgs.Empty);
         }
@@ -159,11 +161,83 @@ namespace JoustClient
             // called when game end conditions have been met
         }
 
+        public void NotifyWon(object sender, int e)
+        {
+            int stage = control.WorldRef.stage;
+            if (stage == 99)
+            {
+                stage = 0;
+            }
+            else
+            {
+                stage += 1;
+            }
+            control.WorldRef.stage = stage;
+            TextBlock EndStage = new TextBlock();
+            Canvas.SetTop(EndStage, 425);
+            EndStage.Height = 50;
+            EndStage.Foreground = new SolidColorBrush(Colors.White);
+            EndStage.Text = "WAVE CLEARED!";
+            canvas.Children.Add(EndStage);
+            Task.Run(() =>
+            {
+                Thread.Sleep(1000);
+                Dispatcher.Invoke(() => EndStage.Text = "3");
+                Thread.Sleep(1000);
+                Dispatcher.Invoke(() => EndStage.Text = "2");
+                Thread.Sleep(1000);
+                Dispatcher.Invoke(() => EndStage.Text = "1");
+                Thread.Sleep(1000);
+                Dispatcher.Invoke(() => EndStage.Text = String.Format("WAVE {0}", Convert.ToString(stage)));
+                Thread.Sleep(1000);
+                SpawnEnemies();
+            });
+        }
+
+        public void SaveGame(object sender, RoutedEventArgs e)
+        {
+            control.Save();
+        }
+        public void LoadGame(object sender, RoutedEventArgs e)
+        {
+            string fileName = "";
+            foreach (UIElement element in canvas.Children)
+            {
+                if ((element as FrameworkElement).Name == "LoadName")
+                {
+                    fileName = (element as TextBox).Text;
+                }
+            }
+            control.WorldRef.objects.Clear();
+            
+            control.Load(fileName);
+
+            // refresh method
+
+            canvas.Children.Clear();
+            StartGameScreen(sender, e);
+            foreach (WorldObject obj in control.WorldRef.objects)
+            {
+                // set player
+                if (obj.ToString() == "Ostrich")
+                {
+                    control.WorldRef.player = (obj as Ostrich);
+                    playerStateMachine = control.WorldRef.player.stateMachine;
+                    Console.WriteLine("player has been set");
+                }
+                WorldObjectControlFactory(obj);
+            }
+            // end refresh method
+        }
+
         public void NewGame(object sender, EventArgs e)
         {
+            control.WorldRef.win += this.NotifyWon;
             flapLock = false;
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
+            
+            StartGameScreen(sender, e);
 
             // Load Map here
 
@@ -171,12 +245,15 @@ namespace JoustClient
             Ostrich o = InitiateWorldObject("Ostrich", 720, 450) as Ostrich;
             control.WorldRef.player = o;
             playerStateMachine = control.WorldRef.player.stateMachine;
+            if (cheatMode)
+            {
+                o.cheatMode = true;
+            }
 
-            int stage = 5;
-            control.WorldRef.stage = stage;
-            int numBuzzards = 0;
-            int numPterodactyls = 0;
-            control.CalculateNumEnemies(control.WorldRef.stage, ref numBuzzards, ref numPterodactyls);
+            // Get stage num from controls once the proper screens are implemented
+            control.WorldRef.stage = 0;
+
+            SpawnEnemies();
 
             InitiateWorldObject("Platform", 100, 300);
             InitiateWorldObject("Platform", 700, 500);
@@ -187,6 +264,20 @@ namespace JoustClient
             InitiateWorldObject("Respawn", 200, 600);
             InitiateWorldObject("Base", 375, 775);
             
+            updateTimer = new DispatcherTimer(
+                TimeSpan.FromMilliseconds(5), 
+                DispatcherPriority.Render,
+                UpdateTick,
+                Dispatcher.CurrentDispatcher);
+            updateTimer.Start();
+        }
+
+        public void SpawnEnemies()
+        {
+            int numBuzzards = 0;
+            int numPterodactyls = 0;
+            control.CalculateNumEnemies(ref numBuzzards, ref numPterodactyls);
+
             for (int i = 0; i < numBuzzards; i++)
             {
                 InitiateWorldObject("Buzzard", 100, 300);
@@ -194,7 +285,6 @@ namespace JoustClient
 
             for (int i = 0; i < numPterodactyls; i++)
             {
-                //InitiateWorldObject("Pterodactyl", 300, 300);
                 /*  Clayton Cockrell
                  *  Instead of initiating the Pterodactyls to start at the beginning of
                  *  the game, Create a PterodactylControl that handles being notified when
@@ -205,13 +295,6 @@ namespace JoustClient
                 World.Instance.SpawnPterodactyl += pCtrl.NotifySpawn;
                 canvas.Children.Add(newImg);
             }
-            
-            updateTimer = new DispatcherTimer(
-                TimeSpan.FromMilliseconds(5), 
-                DispatcherPriority.Render,
-                UpdateTick,
-                Dispatcher.CurrentDispatcher);
-            updateTimer.Start();
         }
 
         public WorldObject InitiateWorldObject(string type, double x, double y)
@@ -241,6 +324,28 @@ namespace JoustClient
             }
 
             return btnReturn;
+        }
+
+        private void StartGameScreen(object sender, EventArgs e)
+        {
+            canvas.Children.Clear();
+            canvas.Background = Brushes.Black;
+            Button saveBtn = new Button();
+            saveBtn.Content = "Save";
+            saveBtn.Click += new RoutedEventHandler(SaveGame);
+            canvas.Children.Add(saveBtn);
+
+            TextBox loadName = new TextBox();
+            loadName.Name = "LoadName";
+            loadName.Text = "file2load";
+            loadName.Margin = new Thickness(0, 20, 0, 0);
+            canvas.Children.Add(loadName);
+
+            Button loadBtn = new Button();
+            loadBtn.Content = "Load";
+            loadBtn.Click += new RoutedEventHandler(LoadGame);
+            loadBtn.Margin = new Thickness(0, 40, 0, 0);
+            canvas.Children.Add(loadBtn);
         }
 
         private void Title_Screen(object sender, EventArgs e)

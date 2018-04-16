@@ -8,7 +8,7 @@ using System.IO;
 namespace JoustModel
 {
 
-    public class Score : ISerializable
+    public class Score
     {
         // when the user loses the game, a screen pops 
         // up to ask for a username. using the game's score
@@ -30,6 +30,13 @@ namespace JoustModel
             return this.points.ToString() + " || " + this.username.ToString();
         }
 
+        public override string ToString()
+        {
+            // for ease of checking debugging variable values
+
+            return this.points.ToString() + " || " + this.username.ToString();
+        }
+
         public static bool Equals_Mine(Score expected, Score actual)
         {
 
@@ -42,12 +49,6 @@ namespace JoustModel
                 return false;
             }
         }
-
-        public void Deserialize(string data) {
-            // Implement the Deserialization of scores
-            throw new NotImplementedException();
-        }
-        
     }
 
 }

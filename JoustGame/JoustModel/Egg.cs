@@ -27,6 +27,9 @@ namespace JoustModel
         public Egg()
         {
             // Initialize variables
+            hitbox.height = 30;
+            hitbox.width = 30;
+            type = "Egg";
             Value = 250;
             updateGraphic = 0;
             seconds = 0;
@@ -46,6 +49,7 @@ namespace JoustModel
             imagePath = "Images/Enemy/egg1.png";
             coords = new Point(0, 0);
             World.Instance.objects.Add(this);
+            World.Instance.enemies.Add(this);
         }
 
         /// <summary>
@@ -55,6 +59,8 @@ namespace JoustModel
         public override void Die()
         {
             World.Instance.objects.Remove(this);
+            World.Instance.enemies.Remove(this);
+            World.Instance.CheckWin();
         }
 
         /// <summary>
@@ -63,6 +69,9 @@ namespace JoustModel
         /// </summary>
         public override void Update()
         {
+            // Check Collision
+            CheckCollision();
+
             // Determine the next state
             EnemyState.GetNextState(this);
             stateMachine.currentState.Update();

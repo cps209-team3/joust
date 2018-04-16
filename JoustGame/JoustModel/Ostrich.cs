@@ -18,9 +18,14 @@ namespace JoustModel
         public string oLock;
         public bool leftDown;
         public bool rightDown;
+        public bool cheatMode;
 
         public Ostrich()
         {
+            hitbox.height = 75;
+            hitbox.width = 50;
+            cheatMode = false;
+            type = "Ostrich";
             oLock = "lock";
             Value = 2000;
             lives = 3;
@@ -43,12 +48,18 @@ namespace JoustModel
 
         public override void Die()
         {
-            World.Instance.objects.Remove(this);
+            if (!cheatMode)
+            {
+                World.Instance.objects.Remove(this);
+            }
         }
+
 
         public override void Update()
         {
             // Check for collisions
+            CheckCollision();
+            
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
@@ -79,17 +90,16 @@ namespace JoustModel
             speed = Math.Sqrt(Math.Pow(xNew, 2) + Math.Pow(yNew, 2));
             angle = Math.Atan2(yNew, xNew) * 180 / Math.PI;
             if (speed > 1000) { speed = 1000; }
-            lock (oLock)
-            {
-                nSpeed = 0;
-                nAngle = 0;
-            }
+            nSpeed = 0;
+            nAngle = 0;
             //Console.WriteLine(yNew);
             //Console.WriteLine(xNew);
             //Console.WriteLine(yNew / xNew);
             //Console.WriteLine();
             coords.x += xNew;
             coords.y -= yNew;
+            hitbox.xPos = coords.x;
+            hitbox.yPos = coords.y;
 
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
 
@@ -98,7 +108,6 @@ namespace JoustModel
 
         public void MoveLeftRight()
         {
-            
             if (leftDown && !rightDown)
             {
                 Task.Run(() => stateMachine.HandleInput("left"));

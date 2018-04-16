@@ -31,6 +31,9 @@ namespace JoustModel
         public Buzzard()
         {
             // Initialize instance variables
+            hitbox.height = 75;
+            hitbox.width = 50;
+            type = "Buzzard";
             Value = 500;
             speed = SPEED;
             angle = 0;
@@ -73,6 +76,7 @@ namespace JoustModel
             imagePath = "Images/Enemy/mik_" + color + "_stand.png";
             coords = new Point(0, 0);
             World.Instance.objects.Add(this);
+            World.Instance.enemies.Add(this);
         }
 
         /// <summary>
@@ -82,6 +86,8 @@ namespace JoustModel
         public override void Die()
         {
             World.Instance.objects.Remove(this);
+            World.Instance.enemies.Remove(this);
+            World.Instance.CheckWin();
         }
 
         /// <summary>
@@ -90,6 +96,9 @@ namespace JoustModel
         /// </summary>
         public override void Update()
         {
+            // Check Collision
+            CheckCollision();
+
             // Determine the next state
             EnemyState.GetNextState(this);
             stateMachine.currentState.Update();

@@ -8,9 +8,11 @@ namespace JoustModel
     {
         // Event handler to notify the view
         public event EventHandler SpawnPterodactyl;
+        public event EventHandler<int> win;
 
         // Public instance variables
         public List<WorldObject> objects;
+        public List<Enemy> enemies;
         public Ostrich player;
         public int stage;
 
@@ -26,12 +28,21 @@ namespace JoustModel
         private World()
         {
             objects = new List<WorldObject>();
+            enemies = new List<Enemy>();
         }
 
         private static World instance = new World();
         public static World Instance
         {
             get { return instance; }
+        }
+
+        public void CheckWin()
+        {
+            if (enemies.Count == 0 && win != null)
+            {
+                win(this, 0);
+            }
         }
 
         /// <summary>

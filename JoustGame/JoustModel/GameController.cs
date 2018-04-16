@@ -21,13 +21,13 @@ namespace JoustModel
                 foreach (WorldObject worldObject in WorldRef.objects)
                 {
                     Entity entity = worldObject as Entity;
-
+                    
                     if (entity != null)
                     {
-                        Trace.WriteLine(entity.GetType());
                         entity.Update();
                         World.Instance.TrackTime();
                     }
+
                 }
             }
             catch (InvalidOperationException)
@@ -36,8 +36,9 @@ namespace JoustModel
             } 
         }
 
-        public void CalculateNumEnemies(int stage, ref int numBuzzards, ref int numPterodactyls)
+        public void CalculateNumEnemies(ref int numBuzzards, ref int numPterodactyls)
         {
+            int stage = WorldRef.stage;
             numBuzzards = stage + 3;
             if (stage >= 5)
             {
