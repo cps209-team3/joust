@@ -58,16 +58,20 @@ namespace JoustModel
         public override void Update()
         {
             // Check for collisions
-            Point collisionPoint = CheckCollision();
-            if (collisionPoint != null)
+            WorldObject objHit = CheckCollision();
+            if (objHit != null)
             {
-                coords.x -= collisionPoint.x;
-                coords.y -= collisionPoint.y;
-                if (collisionPoint.y > 0)
+                Point minTV = FindMinTV(objHit);
+                Console.WriteLine("Ostrich has detected a collision");
+                coords.x -= minTV.x;
+                coords.y -= minTV.y;
+                if (minTV.y > 0)
                 {
                     stateMachine.Change("stand");
                 }
+
             }
+           
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
