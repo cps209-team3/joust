@@ -30,8 +30,7 @@ namespace JoustClient
         public DispatcherTimer updateTimer;
         public StateMachine playerStateMachine;
         public bool flapLock;
-        public bool cheatMode;
-        public bool cheat_on = false;
+        public bool cheatMode = false;
         public bool controls_on = false;
         public TextBox diff = new TextBox();
 
@@ -267,6 +266,18 @@ namespace JoustClient
 
         public void NewGame(object sender, EventArgs e)
         {
+            // switched bool to activate controls
+            controls_on = true;
+
+            // difficulty setting
+            int difficulty = 0;
+            bool result = Int32.TryParse(diff.Text, out difficulty);
+            if (difficulty < 0)
+            {
+                difficulty = 0;
+            }
+            control.WorldRef.stage = difficulty;
+
             control.WorldRef.win += this.NotifyWon;
             flapLock = false;
             canvas.Children.Clear();
@@ -346,12 +357,7 @@ namespace JoustClient
         // Title screens
         private void StartGameScreen(object sender, EventArgs e)
         {
-            // switched bool to activate controls
-            controls_on = true;
-
-            // difficulty setting
-            int difficulty = 0;
-            bool result = Int32.TryParse(diff.Text, out difficulty);
+            
 
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
@@ -480,19 +486,25 @@ namespace JoustClient
 
             Button cheat = Make_Button("CHEAT OFF", 350.0, Cheat_Toggle);
             cheat.Height = 50;
-            cheat_on = false;
+            cheatMode = false;
 
-            // NO ERROR HANDLING FOR DIFFICULTY
+
+            TextBlock descrip = Make_TextBlock(425, 620, 50, 200);
+            descrip.Text = "Set stage:{0-99}";
+            descrip.Height = 40;
+            descrip.Width = 200;
+            descrip.TextAlignment = TextAlignment.Center;
+
+            Canvas.SetLeft(diff, 620);
+            Canvas.SetTop(diff, 475);
             diff.Height = 50;
             diff.Width = 200;
-            Canvas.SetLeft(diff, 620);
-            Canvas.SetTop(diff, 400);
             diff.Text = "0";
             diff.FontSize = 40;
             diff.TextAlignment = TextAlignment.Center;
             diff.FontFamily = new FontFamily("Century Gothic");
             diff.BorderBrush = Brushes.Red;
-            diff.MaxLength = 1;
+            diff.MaxLength = 2;
             canvas.Children.Add(diff);
         }
 
@@ -500,15 +512,15 @@ namespace JoustClient
         {
             Button sent = sender as Button;
 
-            if (cheat_on == true)
+            if (cheatMode == true)
             {
-                cheat_on = false;
+                cheatMode = false;
                 sent.Content = "CHEAT OFF";
                 sent.Background = Brushes.Yellow;
             }
             else
             {
-                cheat_on = true;
+                cheatMode = true;
                 sent.Content = "CHEAT ON";
                 sent.Background = Brushes.Orange;
             }
