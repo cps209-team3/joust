@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JoustModel
 {
@@ -53,38 +50,22 @@ namespace JoustModel
         /// objects in the World and executes their Update method if a Buzzard, Egg,
         /// or a Pterodactyl.
         /// </summary>
-        public void UpdateAllEnemies_Position() {
+        public void TrackTime() {
             try {
-                foreach (WorldObject obj in objects) {
-                    Buzzard buzzardObj = obj as Buzzard;
-                    if (buzzardObj != null) {
-                        buzzardObj.Update();
-                    }
-                    Egg eggObj = obj as Egg;
-                    if (eggObj != null) {
-                        eggObj.Update();
-                    }
-
-                    // Used to keep track of the stage time for spawning the Pterodactyls
-                    stageTimeFrame++;
-                    if (stageTimeFrame == 500) {
-                        stageTimeSeconds++;
-                        stageTimeFrame = 0;
-                    }
-                    if (stageTimeSeconds == 60) {
-                        stageTimeMinutes++;
-                        stageTimeSeconds = 0;
-                    }
-                    if (stageTimeMinutes == PTERODACTYL_SPAWN_MINUTES) {
-                        stageTimeMinutes = 0;
-                        if (SpawnPterodactyl != null)
-                            SpawnPterodactyl(Instance, null);
-                    }
-
-                    Pterodactyl pterodactylObj = obj as Pterodactyl;
-                    if (pterodactylObj != null) {
-                        pterodactylObj.Update();
-                    }
+                // Used to keep track of the stage time for spawning the Pterodactyls
+                stageTimeFrame++;
+                if (stageTimeFrame == 300) {
+                    stageTimeSeconds++;
+                    stageTimeFrame = 0;
+                }
+                if (stageTimeSeconds == 60) {
+                    stageTimeMinutes++;
+                    stageTimeSeconds = 0;
+                }
+                if (stageTimeMinutes == PTERODACTYL_SPAWN_MINUTES) {
+                    stageTimeMinutes = 0;
+                    if (SpawnPterodactyl != null)
+                        SpawnPterodactyl(Instance, null);
                 }
             } catch (InvalidOperationException op) {
                 // This exception was being thrown when I added to the objects 

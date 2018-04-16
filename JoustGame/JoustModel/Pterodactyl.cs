@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JoustModel
@@ -13,9 +14,10 @@ namespace JoustModel
 
         // Public property Value (used to determine points awarded upon destroying)
         public override int Value { get; set; }
-        
+
+        // Public instance variables
+        public bool charging;
         // Private instance variables
-        private bool charging;
         private const double SPEED = 6;
         private const double TERMINAL_VELOCITY = 7;
         private double prevAngle;
@@ -38,7 +40,19 @@ namespace JoustModel
             chargeTime = 0;
             dieAnimateTime = 0;
             // Start out in falling state
-            state = new EnemyFallingState() { StateEnemy = this, Angle = (int)angle };
+            stateMachine = new StateMachine();
+            EnemyFlappingState flap = new EnemyFlappingState(this) { Angle = 90 };
+            stateMachine.stateDict.Add("flap", flap);
+            stateMachine.stateDict.Add("flap_right", new EnemyFlappingState(this) { Angle = 45 });
+            stateMachine.stateDict.Add("flap_left", new EnemyFlappingState(this) { Angle = 135 });
+            stateMachine.stateDict.Add("fall", new EnemyFallingState(this) { Angle = 270 });
+            stateMachine.stateDict.Add("fall_right", new EnemyFallingState(this) { Angle = 315 });
+            stateMachine.stateDict.Add("fall_left", new EnemyFallingState(this) { Angle = 225 });
+            stateMachine.stateDict.Add("charge", new PterodactylChargeState(this));
+            stateMachine.stateDict.Add("destroyed", new PterodactylDestroyedState(this));
+
+            stateMachine.currentState = flap;
+
             imagePath = "Images/Enemy/pterodactyl_fly1.png";
             coords = new Point(0, 0);
             World.Instance.objects.Add(this);
@@ -67,25 +81,25 @@ namespace JoustModel
 
             if (!charging) {
                 // Determine the next state
-                state = EnemyState.GetNextState(this);
-                state.Setup();
+                EnemyState.GetNextState(this);
+                stateMachine.currentState.Update();
             }
 
-            if (state is EnemyFlappingState) {
+            if (stateMachine.currentState is EnemyFlappingState) {
                 // "Gravity" purposes
                 if (speed > TERMINAL_VELOCITY) {
                     if (prevAngle == 225 || prevAngle == 270 || prevAngle == 315) speed = 0.05;
                     else speed = TERMINAL_VELOCITY;
                 }
             }
-            else if (state is EnemyFallingState) {
+            else if (stateMachine.currentState is EnemyFallingState) {
                 // "Gravity" purposes
                 if (speed > TERMINAL_VELOCITY) {
                     if (prevAngle == 45 || prevAngle == 90 || prevAngle == 135) speed = 0.05;
                     else speed = TERMINAL_VELOCITY;
                 }
             }
-            else if (state is PterodactylDestroyedState) {
+            else if (stateMachine.currentState is PterodactylDestroyedState) {
                 // Slow the last 2 frames of the destroyed pterodactyl
                 dieAnimateTime++;
                 updateGraphicRate = 10;
@@ -95,12 +109,13 @@ namespace JoustModel
                     Die();
                 }
             }
-            else if (state is PterodactylChargeState) {
+            else if (stateMachine.currentState is PterodactylChargeState) {
                 // Don't allow the state to change when charging
+                Trace.WriteLine("Charging: " + chargeTime);
                 charging = true;
                 chargeTime++;
                 speed = 10;
-                if (chargeTime > 40) {
+                if (chargeTime > 50) {
                     charging = false;
                     chargeTime = 0;
                 }

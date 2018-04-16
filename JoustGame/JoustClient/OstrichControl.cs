@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,10 +19,15 @@ namespace JoustClient
 {
     public class OstrichControl : WorldObjectControl
     {
+        private string currentMove;
+        private static string THE_LOCK = "lockme";
         public OstrichControl(string imagePath) : base(imagePath)
         {
             Height = 75;
             Width = 50;
+            lock (THE_LOCK) {
+                currentMove = "Sprites/player_stand.png";
+            }
         }
 
         public void NotifyMoved(object sender, int e)
@@ -29,6 +35,41 @@ namespace JoustClient
             Ostrich o = sender as Ostrich;
             Canvas.SetTop(this, o.coords.y);
             Canvas.SetLeft(this, o.coords.x);
+
+            if (o.leftDown) LayoutTransform = new ScaleTransform() { ScaleX = -1 };
+            else if (o.rightDown) LayoutTransform = new ScaleTransform() { ScaleX = 1 };
+
+            if (o.stateMachine.Current is StandState) {
+                if (o.leftDown || o.rightDown) {
+                    lock (THE_LOCK) {
+                        if (currentMove.EndsWith("stand.png")) currentMove = "Sprites/player_move3.png";
+                        else if (currentMove.EndsWith("move3.png")) currentMove = "Sprites/player_move2.png";
+                        else if (currentMove.EndsWith("move2.png")) currentMove = "Sprites/player_move1.png";
+                        else currentMove = "Sprites/player_stand.png";
+                    }
+
+                    Task.Run(() => {
+                        lock (THE_LOCK) {
+                            Dispatcher.Invoke(() => Source = new BitmapImage(new Uri(currentMove, UriKind.Relative)));
+                        }
+                    });
+                }
+                else {
+                    Source = new BitmapImage(new Uri(o.imagePath, UriKind.Relative));
+                }
+            }
+            else if (o.stateMachine.Current is FallState) {
+                Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative));
+            }
+            else if (o.stateMachine.Current is FlapState) {
+                if (MainWindow.flapLock) {
+                    Task.Run(() => {
+                        Dispatcher.Invoke(() => Source = new BitmapImage(new Uri("Sprites/player_fly2.png", UriKind.Relative)));
+                        Thread.Sleep(900);
+                        Dispatcher.Invoke(() => Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative)));
+                    });
+                }
+            }
         }
     }
 }

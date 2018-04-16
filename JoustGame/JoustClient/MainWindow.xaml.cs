@@ -29,7 +29,7 @@ namespace JoustClient
         public TextBox namebox = new TextBox();
         public DispatcherTimer updateTimer;
         public StateMachine playerStateMachine;
-        public bool flapLock;
+        public static bool flapLock;
         public bool cheatMode;
 
         public MainWindow()
@@ -62,6 +62,7 @@ namespace JoustClient
                     flapLock = true;
                     Task.Run(() =>
                     {
+                        PlaySounds.Instance.Play_Flap();
                         Thread.Sleep(100);
                         flapLock = false;
                     });
@@ -121,27 +122,11 @@ namespace JoustClient
                     b.BuzzardStateChange += bC.NotifyState;
                     b.BuzzardDropEgg += bC.NotifyDrop;
                     b.BuzzardDestroyed += bC.NotifyDestroy;
-                    // Used to update all enemies in the world
-                    //DispatcherTimer moveTimer = new DispatcherTimer();
-                    //moveTimer.Interval = new TimeSpan(0, 0, 0, 0, 33);
-                    //moveTimer.Tick += World.Instance.UpdateAllEnemies_Position;
-                    //moveTimer.Start();
-
-                    /*  Comment:    Clayton Cockrell
-                     *  The Random object in Buzzard would give the same random number to all the 
-                     *  Buzzard objects if their creation was not halted for a little bit of time.
-                     */
                     Thread.Sleep(20);
                     break;
                 case "Pterodactyl":
-                    PterodactylControl pCtrl = new PterodactylControl("Images/Enemy/pterodactyl.fly1");
-                    i = pCtrl;
-
-                    /*  Comment:    Clayton Cockrell
-                     *  Pterodactyls spawn after a certain number of minutes. I currently have it set
-                     *  to 1 minute. (To change, see PTERODACTYL_SPAWN_MINUTES constant in World class)
-                     */
-                    World.Instance.SpawnPterodactyl += pCtrl.NotifySpawn;
+                    // Previous code moved to ~ Line 203
+                    i = null;
                     break;
                 case "Egg":
                     Egg e = worldObject as Egg;
@@ -164,9 +149,12 @@ namespace JoustClient
                     BaseControl baC = i as BaseControl;
                     break;
             }
-            canvas.Children.Add(i);
-            Canvas.SetTop(i, worldObject.coords.y);
-            Canvas.SetLeft(i, worldObject.coords.x);
+
+            if (i != null) {
+                canvas.Children.Add(i);
+                Canvas.SetTop(i, worldObject.coords.y);
+                Canvas.SetLeft(i, worldObject.coords.x);
+            }
 
             //Title_Screen(null, EventArgs.Empty);
             //Finish_HighScores(null, EventArgs.Empty);
@@ -262,11 +250,6 @@ namespace JoustClient
                 o.cheatMode = true;
             }
 
-            /*  Comment:    Clayton Cockrell
-             *  Pterodactyls start spawning at stage 5. stage is set this for testing
-             *  purposes.
-             */
-
             // Get stage num from controls once the proper screens are implemented
             control.WorldRef.stage = 0;
 
@@ -302,7 +285,15 @@ namespace JoustClient
 
             for (int i = 0; i < numPterodactyls; i++)
             {
-                InitiateWorldObject("Pterodactyl", 300, 300);
+                /*  Clayton Cockrell
+                 *  Instead of initiating the Pterodactyls to start at the beginning of
+                 *  the game, Create a PterodactylControl that handles being notified when
+                 *  a Pterodactyl needs to spawn.
+                 */
+                PterodactylControl pCtrl = new PterodactylControl("Images/Enemy/pterodactyl.fly1");
+                Image newImg = pCtrl;
+                World.Instance.SpawnPterodactyl += pCtrl.NotifySpawn;
+                canvas.Children.Add(newImg);
             }
         }
 

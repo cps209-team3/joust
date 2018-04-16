@@ -36,9 +36,18 @@ namespace JoustModel
             milliseconds = 3;
             alreadyHatched = false;
             mounted = false;
+
+            stateMachine = new StateMachine();
+            EnemyStandingState stand = new EnemyStandingState(this);
+            stateMachine.stateDict.Add("stand", stand);
+            stateMachine.stateDict.Add("fall", new EnemyFallingState(this) { Angle = 270 });
+            stateMachine.stateDict.Add("fall_right", new EnemyFallingState(this) { Angle = 315 });
+            stateMachine.stateDict.Add("fall_left", new EnemyFallingState(this) { Angle = 225 });
+            stateMachine.stateDict.Add("hatching", new EggHatchingState(this));
+            stateMachine.stateDict.Add("hatched", new EggHatchedState(this));
+
             imagePath = "Images/Enemy/egg1.png";
             coords = new Point(0, 0);
-
             World.Instance.objects.Add(this);
             World.Instance.enemies.Add(this);
         }
@@ -64,10 +73,10 @@ namespace JoustModel
             CheckCollision();
 
             // Determine the next state
-            state = EnemyState.GetNextState(this);
-            state.Setup();
+            EnemyState.GetNextState(this);
+            stateMachine.currentState.Update();
 
-            if (state is EggHatchedState) {
+            if (stateMachine.currentState is EggHatchedState) {
                 // Allow the hatched animation to run before notifying
                 if (milliseconds > 30 && !alreadyHatched) {
                     if (EggHatched != null) {

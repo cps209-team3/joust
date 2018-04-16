@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
+using System.Diagnostics;
 
 namespace JoustModel
 {
@@ -20,6 +16,7 @@ namespace JoustModel
         {
             try
             {
+                Trace.WriteLine("WorldObject Count: " + WorldRef.objects.Count);
                 // Update everything 50 times per second (subject to change)
                 foreach (WorldObject worldObject in WorldRef.objects)
                 {
@@ -27,9 +24,8 @@ namespace JoustModel
                     
                     if (entity != null)
                     {
-                        
                         entity.Update();
-                        World.Instance.UpdateAllEnemies_Position();
+                        World.Instance.TrackTime();
                     }
 
                 }
