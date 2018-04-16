@@ -32,9 +32,14 @@ namespace JoustModel
 
                 if (wo.ToString() != this.ToString() && (coords.x < wo.coords.x + wo.width && coords.x + width > wo.coords.x && coords.y < wo.coords.y + wo.height && height + coords.y > wo.coords.y))
                 {
-                    if (wo.ToString() == "Buzzard" || wo.ToString() == "Pterodactyl")
+                    if (wo.ToString() == "Buzzard") // these statements need to be reorganized later. (Implement die method for enemies class, and more enemy checks to ostrich code)
                     {
-                        World.Instance.objects.Remove(wo);
+                        (wo as Buzzard).Die();
+                        return null;
+                    }
+                    else if (wo.ToString() == "Pterodactyl")
+                    {
+                        (wo as Pterodactyl).Die();
                         return null;
                     }
                     else
