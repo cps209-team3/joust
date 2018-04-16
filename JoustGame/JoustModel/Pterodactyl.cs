@@ -30,6 +30,8 @@ namespace JoustModel
         public Pterodactyl()
         {
             // Initialize instance variables
+            height = 30;
+            width = 120;
             Value = 1000;
             speed = 0;
             angle = 315;
@@ -77,7 +79,7 @@ namespace JoustModel
         public override void Update()
         {
             // Check Collision
-            CheckCollision();
+            //CheckCollision();
 
             if (!charging) {
                 // Determine the next state

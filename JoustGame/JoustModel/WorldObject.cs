@@ -11,7 +11,8 @@ namespace JoustModel
     {
         public Point coords = new Point(0,0);
         //public Hitbox hitbox;
-        public Hitbox hitbox = new Hitbox(0, 0, 0, 0);
+        public int height;
+        public int width;
         public string imagePath;
         public string type;
 

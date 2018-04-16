@@ -27,8 +27,8 @@ namespace JoustModel
         public Egg()
         {
             // Initialize variables
-            hitbox.height = 30;
-            hitbox.width = 30;
+            height = 30;
+            width = 30;
             type = "Egg";
             Value = 250;
             updateGraphic = 0;
@@ -70,7 +70,7 @@ namespace JoustModel
         public override void Update()
         {
             // Check Collision
-            CheckCollision();
+            //CheckCollision();
 
             // Determine the next state
             EnemyState.GetNextState(this);

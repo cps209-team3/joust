@@ -288,7 +288,7 @@ namespace JoustClient
             // Load Map here
 
             // Get stage num from controls once the proper screens are implemented
-            Ostrich o = InitiateWorldObject("Ostrich", 720, 450) as Ostrich;
+            Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
             control.WorldRef.player = o;
             playerStateMachine = control.WorldRef.player.stateMachine;
             if (cheatMode)
