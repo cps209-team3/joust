@@ -10,7 +10,7 @@ namespace JoustModel
     {
         public Platform()
         {
-            width = 300;
+            width = 200;
             height = 30;
             type = "Platform";
             imagePath = "Images/Platform/platform_short1.png";

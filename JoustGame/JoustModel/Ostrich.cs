@@ -61,12 +61,12 @@ namespace JoustModel
             Point collisionPoint = CheckCollision();
             if (collisionPoint != null)
             {
-                Console.WriteLine("Collision detected by ostrich at " + collisionPoint.x + "," + collisionPoint.y);
+                Console.WriteLine("Minimum translation vector = " + collisionPoint.x + "," + collisionPoint.y);
+                coords.x -= collisionPoint.x;
+                coords.y -= collisionPoint.y;
             }
-            // This is returning where on the entity the collision is happening
-            
-            
-            
+
+
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
@@ -105,6 +105,7 @@ namespace JoustModel
             //Console.WriteLine();
             coords.x += xNew;
             coords.y -= yNew;
+
 
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
 
