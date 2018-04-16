@@ -20,21 +20,34 @@ namespace JoustModel
 
         public abstract void Update();
 
-        public void CheckCollision()
+
+        /// <summary>
+        /// Checks for collision, returns the point of collision
+        /// </summary>
+        /// <returns> point of collision </returns>
+        public Point CheckCollision()
         {
             foreach (WorldObject wo in World.Instance.objects)
-            {
-                if (wo.ToString() != this.ToString()) // Don't collide with itself!
+            {       // Don't collide with itself! and check for collision
+                if (wo.ToString() != this.ToString() && (coords.x < wo.coords.x + wo.width && coords.x + width > wo.coords.x && coords.y < wo.coords.y + wo.height && height + coords.y > wo.coords.y))
                 {
-                    WorldObject objHit = hitbox.CheckCollisions(wo);
-                    if (objHit != null)
+                    Point leftV = new Point(coords.x - (wo.coords.x + wo.width), 0);
+                    Point rightV = new Point((coords.x + width) - wo.coords.x, 0);
+                    Point topV = new Point(0, coords.y - (wo.coords.y + wo.height));
+                    Point bottomV = new Point(0, (coords.y + height) - wo.coords.y);
+                    List<Point> cornerVectors = new List<Point> { leftV, rightV, topV, bottomV };
+                    Point minTV = leftV;
+                    foreach (Point p in cornerVectors)
                     {
-                        // Collision detected!
-                        Console.WriteLine("Collision detected between " + this.ToString() + " and " + objHit.ToString());
+                        if (Math.Sqrt(Math.Pow(minTV.x, 2) + Math.Pow(minTV.y, 2)) > Math.Sqrt(Math.Pow(p.x, 2) + Math.Pow(p.y, 2)))
+                        {
+                            minTV = p;
+                        }
                     }
+                    return minTV;
                 }
-
             }
+            return null; // no collision
         }
     }    
         

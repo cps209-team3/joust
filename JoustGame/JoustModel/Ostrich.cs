@@ -22,8 +22,8 @@ namespace JoustModel
 
         public Ostrich()
         {
-            hitbox.height = 75;
-            hitbox.width = 50;
+            height = 75;
+            width = 50;
             cheatMode = false;
             type = "Ostrich";
             oLock = "lock";
@@ -57,7 +57,14 @@ namespace JoustModel
 
         public override void Update()
         {
-            CheckCollision();
+            // Check for collisions
+            Point collisionPoint = CheckCollision();
+            if (collisionPoint != null)
+            {
+                Console.WriteLine("Minimum translation vector = " + collisionPoint.x + "," + collisionPoint.y);
+                coords.x -= collisionPoint.x;
+                coords.y -= collisionPoint.y;
+            }
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
@@ -74,8 +81,7 @@ namespace JoustModel
             nAngle = 0;
             coords.x += xNew;
             coords.y -= yNew;
-            hitbox.xPos = coords.x;
-            hitbox.yPos = coords.y;
+
 
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
 
