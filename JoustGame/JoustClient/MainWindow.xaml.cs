@@ -331,12 +331,12 @@ namespace JoustClient
 
             for (int i = 0; i < numBuzzards; i++)
             {
-                InitiateWorldObject("Buzzard", 100, 300);
+                InitiateWorldObject("Buzzard", 100, 100);
             }
 
             for (int i = 0; i < numPterodactyls; i++)
             {
-                InitiateWorldObject("Pterodactyl", 300, 300);
+                InitiateWorldObject("Pterodactyl", 300, 100);
             }
         }
 
