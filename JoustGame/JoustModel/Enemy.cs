@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JoustModel {
 
@@ -83,12 +79,12 @@ namespace JoustModel {
                     EnemyState enemySt = b.stateMachine.currentState as EnemyState;
                     switch (enemySt.Angle) {
                         case 270:
-                            if (chance % 10 < 3 || b.coords.y > 600) b.stateMachine.Change("flap");
+                            if (chance % 10 < 3 || b.coords.y > 730) b.stateMachine.Change("flap");
                             else if (chance % 2 == 0) b.stateMachine.Change("fall_right");
                             else b.stateMachine.Change("fall_left");
                             break;
                         default:
-                            if (chance < 3) b.stateMachine.Change("fall");
+                            if (chance < 3 || b.coords.y > 730) b.stateMachine.Change("fall");
                             break;
                     }
                 }
@@ -148,7 +144,7 @@ namespace JoustModel {
                             else p.stateMachine.Change("fall_left");
                             break;
                         default:
-                            if (chance < 3) p.stateMachine.Change("fall");
+                            if (chance < 3 || p.coords.y > 700) p.stateMachine.Change("fall");
                             break;
                     }
                 }
@@ -166,8 +162,7 @@ namespace JoustModel {
                     }
                 }
                 else if (p.stateMachine.currentState is PterodactylChargeState) {
-                    if (p.coords.y <= 300 && p.coords.y >= 450 && p.coords.x <= 600 && p.coords.x >= 700) {
-                        Trace.WriteLine("Change to Flap State");
+                    if (p.coords.y <= 300 || p.coords.y >= 450 || p.coords.x <= 600 || p.coords.x >= 700) {
                         p.stateMachine.Change("flap");
                     }
                 }

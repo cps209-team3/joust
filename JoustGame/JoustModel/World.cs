@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JoustModel
 {
@@ -46,7 +43,7 @@ namespace JoustModel
             try {
                 // Used to keep track of the stage time for spawning the Pterodactyls
                 stageTimeFrame++;
-                if (stageTimeFrame == 200) {
+                if (stageTimeFrame == 300) {
                     stageTimeSeconds++;
                     stageTimeFrame = 0;
                 }
