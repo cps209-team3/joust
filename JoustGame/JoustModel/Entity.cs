@@ -29,22 +29,32 @@ namespace JoustModel
         {
             foreach (WorldObject wo in World.Instance.objects)
             {       // Don't collide with itself! and check for collision
+
                 if (wo.ToString() != this.ToString() && (coords.x < wo.coords.x + wo.width && coords.x + width > wo.coords.x && coords.y < wo.coords.y + wo.height && height + coords.y > wo.coords.y))
                 {
-                    Point leftV = new Point(coords.x - (wo.coords.x + wo.width), 0);
-                    Point rightV = new Point((coords.x + width) - wo.coords.x, 0);
-                    Point topV = new Point(0, coords.y - (wo.coords.y + wo.height));
-                    Point bottomV = new Point(0, (coords.y + height) - wo.coords.y);
-                    List<Point> cornerVectors = new List<Point> { leftV, rightV, topV, bottomV };
-                    Point minTV = leftV;
-                    foreach (Point p in cornerVectors)
+                    if (wo.ToString() == "Buzzard" || wo.ToString() == "Pterodactyl")
                     {
-                        if (Math.Sqrt(Math.Pow(minTV.x, 2) + Math.Pow(minTV.y, 2)) > Math.Sqrt(Math.Pow(p.x, 2) + Math.Pow(p.y, 2)))
-                        {
-                            minTV = p;
-                        }
+                        World.Instance.objects.Remove(wo);
+                        return null;
                     }
-                    return minTV;
+                    else
+                    {
+                        Point leftV = new Point(coords.x - (wo.coords.x + wo.width), 0);
+                        Point rightV = new Point((coords.x + width) - wo.coords.x, 0);
+                        Point topV = new Point(0, coords.y - (wo.coords.y + wo.height));
+                        Point bottomV = new Point(0, (coords.y + height) - wo.coords.y);
+                        List<Point> cornerVectors = new List<Point> { leftV, rightV, topV, bottomV };
+                        Point minTV = leftV;
+                        foreach (Point p in cornerVectors)
+                        {
+                            if (Math.Sqrt(Math.Pow(minTV.x, 2) + Math.Pow(minTV.y, 2)) > Math.Sqrt(Math.Pow(p.x, 2) + Math.Pow(p.y, 2)))
+                            {
+                                minTV = p;
+                            }
+                        }
+                        return minTV;
+                    }
+
                 }
             }
             return null; // no collision
