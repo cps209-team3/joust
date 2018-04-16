@@ -35,6 +35,11 @@ namespace JoustClient
         public bool controls_on = false;
         public TextBox diff = new TextBox();
 
+        // This makes flying create fewer threads
+        // to change the animation which makes the
+        // game run better
+        private OstrichControl ostrichCtrl;
+
 
         public MainWindow()
         {
@@ -71,7 +76,10 @@ namespace JoustClient
                         flapLock = true;
                         Task.Run(() =>
                         {
+                            PlaySounds.Instance.Play_Flap();
+                            Dispatcher.Invoke(() => ostrichCtrl.Source = new BitmapImage(new Uri("Sprites/player_fly2.png", UriKind.Relative)));
                             Thread.Sleep(100);
+                            Dispatcher.Invoke(() => ostrichCtrl.Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative)));
                             flapLock = false;
                         });
                         break;
@@ -123,8 +131,8 @@ namespace JoustClient
                 case "Ostrich":
                     Ostrich o = worldObject as Ostrich;
                     i = new OstrichControl(o.imagePath);
-                    OstrichControl oC = i as OstrichControl;
-                    o.ostrichMoved += oC.NotifyMoved;
+                    ostrichCtrl = i as OstrichControl;
+                    o.ostrichMoved += ostrichCtrl.NotifyMoved;
                     break;
                 case "Buzzard":
                     Buzzard b = worldObject as Buzzard;
