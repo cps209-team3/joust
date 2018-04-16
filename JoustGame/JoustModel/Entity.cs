@@ -34,7 +34,7 @@ namespace JoustModel
                 {
                     if (wo.ToString() == "Buzzard") // these statements need to be reorganized later. (Implement die method for enemies class, and more enemy checks to ostrich code)
                     {
-                        (wo as Buzzard).Die();
+                        (wo as Buzzard).stateMachine.Change("flee");
                         return null;
                     }
                     else if (wo.ToString() == "Pterodactyl")

@@ -39,7 +39,7 @@ namespace JoustModel {
                 Buzzard b = e as Buzzard;
 
                 // *** Check if lost in a joust against the player ***
-                if (b.coords.y > 450 && b.coords.y < 525 && b.coords.x > 650 && b.coords.x < 800) b.stateMachine.Change("flee");
+                
 
                 // *** Check if Buzzard is near the ground of a platform and return new EnemyRunningState like below ***
 

@@ -97,7 +97,14 @@ namespace JoustModel
         public override void Update()
         {
             // Check Collision
-            //CheckCollision();
+            Point collisionPoint = CheckCollision();
+            if (collisionPoint != null)
+            {
+                this.stateMachine.Change("stand"); //if hit top
+                this.stateMachine.Change("fall"); // if hit bottom
+                this.stateMachine.Change("flap_left"); // if hit left
+                this.stateMachine.Change("flap_right"); // if hit right
+            }
 
             // Determine the next state
             EnemyState.GetNextState(this);
