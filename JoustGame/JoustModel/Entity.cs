@@ -24,41 +24,37 @@ namespace JoustModel
         /// <summary>
         /// Checks for collision, returns the point of collision
         /// </summary>
-        /// <returns> point of collision </returns>
-        public Point CheckCollision()
+        /// <returns> point of collision (0) and type of object collided with (2) </returns>
+        public WorldObject CheckCollision()
         {
             foreach (WorldObject wo in World.Instance.objects)
             {       // Don't collide with itself! and check for collision
-
                 if (wo.ToString() != this.ToString() && (coords.x < wo.coords.x + wo.width && coords.x + width > wo.coords.x && coords.y < wo.coords.y + wo.height && height + coords.y > wo.coords.y))
                 {
-                    if (wo.ToString() == "Buzzard" || wo.ToString() == "Pterodactyl")
-                    {
-                        World.Instance.objects.Remove(wo);
-                        return null;
-                    }
-                    else
-                    {
-                        Point leftV = new Point(coords.x - (wo.coords.x + wo.width), 0);
-                        Point rightV = new Point((coords.x + width) - wo.coords.x, 0);
-                        Point topV = new Point(0, coords.y - (wo.coords.y + wo.height));
-                        Point bottomV = new Point(0, (coords.y + height) - wo.coords.y);
-                        List<Point> cornerVectors = new List<Point> { leftV, rightV, topV, bottomV };
-                        Point minTV = leftV;
-                        foreach (Point p in cornerVectors)
-                        {
-                            if (Math.Sqrt(Math.Pow(minTV.x, 2) + Math.Pow(minTV.y, 2)) > Math.Sqrt(Math.Pow(p.x, 2) + Math.Pow(p.y, 2)))
-                            {
-                                minTV = p;
-                            }
-                        }
-                        return minTV;
-                    }
-
+                    return wo;
                 }
             }
             return null; // no collision
         }
+
+        public Point FindMinTV(WorldObject wo)
+        {
+            Point leftV = new Point(coords.x - (wo.coords.x + wo.width), 0);
+            Point rightV = new Point((coords.x + width) - wo.coords.x, 0);
+            Point topV = new Point(0, coords.y - (wo.coords.y + wo.height));
+            Point bottomV = new Point(0, (coords.y + height) - wo.coords.y);
+            List<Point> cornerVectors = new List<Point> { leftV, rightV, topV, bottomV };
+            Point minTV = leftV;
+            foreach (Point p in cornerVectors) // find smallest vector
+            {
+                if (Math.Sqrt(Math.Pow(minTV.x, 2) + Math.Pow(minTV.y, 2)) > Math.Sqrt(Math.Pow(p.x, 2) + Math.Pow(p.y, 2)))
+                {
+                    minTV = p;
+                }
+            }
+            return minTV;
+        }
+
     }    
         
 

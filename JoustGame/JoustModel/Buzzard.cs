@@ -96,8 +96,7 @@ namespace JoustModel
         /// </summary>
         public override void Update()
         {
-            // Check Collision
-            //CheckCollision();
+            CheckEnemyCollision();
 
             // Determine the next state
             EnemyState.GetNextState(this);

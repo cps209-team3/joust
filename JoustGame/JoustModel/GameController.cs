@@ -16,7 +16,7 @@ namespace JoustModel
         {
             try
             {
-                Trace.WriteLine("WorldObject Count: " + WorldRef.objects.Count);
+                //Trace.WriteLine("WorldObject Count: " + WorldRef.objects.Count);
                 // Update everything 50 times per second (subject to change)
                 foreach (WorldObject worldObject in WorldRef.objects)
                 {

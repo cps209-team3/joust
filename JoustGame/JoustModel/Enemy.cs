@@ -10,6 +10,40 @@ namespace JoustModel {
     public abstract class Enemy : Entity {
         public EnemyState state;
         public StateMachine stateMachine;
+
+        public void CheckEnemyCollision()
+        {
+            // Check Collision
+            WorldObject objHit = CheckCollision();
+            if (objHit != null)
+            {
+                if (objHit.ToString() == "Ostrich")
+                {
+                    this.stateMachine.Change("flee");
+                }
+                else
+                {
+                    Point minTV = FindMinTV(objHit);
+                    if (minTV.y > 0)
+                    {
+                        this.stateMachine.Change("stand"); //if hit top
+                    }
+                    else if (minTV.y < 0)
+                    {
+                        this.stateMachine.Change("fall"); // if hit bottom
+                    }
+                    else if (minTV.x > 0)
+                    {
+                        this.stateMachine.Change("flap_left"); // if hit left
+                    }
+                    else if (minTV.x < 0)
+                    {
+                        this.stateMachine.Change("flap_right"); // if hit right
+                    }
+                }
+
+            }
+        }
     }
 
     /// <summary>
@@ -39,7 +73,7 @@ namespace JoustModel {
                 Buzzard b = e as Buzzard;
 
                 // *** Check if lost in a joust against the player ***
-                if (b.coords.y > 450 && b.coords.y < 525 && b.coords.x > 650 && b.coords.x < 800) b.stateMachine.Change("flee");
+
 
                 // *** Check if Buzzard is near the ground of a platform and return new EnemyRunningState like below ***
 
@@ -174,6 +208,8 @@ namespace JoustModel {
         public virtual void Enter() { }
         public virtual void Exit() { }
     }
+
+
 
 
     public class EnemyStandingState : EnemyState {
