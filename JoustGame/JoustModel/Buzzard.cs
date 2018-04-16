@@ -100,10 +100,22 @@ namespace JoustModel
             Point collisionPoint = CheckCollision();
             if (collisionPoint != null)
             {
-                this.stateMachine.Change("stand"); //if hit top
-                this.stateMachine.Change("fall"); // if hit bottom
-                this.stateMachine.Change("flap_left"); // if hit left
-                this.stateMachine.Change("flap_right"); // if hit right
+                if (collisionPoint.y > 0)
+                {
+                    this.stateMachine.Change("stand"); //if hit top
+                }
+                else if (collisionPoint.y < 0)
+                {
+                    this.stateMachine.Change("fall"); // if hit bottom
+                }
+                else if (collisionPoint.x > 0)
+                {
+                    this.stateMachine.Change("flap_left"); // if hit left
+                }
+                else if (collisionPoint.x < 0)
+                {
+                    this.stateMachine.Change("flap_right"); // if hit right
+                }  
             }
 
             // Determine the next state

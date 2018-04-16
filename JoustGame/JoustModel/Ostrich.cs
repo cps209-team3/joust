@@ -61,9 +61,12 @@ namespace JoustModel
             Point collisionPoint = CheckCollision();
             if (collisionPoint != null)
             {
-                Console.WriteLine("Minimum translation vector = " + collisionPoint.x + "," + collisionPoint.y);
                 coords.x -= collisionPoint.x;
                 coords.y -= collisionPoint.y;
+                if (collisionPoint.y > 0)
+                {
+                    stateMachine.Change("stand");
+                }
             }
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));

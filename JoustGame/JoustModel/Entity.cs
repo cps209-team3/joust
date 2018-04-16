@@ -39,7 +39,7 @@ namespace JoustModel
                     }
                     else if (wo.ToString() == "Pterodactyl")
                     {
-                        (wo as Pterodactyl).Die();
+                        (wo as Pterodactyl).stateMachine.Change("flee");
                         return null;
                     }
                     else
