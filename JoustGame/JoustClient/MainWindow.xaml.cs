@@ -124,7 +124,7 @@ namespace JoustClient
         public void WorldObjectControlFactory(WorldObject worldObject)
         {
             string woString = worldObject.ToString();
-            Image i;
+            WorldObjectControl i;
             switch (woString)
             {
                 case "Ostrich":
@@ -135,6 +135,7 @@ namespace JoustClient
                     break;
                 case "Buzzard":
                     Buzzard b = worldObject as Buzzard;
+                    Console.WriteLine("Spawning Buzzard");
                     i = new BuzzardControl(b.imagePath);
                     BuzzardControl bC = i as BuzzardControl;
 
@@ -331,12 +332,12 @@ namespace JoustClient
 
             for (int i = 0; i < numBuzzards; i++)
             {
-                InitiateWorldObject("Buzzard", 100, 100);
+                Dispatcher.Invoke(() => InitiateWorldObject("Buzzard", 100, 300));
             }
 
             for (int i = 0; i < numPterodactyls; i++)
             {
-                InitiateWorldObject("Pterodactyl", 300, 100);
+                Dispatcher.Invoke(() => InitiateWorldObject("Pterodactyl", 300, 300));
             }
         }
 
