@@ -25,7 +25,7 @@ JD
 Sandeep
 * High scores designed and implemented
 * Sounds designed and partially implemented
-* Title Screens designed implemented
+* Title Screens designed and implemented
 
 ## Known Issues
 Clayton
@@ -40,9 +40,9 @@ JD
 * No known issues
 
 Sandeep
-* messy High score manager class needs revision
-* don't know if sounds work in-game
-* will need to design title screens and in-game menu
+* May need to tweak sound playing issues
+* Need to fix error checking on the difficulty screen
+* May design the screens better
 
 ## Recording
 https://youtu.be/I2DPDyWvyrA
@@ -53,4 +53,4 @@ https://youtu.be/I2DPDyWvyrA
 | Clayton | 31:15 |
 | Jacob | 27:43 |
 | JD | 11:40 |
-| Sandeep | 20:04 |
+| Sandeep | 28:33 |
