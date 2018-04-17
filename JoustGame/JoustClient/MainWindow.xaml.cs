@@ -25,7 +25,7 @@ namespace JoustClient
     public partial class MainWindow : Window
     {
         public GameController control = new GameController();
-        public int currentEndScore = 199991; // must set this when game end conditions have been met
+        public int endScore; // must set this when game end conditions have been met
         public TextBox namebox = new TextBox();
         public DispatcherTimer updateTimer;
         public StateMachine playerStateMachine;
@@ -124,7 +124,7 @@ namespace JoustClient
         public void WorldObjectControlFactory(WorldObject worldObject)
         {
             string woString = worldObject.ToString();
-            WorldObjectControl i;
+            Image i;
             switch (woString)
             {
                 case "Ostrich":
@@ -132,10 +132,13 @@ namespace JoustClient
                     i = new OstrichControl(o.imagePath);
                     ostrichCtrl = i as OstrichControl;
                     o.ostrichMoved += ostrichCtrl.NotifyMoved;
+
+                    // initial score setting
+                    endScore = o.score;
+
                     break;
                 case "Buzzard":
                     Buzzard b = worldObject as Buzzard;
-                    Console.WriteLine("Spawning Buzzard");
                     i = new BuzzardControl(b.imagePath);
                     BuzzardControl bC = i as BuzzardControl;
 
@@ -190,10 +193,6 @@ namespace JoustClient
             canvas.Children.Add(i);
             Canvas.SetTop(i, worldObject.coords.y);
             Canvas.SetLeft(i, worldObject.coords.x);
-
-            //Title_Screen(null, EventArgs.Empty);
-            //Finish_HighScores(null, EventArgs.Empty);
-            // called when game end conditions have been met
         }
 
         public void NotifyWon(object sender, int e)
@@ -210,10 +209,6 @@ namespace JoustClient
             control.WorldRef.stage = stage;
             TextBlock EndStage = new TextBlock();
             Canvas.SetTop(EndStage, 425);
-            Canvas.SetLeft(EndStage, 550);
-            Canvas.SetLeft(EndStage, 790);
-            EndStage.HorizontalAlignment = HorizontalAlignment.Center;
-            EndStage.FontSize = 32;
             EndStage.Height = 50;
             EndStage.Foreground = new SolidColorBrush(Colors.White);
             EndStage.Text = "WAVE CLEARED!";
@@ -230,7 +225,6 @@ namespace JoustClient
                 Dispatcher.Invoke(() => EndStage.Text = String.Format("WAVE {0}", Convert.ToString(stage)));
                 Thread.Sleep(1000);
                 SpawnEnemies();
-                canvas.Children.Remove(EndStage);
             });
         }
 
@@ -294,7 +288,7 @@ namespace JoustClient
             // Load Map here
 
             // Get stage num from controls once the proper screens are implemented
-            Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
+            Ostrich o = InitiateWorldObject("Ostrich", 720, 450) as Ostrich;
             control.WorldRef.player = o;
             playerStateMachine = control.WorldRef.player.stateMachine;
             if (cheatMode)
@@ -306,9 +300,6 @@ namespace JoustClient
              *  Pterodactyls start spawning at stage 5. stage is set this for testing
              *  purposes.
              */
-
-            // Get stage num from controls once the proper screens are implemented
-            control.WorldRef.stage = 0;
 
             SpawnEnemies();
 
@@ -327,6 +318,10 @@ namespace JoustClient
                 UpdateTick,
                 Dispatcher.CurrentDispatcher);
             updateTimer.Start();
+
+            // just a test for score setting
+            //o.score = 21;
+            //Finish_HighScores(null, EventArgs.Empty);
         }
 
         public void SpawnEnemies()
@@ -337,12 +332,12 @@ namespace JoustClient
 
             for (int i = 0; i < numBuzzards; i++)
             {
-                Dispatcher.Invoke(() => InitiateWorldObject("Buzzard", 100, 300));
+                InitiateWorldObject("Buzzard", 100, 300);
             }
 
             for (int i = 0; i < numPterodactyls; i++)
             {
-                Dispatcher.Invoke(() => InitiateWorldObject("Pterodactyl", 300, 300));
+                InitiateWorldObject("Pterodactyl", 300, 300);
             }
         }
 
@@ -574,7 +569,18 @@ namespace JoustClient
 
             TextBlock scoreBlock = Make_TextBlock(150, 470, 420, 500);
 
-            Score thisScore = new Score(currentEndScore, namebox.Text);
+            Score thisScore;
+            try
+            {
+                thisScore = new Score(control.WorldRef.player.score, namebox.Text);
+            }
+            catch
+            {
+                // for test
+                control.WorldRef.player = new Ostrich();
+                control.WorldRef.player.score = 100;
+                thisScore = new Score(control.WorldRef.player.score, namebox.Text);
+            }
             HighScoreManager.Instance.AddScore(thisScore);
 
             scoreBlock.Text += "\n";
@@ -583,7 +589,7 @@ namespace JoustClient
             foreach (Score s in HighScoreManager.Instance.AllScores)
             {
                 string space = "";
-                for (int x = 0; x < (11 - s.username.Length); x++)
+                for (int x = 0; x < (12 - s.username.Length); x++)
                 {
                     space += " ";
                 }
@@ -675,7 +681,7 @@ namespace JoustClient
             foreach (Score s in HighScoreManager.Instance.AllScores)
             {
                 string space = "";
-                for (int x = 0; x < (11 - s.username.Length); x++)
+                for (int x = 0; x < (12 - s.username.Length); x++)
                 {
                     space += " ";
                 }
