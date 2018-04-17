@@ -60,15 +60,13 @@ namespace JoustModel
             WorldObject objHit = CheckCollision();
             if (objHit != null)
             {
-                if (objHit.ToString() == "Buzzard" && (objHit as Buzzard).stateMachine.currentState.ToString() == "BuzzardFleeingState") // special case for fleeing buzzard, change later
+                if (objHit.ToString() == "Buzzard" && (objHit as Buzzard).stateMachine.currentState.ToString() == "JoustModel.BuzzardFleeingState") // special case for fleeing buzzard, change later
                 {
                     //do nothing
-
                 }
                 else
                 {
                     Point minTV = FindMinTV(objHit);
-                    Console.WriteLine("Ostrich has detected a collision");
                     coords.x -= minTV.x;
                     coords.y -= minTV.y;
                     if (minTV.y > 0)
