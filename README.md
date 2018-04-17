@@ -45,7 +45,7 @@ Sandeep
 * No Known Issues
 
 ## Recording
-https://youtu.be/I2DPDyWvyrA
+https://drive.google.com/open?id=1wMISDXY1meDh-nFtzabpC5Wvs0jHUOD6
 
 ## Expenses
 | Developer | Total Time Spent |
