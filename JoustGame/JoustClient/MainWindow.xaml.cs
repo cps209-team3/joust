@@ -276,14 +276,7 @@ namespace JoustClient
             // switched bool to activate controls
             controls_on = true;
 
-            // difficulty setting
-            int difficulty = 0;
-            bool result = Int32.TryParse(diff.Text, out difficulty);
-            if (difficulty < 0)
-            {
-                difficulty = 0;
-            }
-            control.WorldRef.stage = difficulty;
+            
 
             control.WorldRef.win += this.NotifyWon;
             flapLock = false;
@@ -303,13 +296,19 @@ namespace JoustClient
                 o.cheatMode = true;
             }
 
+            // difficulty setting
+            int difficulty = 0;
+            bool result = Int32.TryParse(diff.Text, out difficulty);
+            if (difficulty < 0)
+            {
+                difficulty = 0;
+            }
+            control.WorldRef.stage = difficulty;
+
             /*  Comment:    Clayton Cockrell
              *  Pterodactyls start spawning at stage 5. stage is set this for testing
              *  purposes.
              */
-
-            // Get stage num from controls once the proper screens are implemented
-            control.WorldRef.stage = 0;
 
             SpawnEnemies();
 
@@ -461,10 +460,7 @@ namespace JoustClient
         {
             controls_on = false;
 
-            Task.Run(() =>
-            {
-                PlaySounds.Instance.Play_Spawn();
-            });
+            
 
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
@@ -476,6 +472,11 @@ namespace JoustClient
             Button scores = Make_Button("High Scores", 600.0, HighScores_Screen);
 
             Image image = Make_Image("\\Images\\joust2.png", 25.0, 510.0, 150, 400);
+
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Spawn();
+            });
         }
 
         private void Single_Screen(object sender, RoutedEventArgs e)
