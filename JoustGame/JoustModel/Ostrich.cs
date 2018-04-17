@@ -87,6 +87,12 @@ namespace JoustModel
             coords.x += xNew;
             coords.y -= yNew;
 
+            if (coords.x < -25) coords.x = 1465;
+            else if (coords.x > 1465) coords.x = -25;
+
+            if (coords.y < 0) coords.y = 0;
+            else if (coords.y > 900) coords.y = 900;
+
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
 
             stateMachine.Update();
