@@ -25,7 +25,6 @@ namespace JoustClient
     public partial class MainWindow : Window
     {
         public GameController control = new GameController();
-        public int currentEndScore = 199991; // must set this when game end conditions have been met
         public TextBox namebox = new TextBox();
         public DispatcherTimer updateTimer;
         public StateMachine playerStateMachine;
@@ -574,7 +573,18 @@ namespace JoustClient
 
             TextBlock scoreBlock = Make_TextBlock(150, 470, 420, 500);
 
-            Score thisScore = new Score(currentEndScore, namebox.Text);
+            Score thisScore;
+            try
+            {
+                thisScore = new Score(control.WorldRef.player.score, namebox.Text);
+            }
+            catch
+            {
+                // for test
+                control.WorldRef.player = new Ostrich();
+                control.WorldRef.player.score = 100;
+                thisScore = new Score(control.WorldRef.player.score, namebox.Text);
+            }
             HighScoreManager.Instance.AddScore(thisScore);
 
             scoreBlock.Text += "\n";
@@ -583,7 +593,7 @@ namespace JoustClient
             foreach (Score s in HighScoreManager.Instance.AllScores)
             {
                 string space = "";
-                for (int x = 0; x < (11 - s.username.Length); x++)
+                for (int x = 0; x < (12 - s.username.Length); x++)
                 {
                     space += " ";
                 }
@@ -675,7 +685,7 @@ namespace JoustClient
             foreach (Score s in HighScoreManager.Instance.AllScores)
             {
                 string space = "";
-                for (int x = 0; x < (11 - s.username.Length); x++)
+                for (int x = 0; x < (12 - s.username.Length); x++)
                 {
                     space += " ";
                 }
