@@ -22,6 +22,7 @@ namespace JoustModel {
                     if (this.coords.y > objHit.coords.y)
                     {
                         this.stateMachine.Change("flee");
+                        stateMachine.currentState.Update();
                     }
                     else
                     {
@@ -31,22 +32,21 @@ namespace JoustModel {
                 }
                 else
                 {
-                    Point minTV = FindMinTV(objHit);
-                    if (minTV.y > 0)
-                    {
-                        this.stateMachine.Change("stand"); //if hit top
-                    }
-                    else if (minTV.y < 0)
-                    {
-                        this.stateMachine.Change("fall"); // if hit bottom
-                    }
-                    else if (minTV.x > 0)
-                    {
-                        this.stateMachine.Change("flap_left"); // if hit left
-                    }
-                    else if (minTV.x < 0)
-                    {
-                        this.stateMachine.Change("flap_right"); // if hit right
+                    if (objHit is Egg || stateMachine.currentState is BuzzardPickupState) { }
+                    else {
+                        Point minTV = FindMinTV(objHit);
+                        if (minTV.y > 0) {
+                            this.stateMachine.Change("stand"); //if hit top
+                        }
+                        else if (minTV.y < 0) {
+                            this.stateMachine.Change("fall"); // if hit bottom
+                        }
+                        else if (minTV.x > 0) {
+                            this.stateMachine.Change("flap_left"); // if hit left
+                        }
+                        else if (minTV.x < 0) {
+                            this.stateMachine.Change("flap_right"); // if hit right
+                        }
                     }
                 }
 
@@ -79,11 +79,6 @@ namespace JoustModel {
             if (e is Buzzard) {
                 /*** Buzzard States ***/
                 Buzzard b = e as Buzzard;
-
-                // *** Check if lost in a joust against the player ***
-
-
-                // *** Check if Buzzard is near the ground of a platform and return new EnemyRunningState like below ***
 
                 if (b.stateMachine.currentState is EnemyStandingState) {
                     if (chance % 2 == 0) {
@@ -137,6 +132,7 @@ namespace JoustModel {
                         // Picked up Mik
                         set_state.TargetEgg.mounted = true;
                         b.droppedEgg = false;
+                        Trace.WriteLine(set_state.TargetEgg.mounted);
                         b.stateMachine.Change("stand");
                     }
                 }
