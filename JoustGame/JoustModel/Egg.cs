@@ -19,6 +19,7 @@ namespace JoustModel
         public int seconds;
         public int milliseconds;
         public bool mounted;
+        public bool collected;
         // Private instance variables
         private int updateGraphic;
         private bool alreadyHatched;
@@ -70,7 +71,7 @@ namespace JoustModel
         public override void Update()
         {
             // Check Collision
-            //CheckCollision();
+            CheckEnemyCollision();
 
             // Determine the next state
             EnemyState.GetNextState(this);
@@ -87,7 +88,7 @@ namespace JoustModel
             }
 
             // Check if the hatched Mik has mounted a Buzzard
-            if (mounted) {
+            if (mounted || collected) {
                 if (EggDestroyed != null)
                     EggDestroyed(this, null);
                 Die();

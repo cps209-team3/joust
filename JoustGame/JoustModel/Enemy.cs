@@ -19,20 +19,23 @@ namespace JoustModel {
             {
                 if (objHit.ToString() == "Ostrich")
                 {
-                    if (this.coords.y > objHit.coords.y)
-                    {
-                        this.stateMachine.Change("flee");
-                        stateMachine.currentState.Update();
+                    if (this is Egg) {
+                        Egg egg = this as Egg;
+                        egg.collected = true;
                     }
-                    else
-                    {
-                        (objHit as Ostrich).Die();
+                    if (this is Buzzard) {
+                        if (this.coords.y > objHit.coords.y) {
+                            this.stateMachine.Change("flee");
+                            stateMachine.currentState.Update();
+                        }
+                        else {
+                            (objHit as Ostrich).Die();
+                        }
                     }
-                    
                 }
                 else
                 {
-                    if (objHit is Egg || stateMachine.currentState is BuzzardPickupState) { }
+                    if (objHit is Egg || stateMachine.currentState is BuzzardPickupState || this is Egg) { }
                     else {
                         Point minTV = FindMinTV(objHit);
                         if (minTV.y > 0) {
