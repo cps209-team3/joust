@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:JoustClient"
         mc:Ignorable="d"
         Title="MainWindow" Height="900" Width="1440" Loaded="Window_Loaded" KeyDown="Canvas_KeyDown" KeyUp="Canvas_KeyUp">
-    <Canvas x:Name="canvas">
-        
-    </Canvas>
+    <Border BorderBrush="Green" BorderThickness="5">
+        <Canvas x:Name="canvas">
+
+        </Canvas>
+    </Border>
 </Window>
