@@ -12,15 +12,19 @@ to an upwards velocity. A single wing flap will increase the ostrich's upward sp
 ## Work completed
 Clayton
 * Artwork
+* Animations
 * Enemy Behavior
 
 Jacob
 * Object Model
 * Player Controls
+* Level Progression
+* Cheat Mode
 
 JD
 * Base Level
 * Save/Load
+* Serialization
 
 Sandeep
 * High scores designed and implemented
@@ -29,19 +33,16 @@ Sandeep
 
 ## Known Issues
 Clayton
-* No known issues
+* No Known Issues
 
 Jacob
-* User shouldn't be able to move up repeatedly
-* Player moves too slow
+* No Known Issues
 
 JD
-* No known issues
+* No Known Issues
 
 Sandeep
-* May need to tweak sound playing issues
-* Need to fix error checking on the difficulty screen
-* May design the screens better
+* No Known Issues
 
 ## Recording
 https://youtu.be/I2DPDyWvyrA
@@ -49,7 +50,7 @@ https://youtu.be/I2DPDyWvyrA
 ## Expenses
 | Developer | Total Time Spent |
 |-----------|------------------|
-| Clayton | 43:15 |
-| Jacob | 27:43 |
+| Clayton | 31:15 |
+| Jacob | 36:48 |
 | JD | 11:40 |
 | Sandeep | 28:33 |
