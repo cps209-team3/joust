@@ -29,8 +29,7 @@ Sandeep
 
 ## Known Issues
 Clayton
-* Enemys block the main thread sometimes
-* Updating enemies needs to be optimized
+* No known issues
 
 Jacob
 * User shouldn't be able to move up repeatedly
@@ -50,7 +49,7 @@ https://youtu.be/I2DPDyWvyrA
 ## Expenses
 | Developer | Total Time Spent |
 |-----------|------------------|
-| Clayton | 31:15 |
+| Clayton | 43:15 |
 | Jacob | 27:43 |
 | JD | 11:40 |
 | Sandeep | 28:33 |
