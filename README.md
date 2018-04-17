@@ -52,5 +52,5 @@ https://drive.google.com/open?id=1wMISDXY1meDh-nFtzabpC5Wvs0jHUOD6
 |-----------|------------------|
 | Clayton | 43:15 |
 | Jacob | 36:48 |
-| JD | 11:40 |
+| JD | 23:40 |
 | Sandeep | 28:33 |
