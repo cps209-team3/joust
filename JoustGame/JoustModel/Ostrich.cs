@@ -22,7 +22,7 @@ namespace JoustModel
 
         public Ostrich()
         {
-            height = 75;
+            height = 67;
             width = 50;
             cheatMode = false;
             type = "Ostrich";
@@ -60,13 +60,21 @@ namespace JoustModel
             WorldObject objHit = CheckCollision();
             if (objHit != null)
             {
-                Point minTV = FindMinTV(objHit);
-                Console.WriteLine("Ostrich has detected a collision");
-                coords.x -= minTV.x;
-                coords.y -= minTV.y;
-                if (minTV.y > 0)
+                if (objHit.ToString() == "Buzzard" && (objHit as Buzzard).stateMachine.currentState.ToString() == "BuzzardFleeingState") // special case for fleeing buzzard, change later
                 {
-                    stateMachine.Change("stand");
+                    //do nothing
+
+                }
+                else
+                {
+                    Point minTV = FindMinTV(objHit);
+                    Console.WriteLine("Ostrich has detected a collision");
+                    coords.x -= minTV.x;
+                    coords.y -= minTV.y;
+                    if (minTV.y > 0)
+                    {
+                        stateMachine.Change("stand");
+                    }
                 }
             }
 
