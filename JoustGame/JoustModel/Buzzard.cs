@@ -123,6 +123,12 @@ namespace JoustModel
                 // When the Buzzard has been hit, it drops an egg and
                 // flies to the left side. Destroy the Buzzard when
                 // close enough to the edge of the screen.
+                if (!droppedEgg) {
+                    if (BuzzardDropEgg != null)
+                        BuzzardDropEgg(this, null);
+                    droppedEgg = true;
+                }
+
                 if (coords.x < 3) {
                     if (BuzzardDestroyed != null)
                         BuzzardDestroyed(this, null);
@@ -145,13 +151,6 @@ namespace JoustModel
             if (updateGraphic == 0) {
                 if (BuzzardStateChange != null)
                     BuzzardStateChange(this, null);
-            }
-
-            // *** Check if lost in a joust against the player ***
-            if (coords.y > 450 && coords.y < 525 && coords.x > 650 && coords.x < 800 && !droppedEgg) {
-                if (BuzzardDropEgg != null)
-                    BuzzardDropEgg(this, null);
-                droppedEgg = true;
             }
         }
 
