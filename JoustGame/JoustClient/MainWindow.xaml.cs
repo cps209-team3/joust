@@ -212,6 +212,7 @@ namespace JoustClient
             Canvas.SetLeft(EndStage, 550);
             Canvas.SetLeft(EndStage, 790);
             EndStage.HorizontalAlignment = HorizontalAlignment.Center;
+            EndStage.VerticalAlignment = VerticalAlignment.Center;
             EndStage.FontSize = 32;
             EndStage.Height = 50;
             EndStage.Foreground = new SolidColorBrush(Colors.White);
@@ -229,7 +230,7 @@ namespace JoustClient
                 Dispatcher.Invoke(() => EndStage.Text = String.Format("WAVE {0}", Convert.ToString(stage)));
                 Thread.Sleep(1000);
                 SpawnEnemies();
-                canvas.Children.Remove(EndStage);
+                Dispatcher.Invoke(() => canvas.Children.Remove(EndStage));
             });
         }
 
@@ -237,6 +238,7 @@ namespace JoustClient
         {
             control.Save();
         }
+
         public void LoadGame(object sender, RoutedEventArgs e)
         {
             string fileName = "";
