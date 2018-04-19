@@ -19,6 +19,13 @@ using JoustModel;
 
 namespace JoustClient
 {
+    public enum SpaceType
+    {
+        Spawn,
+        Plat,
+        Blank,
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -33,11 +40,18 @@ namespace JoustClient
         public bool controls_on = false;
         public TextBox diff = new TextBox();
 
+        public string tester;
+
+        private System.Windows.Point mousePosition;
+        private bool dragging = false;
+        private Image currImg;
+
         // This makes flying create fewer threads
         // to change the animation which makes the
         // game run better
         private OstrichControl ostrichCtrl;
 
+        
 
         public MainWindow()
         {
@@ -50,8 +64,9 @@ namespace JoustClient
             // If you need a different screen on window load, comment out the line below
             //NewGame();
 
-            Title_Screen(null, EventArgs.Empty);
+            //Title_Screen(null, EventArgs.Empty);
             //Finish_HighScores(null, EventArgs.Empty);
+            Test_Screen(null, EventArgs.Empty);
         }
         
         private void Canvas_KeyUp(object sender, KeyEventArgs e)
@@ -385,10 +400,13 @@ namespace JoustClient
             canvas.Children.Add(loadBtn);
         }
 
-        private Button Make_Button(string content, double top, RoutedEventHandler eventx)
+        private Button Make_Button(object content, double top, RoutedEventHandler eventx)
         {
             Button btnReturn = new Button();
-            btnReturn.Content = content.ToUpper();
+
+            string contentString = content as string;
+            btnReturn.Content = contentString.ToUpper();
+
             btnReturn.SetValue(Canvas.TopProperty, top);
 
             if (!(eventx == null))
@@ -851,5 +869,116 @@ namespace JoustClient
 
             Button back = Make_BackButton(625.0, Help_Screen);
         }
+
+        private void Test_Screen(object sender, EventArgs e)
+        {
+
+            //for (int y = 0; y < 6; y++)
+            //{
+            //    double top = (105.0 * y) + 105.0;
+
+            //    for (int x = 0; x < 7; x++)
+            //    {
+            //        double left = 200.0 * x;
+
+            //        Button btnReturn = new Button();
+            //        btnReturn.SetValue(Canvas.TopProperty, top);
+            //        btnReturn.SetValue(Canvas.LeftProperty, left);
+            //        btnReturn.Height = 30;
+            //        btnReturn.Width = 200;
+            //        canvas.Children.Add(btnReturn);
+
+            //        Image option;
+            //        option = Make_Image("//Images//Sprites//platform_short1.png", 0, 0, 30, 200);
+            //        canvas.Children.Remove(option);
+
+            //        btnReturn.Content = option;
+
+            //        btnReturn.Tag = new System.Windows.Point(x, y);
+
+            //        btnReturn.Click += new RoutedEventHandler(click_switch);
+            //    }
+            //}
+
+            Image one = Make_Image("//Images//Sprites//platform_short1.png", 0, 0, 30, 200);
+            Image two = Make_Image("//Images//Sprites//pterodactyl_die1.png", 0, 0, 30, 200);
+            canvas.Children.Remove(one);
+            canvas.Children.Remove(two);
+
+            Button ex1 = Make_Button("heh", 0.0, plat_button);
+            ex1.Height = 30;
+            ex1.Width = 200;
+            ex1.Content = one;
+
+            Button ex2 = Make_Button("heh", 0.0, spawn_button);
+            ex2.Height = 30;
+            ex2.Width = 200;
+            ex2.SetValue(Canvas.LeftProperty, 420.0);
+            ex2.Content = two;
+
+        }
+
+        private void click_switch(object sender, RoutedEventArgs e)
+        {
+            Image one = Make_Image("//Images//Sprites//platform_short1.png", 0, 0, 30, 200);
+            Image two = Make_Image("//Images//Sprites//pterodactyl_die1.png", 0, 0, 30, 200);
+            canvas.Children.Remove(one);
+            canvas.Children.Remove(two);
+
+            Button sent = sender as Button;
+            tester = String.Copy(sent.Content.ToString());
+
+            if (tester.Equals(one.ToString()))
+            {
+                sent.Content = two;
+            }
+            else if (tester.Equals(two.ToString()))
+            {
+                sent.Content = "none";
+            }
+            else if (tester.Equals("none"))
+            {
+                sent.Content = one;
+            }
+
+        }
+
+        private void plat_button(object sender, EventArgs e)
+        {
+            Image one = Make_Image("//Images//Sprites//platform_short1.png", 0, 0, 30, 200);
+            one.MouseDown += img_MouseDown;
+        }
+
+        private void spawn_button(object sender, EventArgs e)
+        {
+            Image one = Make_Image("//Images//Sprites//pterodactyl_die1.png", 0, 0, 30, 200);
+            one.MouseDown += img_MouseDown;
+        }
+
+        private void img_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            mousePosition = e.GetPosition(canvas);
+            dragging = true;
+
+            currImg = (Image) sender;
+        }
+
+        private void canvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            dragging = false;
+        }
+
+        private void canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!dragging) return;
+
+            var position = e.GetPosition(canvas);
+            var offset = position - mousePosition;
+            mousePosition = position;
+            Canvas.SetLeft(currImg, Canvas.GetLeft(currImg) + offset.X);
+            Canvas.SetTop(currImg, Canvas.GetTop(currImg) + offset.Y);
+        }
     }
+    
+    
 }
