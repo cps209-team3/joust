@@ -173,6 +173,7 @@ namespace JoustModel {
         public virtual void HandleInput(string data) { }
         public virtual void Enter() { }
         public virtual void Exit() { }
+        public void CheckCollisions() { }
     }
 
 
@@ -253,6 +254,7 @@ namespace JoustModel {
 
         public override void Enter() { }
         public override void Exit() { }
+        public void CheckCollisions() { }
     }
 
     public class EnemyFallingState : EnemyState {

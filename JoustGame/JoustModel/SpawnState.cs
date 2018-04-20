@@ -35,5 +35,7 @@ namespace JoustModel
         {
             return "spawn";
         }
+
+        public void CheckCollisions() { }
     }
 }

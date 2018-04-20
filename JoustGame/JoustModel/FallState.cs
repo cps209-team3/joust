@@ -56,6 +56,11 @@ namespace JoustModel
         {
             return "fall";
         }
+
+        public void CheckCollisions()
+        {
+            ostrich.CheckEnemyCollision(ostrich.CheckCollision());
+        }
     }
 }
 

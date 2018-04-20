@@ -55,5 +55,10 @@ namespace JoustModel
         {
             return "flap";
         }
+
+        public void CheckCollisions()
+        {
+            ostrich.CheckEnemyCollision(ostrich.CheckCollision());
+        }
     }
 }

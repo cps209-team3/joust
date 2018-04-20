@@ -68,7 +68,7 @@ namespace JoustModel
 
         public override void Update()
         {
-
+            stateMachine.currentState.CheckCollisions();
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));

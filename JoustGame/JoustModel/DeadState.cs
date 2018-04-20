@@ -29,5 +29,7 @@
         {
             return "dead";
         }
+
+        public void CheckCollisions() { }
     }
 }

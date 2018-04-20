@@ -44,5 +44,10 @@
         {
             return "stand";
         }
+
+        public void CheckCollisions()
+        {
+            ostrich.CheckEnemyCollision(ostrich.CheckCollision());
+        }
     }
 }
