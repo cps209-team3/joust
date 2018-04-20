@@ -252,7 +252,7 @@ namespace JoustClient
             Task.Run(() =>
             {
                 Thread.Sleep(3000);
-                Dispatcher.Invoke(() => Title_Screen(sender, new EventArgs()));
+                Dispatcher.Invoke(() => HighScores_Screen(sender, new RoutedEventArgs()));
             });
         }
 
