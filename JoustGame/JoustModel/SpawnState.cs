@@ -21,14 +21,13 @@ namespace JoustModel
         public void Enter()
         {
             ostrich.coords.x = World.Instance.basePlatform.coords.x + 350;
-            ostrich.coords.y = World.Instance.basePlatform.coords.y - 200;
-            Console.WriteLine(Convert.ToString(ostrich.coords.x) + ", " + Convert.ToString(ostrich.coords.y));
-            ostrich.speed = 0.075;
-            ostrich.angle = 90;
+            ostrich.coords.y = World.Instance.basePlatform.coords.y - 76;
+            ostrich.speed = 0;
+            ostrich.angle = 0;
             Task.Run(() =>
             {
-                Thread.Sleep(5000);
-                ostrich.speed = 0;
+                Thread.Sleep(3000);
+                stateMachine.Change("stand");
             });
         }
         public void Exit() { }
