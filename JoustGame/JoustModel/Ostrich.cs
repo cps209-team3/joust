@@ -117,9 +117,10 @@ namespace JoustModel
         {
             if (objHit != null)
             {
-                if (objHit.ToString() == "Buzzard" && (objHit as Buzzard).stateMachine.currentState.ToString() == "JoustModel.BuzzardFleeingState") // special case for fleeing buzzard, change later
+                //Console.WriteLine("Player detected collision with " + objHit.ToString());
+                if (objHit.ToString() == "Buzzard") 
                 {
-                    //do nothing
+
                 }
                 else
                 {
