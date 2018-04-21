@@ -14,6 +14,7 @@
         public void Update()
         {
             ostrich.MoveLeftRight();
+            ostrich.WrapAround();
         }
 
         public void HandleInput(string command)

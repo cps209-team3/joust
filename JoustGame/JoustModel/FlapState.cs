@@ -24,6 +24,7 @@ namespace JoustModel
                 stateMachine.Change("fall");
             });
             ostrich.MoveLeftRight();
+            ostrich.WrapAround();
         }
 
         public void HandleInput(string command)
