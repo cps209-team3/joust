@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Threading;
 
 namespace JoustModel
@@ -20,7 +21,8 @@ namespace JoustModel
         public void Enter()
         {
             ostrich.coords.x = World.Instance.basePlatform.coords.x + 350;
-            ostrich.coords.y = World.Instance.basePlatform.coords.y;
+            ostrich.coords.y = World.Instance.basePlatform.coords.y - 200;
+            Console.WriteLine(Convert.ToString(ostrich.coords.x) + ", " + Convert.ToString(ostrich.coords.y));
             ostrich.speed = 0.075;
             ostrich.angle = 90;
             Task.Run(() =>

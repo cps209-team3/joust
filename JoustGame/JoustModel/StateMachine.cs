@@ -13,7 +13,6 @@ namespace JoustModel
         public void Remove(string id) { stateDict.Remove(id); }
         public void Clear() { stateDict.Clear(); }
 
-
         public void Change(string id)
         {
             currentState.Exit();

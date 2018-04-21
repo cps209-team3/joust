@@ -162,14 +162,19 @@ namespace JoustModel
             {
                 if (objHit.ToString() == "Ostrich")
                 {
-                    if (this.coords.y > objHit.coords.y)
+                    string state = (objHit as Ostrich).stateMachine.currentState.ToString();
+                    Console.WriteLine("ostrich state = " + state);
+                    if (state != "dead" && state != "spawn")
                     {
-                        this.stateMachine.Change("flee");
-                        stateMachine.currentState.Update();
-                    }
-                    else
-                    {
-                        (objHit as Ostrich).Die();
+                        if (this.coords.y > objHit.coords.y)
+                        {
+                            this.stateMachine.Change("flee");
+                            stateMachine.currentState.Update();
+                        }
+                        else
+                        {
+                            (objHit as Ostrich).Die();
+                        }
                     }
                 }
                 else

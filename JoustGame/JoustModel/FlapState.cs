@@ -23,7 +23,10 @@ namespace JoustModel
             Task.Run(() =>
             {
                 Thread.Sleep(100);
-                stateMachine.Change("fall");
+                if (stateMachine.currentState.ToString() == "flap")
+                {
+                    stateMachine.Change("fall");
+                }
             });
             ostrich.MoveLeftRight();
             ostrich.WrapAround();
