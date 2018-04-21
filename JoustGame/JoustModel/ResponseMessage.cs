@@ -9,19 +9,22 @@ using System.Collections.Generic;
 
 namespace JoustModel
 {
-    public class ResponseMessage
+    public class ResponseMessage { }
+
+    public class InitialResponseMessage : ResponseMessage
     {
-      
+        public List<string> PlayerNames { get; set; }
+        public bool CanHost { get; set; }
     }
 
-    public class PlayerMoveResponseMessage: ResponseMessage
+    public class PlayerMoveResponseMessage : ResponseMessage
     {
         public int Index { get; set; }
         public double Speed { get; set; }
         public double Angle { get; set; }
     }
 
-    public class GameStatusResponseMessage: ResponseMessage
+    public class GameStatusResponseMessage : ResponseMessage
     {
         public int Index { get; set; }
         public double Speed { get; set; }

@@ -14,6 +14,33 @@ namespace JoustModel
         public abstract ResponseMessage Execute(GameController ctrl);
     }
 
+    public class InitialRequestMessage : RequestMessage
+    {
+        public string PlayerName { get; set; }
+
+        public InitialRequestMessage(string playerName)
+        {
+            PlayerName = playerName;
+        }
+
+        public override ResponseMessage Execute(GameController ctrl)
+        {
+            InitialResponseMessage response = new InitialResponseMessage();
+            
+            ctrl.WorldRef.playerNames.Add(PlayerName);
+            response.PlayerNames = ctrl.WorldRef.playerNames;
+            if (ctrl.WorldRef.hosted)
+            {
+                response.CanHost = false;
+            }
+            else
+            {
+                response.CanHost = true;
+            }
+            return response;
+        }
+    }
+
     public class PlayerMoveRequestMessage : RequestMessage
     {
         public int Index { get; set; }

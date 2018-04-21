@@ -30,6 +30,11 @@ namespace JoustClient
             wr = new StreamWriter(tcpClient.GetStream());
         }
 
+        public void Disconnect()
+        {
+            tcpClient.Close();
+        }
+
         public async Task<ResponseMessage> SendMessageAsync(RequestMessage msg)
         {
             var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
@@ -39,7 +44,6 @@ namespace JoustClient
             string response = await rd.ReadLineAsync();
             ResponseMessage responseMsg = JsonConvert.DeserializeObject(response, settings) as ResponseMessage;
             return responseMsg;
-
         }
     }
 }
