@@ -1,5 +1,4 @@
-﻿
-namespace JoustModel
+﻿namespace JoustModel
 {
     public class StandState : IState
     {

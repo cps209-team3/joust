@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="Base.cs" />
     <Compile Include="Buzzard.cs" />
+    <Compile Include="DeadState.cs" />
     <Compile Include="Egg.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Entity.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Point.cs" />
     <Compile Include="Pterodactyl.cs" />
     <Compile Include="Respawn.cs" />
+    <Compile Include="SpawnState.cs" />
     <Compile Include="StandState.cs" />
     <Compile Include="StateMachine.cs" />
     <Compile Include="World.cs" />

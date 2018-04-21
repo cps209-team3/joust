@@ -32,6 +32,7 @@ namespace JoustClient
         public bool cheatMode = false;
         public bool controls_on = false;
         public TextBox diff = new TextBox();
+        TextBlock Announce;
 
         // This makes flying create fewer threads
         // to change the animation which makes the
@@ -49,8 +50,16 @@ namespace JoustClient
             // This is only here for faster testing
             // If you need a different screen on window load, comment out the line below
             //NewGame();
-
             Title_Screen(null, EventArgs.Empty);
+            Announce = new TextBlock();
+            Canvas.SetTop(Announce, 425);
+            Canvas.SetLeft(Announce, 550);
+            Canvas.SetLeft(Announce, 790);
+            Announce.HorizontalAlignment = HorizontalAlignment.Center;
+            Announce.VerticalAlignment = VerticalAlignment.Center;
+            Announce.FontSize = 32;
+            Announce.Height = 50;
+            Announce.Foreground = new SolidColorBrush(Colors.White);
             //Finish_HighScores(null, EventArgs.Empty);
         }
         
@@ -207,30 +216,37 @@ namespace JoustClient
                 stage += 1;
             }
             control.WorldRef.stage = stage;
-            TextBlock EndStage = new TextBlock();
-            Canvas.SetTop(EndStage, 425);
-            Canvas.SetLeft(EndStage, 550);
-            Canvas.SetLeft(EndStage, 790);
-            EndStage.HorizontalAlignment = HorizontalAlignment.Center;
-            EndStage.VerticalAlignment = VerticalAlignment.Center;
-            EndStage.FontSize = 32;
-            EndStage.Height = 50;
-            EndStage.Foreground = new SolidColorBrush(Colors.White);
-            EndStage.Text = "WAVE CLEARED!";
-            canvas.Children.Add(EndStage);
+            Announce.Text = "WAVE CLEARED!";
+            canvas.Children.Add(Announce);
             Task.Run(() =>
             {
                 Thread.Sleep(1000);
-                Dispatcher.Invoke(() => EndStage.Text = "3");
+                Dispatcher.Invoke(() => Announce.Text = "3");
                 Thread.Sleep(1000);
-                Dispatcher.Invoke(() => EndStage.Text = "2");
+                Dispatcher.Invoke(() => Announce.Text = "2");
                 Thread.Sleep(1000);
-                Dispatcher.Invoke(() => EndStage.Text = "1");
+                Dispatcher.Invoke(() => Announce.Text = "1");
                 Thread.Sleep(1000);
-                Dispatcher.Invoke(() => EndStage.Text = String.Format("WAVE {0}", Convert.ToString(stage)));
+                Dispatcher.Invoke(() => Announce.Text = String.Format("WAVE {0}", Convert.ToString(stage)));
                 Thread.Sleep(1000);
                 SpawnEnemies();
-                Dispatcher.Invoke(() => canvas.Children.Remove(EndStage));
+                Dispatcher.Invoke(() =>
+                {
+                    Announce.Text = "";
+                    canvas.Children.Remove(Announce);
+                });
+            });
+        }
+
+        public void NotifyLost(object sender, int e)
+        {
+            Announce.Text = "GAME OVER";
+            canvas.Children.Add(Announce);
+            control.WorldRef.player.ostrichDied -= this.NotifyLost;
+            Task.Run(() =>
+            {
+                Thread.Sleep(3000);
+                Dispatcher.Invoke(() => Title_Screen(sender, new EventArgs()));
             });
         }
 
@@ -275,9 +291,7 @@ namespace JoustClient
         {
             // switched bool to activate controls
             controls_on = true;
-
             
-
             control.WorldRef.win += this.NotifyWon;
             flapLock = false;
             canvas.Children.Clear();
@@ -290,6 +304,7 @@ namespace JoustClient
             // Get stage num from controls once the proper screens are implemented
             Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
             control.WorldRef.player = o;
+            control.WorldRef.player.ostrichDied += this.NotifyLost;
             playerStateMachine = control.WorldRef.player.stateMachine;
             if (cheatMode)
             {
@@ -459,8 +474,6 @@ namespace JoustClient
         private void Title_Screen(object sender, EventArgs e)
         {
             controls_on = false;
-
-            
 
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;

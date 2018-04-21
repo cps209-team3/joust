@@ -10,6 +10,7 @@ namespace JoustModel
     public class Ostrich : Entity
     {
         public event EventHandler<int> ostrichMoved;
+        public event EventHandler<int> ostrichDied;
         public StateMachine stateMachine;
         public int lives;
         public int score;
@@ -38,6 +39,8 @@ namespace JoustModel
             stateMachine.stateDict.Add("flap", new FlapState(this));
             stateMachine.stateDict.Add("stand", stand);
             stateMachine.stateDict.Add("fall", new FallState(this));
+            stateMachine.stateDict.Add("dead", new DeadState(this));
+            stateMachine.stateDict.Add("spawn", new SpawnState(this));
             stateMachine.currentState = stand;
             imagePath = "Images/Player/player_stand.png";
             leftDown = false;
@@ -49,7 +52,16 @@ namespace JoustModel
         {
             if (!cheatMode)
             {
-                World.Instance.objects.Remove(this);
+                lives -= 1;
+                if (lives == 0)
+                {
+                    ostrichDied(this, 0);
+                }
+                else
+                {
+                    cheatMode = true;
+                    stateMachine.Change("dead");
+                }
             }
         }
 

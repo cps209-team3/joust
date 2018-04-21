@@ -13,6 +13,7 @@ namespace JoustModel
             width = 700;
             type = "Base";
             imagePath = "Images/Platform/platform_bottom.png";
+            World.Instance.basePlatform = this;
         }
 
         public override string Serialize()
