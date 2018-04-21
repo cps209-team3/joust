@@ -46,9 +46,9 @@ namespace JoustModel
             }
         }
 
-        public void Enter() { }
+        public void Enter() { ostrich.changing = true; }
 
-        public void Exit() { }
+        public void Exit() { ostrich.changing = false; }
 
         public override string ToString()
         {

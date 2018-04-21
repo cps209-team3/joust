@@ -47,7 +47,6 @@ namespace JoustModel
             return "stand";
         }
 
-
         public void CheckCollisions()
         {
             bool collisionDetected = false;
@@ -60,7 +59,7 @@ namespace JoustModel
             }
             if (collisionDetected != true)
             {
-                stateMachine.Change("fall"); // no collision
+                stateMachine.Change("fall");
             }
             else
             {

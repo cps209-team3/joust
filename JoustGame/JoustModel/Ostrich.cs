@@ -20,9 +20,11 @@ namespace JoustModel
         public bool leftDown;
         public bool rightDown;
         public bool cheatMode;
+        public bool changing;
 
         public Ostrich()
         {
+            changing = false;
             height = 67;
             width = 50;
             cheatMode = false;
@@ -92,13 +94,13 @@ namespace JoustModel
 
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
 
-            Console.WriteLine("Ostrich 2nd state = " + stateMachine.currentState.ToString());
+            //Console.WriteLine("Ostrich 2nd state = " + stateMachine.currentState.ToString());
 
             stateMachine.Update();
-            Console.WriteLine("Ostrich 3rd state = " + stateMachine.currentState.ToString());
+            //Console.WriteLine("Ostrich 3rd state = " + stateMachine.currentState.ToString());
 
             stateMachine.currentState.CheckCollisions();
-            Console.WriteLine("Ostrich 4th state = " + stateMachine.currentState.ToString());
+            //Console.WriteLine("Ostrich 4th state = " + stateMachine.currentState.ToString());
         }
 
         public void WrapAround()
@@ -135,7 +137,11 @@ namespace JoustModel
                     coords.y -= minTV.y;
                     if (minTV.y > 0)
                     {
-                        stateMachine.Change("stand");
+                        Console.WriteLine(objHit.ToString());
+                        if (!changing)
+                        {
+                            stateMachine.Change("stand");
+                        }
                     }
                 }
             }
