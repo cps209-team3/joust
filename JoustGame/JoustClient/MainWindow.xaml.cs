@@ -26,13 +26,15 @@ namespace JoustClient
     {
         public GameController control = new GameController();
         public TextBox namebox = new TextBox();
-        public DispatcherTimer updateTimer;
         public StateMachine playerStateMachine;
         public bool flapLock;
         public bool cheatMode = false;
         public bool controls_on = false;
+        public bool inEscScreen = false;
+        public bool multiplayer = false;
         public TextBox diff = new TextBox();
         TextBlock Announce;
+        public Ostrich localPlayer;
 
         // This makes flying create fewer threads
         // to change the animation which makes the
@@ -72,7 +74,7 @@ namespace JoustClient
                 switch (e.Key)
                 {
                     case Key.Escape:
-                        //show escape menu
+                        Esc_Screen(sender, e);
                         break;
                     case Key.W:
                     case Key.Up:
@@ -92,11 +94,11 @@ namespace JoustClient
                         break;
                     case Key.A:
                     case Key.Left:
-                        control.WorldRef.player.leftDown = false;
+                        localPlayer.leftDown = false;
                         break;
                     case Key.D:
                     case Key.Right:
-                        control.WorldRef.player.rightDown = false;
+                        localPlayer.rightDown = false;
                         break;
                     default:
                         break;
@@ -117,11 +119,11 @@ namespace JoustClient
                         break;
                     case Key.A:
                     case Key.Left:
-                        control.WorldRef.player.leftDown = true;
+                        localPlayer.leftDown = true;
                         break;
                     case Key.D:
                     case Key.Right:
-                        control.WorldRef.player.rightDown = true;
+                        localPlayer.rightDown = true;
                         break;
                     default:
                         break;
@@ -241,14 +243,14 @@ namespace JoustClient
         public void NotifyLost(object sender, int e)
         {
             controls_on = false;
-            updateTimer.Stop();
+            control.updateTimer.Stop();
             control.WorldRef.objects.Clear();
             control.WorldRef.basePlatform = null;
             control.WorldRef.stage = 0;
             Announce.Text = "GAME OVER";
             canvas.Children.Add(Announce);
-            control.WorldRef.player.ostrichDied -= this.NotifyLost;
-            control.WorldRef.player = null;
+            localPlayer.ostrichDied -= this.NotifyLost;
+            localPlayer = null;
             Task.Run(() =>
             {
                 Thread.Sleep(3000);
@@ -284,8 +286,8 @@ namespace JoustClient
                 // set player
                 if (obj.ToString() == "Ostrich")
                 {
-                    control.WorldRef.player = (obj as Ostrich);
-                    playerStateMachine = control.WorldRef.player.stateMachine;
+                    localPlayer = (obj as Ostrich);
+                    playerStateMachine = localPlayer.stateMachine;
                     Console.WriteLine("player has been set");
                 }
                 WorldObjectControlFactory(obj);
@@ -309,9 +311,10 @@ namespace JoustClient
 
             // Get stage num from controls once the proper screens are implemented
             Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
+            o.ostrichDied += this.NotifyLost;
+            playerStateMachine = o.stateMachine;
+            localPlayer = o;
             control.WorldRef.player = o;
-            control.WorldRef.player.ostrichDied += this.NotifyLost;
-            playerStateMachine = control.WorldRef.player.stateMachine;
             if (cheatMode)
             {
                 o.cheatMode = true;
@@ -341,13 +344,36 @@ namespace JoustClient
             InitiateWorldObject("Respawn", 1100, 600);
             InitiateWorldObject("Respawn", 200, 600);
             InitiateWorldObject("Base", 375, 775);
-            
-            updateTimer = new DispatcherTimer(
-                TimeSpan.FromMilliseconds(5), 
-                DispatcherPriority.Render,
-                UpdateTick,
-                Dispatcher.CurrentDispatcher);
-            updateTimer.Start();
+           
+        }
+
+        public void NewMultiplayer(object sender, EventArgs e)
+        {
+            controls_on = true;
+           
+            control.WorldRef.win += this.NotifyWon;
+            flapLock = false;
+            canvas.Children.Clear();
+            canvas.Background = Brushes.Black;
+            canvas.Children.Clear();
+
+            // Get stage num from controls once the proper screens are implemented
+            Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
+            o.ostrichDied += NotifyLost;
+            playerStateMachine = o.stateMachine;
+            control.WorldRef.players.Add(o);
+            localPlayer = o;
+
+            control.updateTimer.Start();
+
+            InitiateWorldObject("Platform", 100, 300);
+            InitiateWorldObject("Platform", 700, 500);
+            InitiateWorldObject("Platform", 500, 300);
+            InitiateWorldObject("Platform", 950, 200);
+            InitiateWorldObject("Respawn", 700, 100);
+            InitiateWorldObject("Respawn", 1100, 600);
+            InitiateWorldObject("Respawn", 200, 600);
+            InitiateWorldObject("Base", 375, 775);
         }
 
         public void SpawnEnemies()
@@ -376,16 +402,11 @@ namespace JoustClient
             return obj;
         }
 
-        public void UpdateTick(object sender, EventArgs e)
-        {
-            control.Update();
-        }
 
         // Title screens
         private void StartGameScreen(object sender, EventArgs e)
         {
-            
-
+            control.updateTimer.Start();
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
             Button saveBtn = new Button();
@@ -405,6 +426,7 @@ namespace JoustClient
             loadBtn.Margin = new Thickness(0, 40, 0, 0);
             canvas.Children.Add(loadBtn);
         }
+
 
         private Button Make_Button(string content, double top, RoutedEventHandler eventx)
         {
@@ -479,7 +501,12 @@ namespace JoustClient
 
         private void Title_Screen(object sender, EventArgs e)
         {
+            inEscScreen = false;
             controls_on = false;
+            control.updateTimer.Stop();
+            control.WorldRef.objects.Clear();
+            control.WorldRef.basePlatform = null;
+            control.WorldRef.stage = 0;
 
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
@@ -598,14 +625,14 @@ namespace JoustClient
             Score thisScore;
             try
             {
-                thisScore = new Score(control.WorldRef.player.score, namebox.Text);
+                thisScore = new Score(localPlayer.score, namebox.Text);
             }
             catch
             {
                 // for test
-                control.WorldRef.player = new Ostrich();
-                control.WorldRef.player.score = 100;
-                thisScore = new Score(control.WorldRef.player.score, namebox.Text);
+                localPlayer = new Ostrich();
+                localPlayer.score = 100;
+                thisScore = new Score(localPlayer.score, namebox.Text);
             }
             HighScoreManager.Instance.AddScore(thisScore);
 
@@ -645,6 +672,7 @@ namespace JoustClient
             canvas.Children.Clear();
 
             Button back = Make_BackButton(625.0, Title_Screen);
+            Button connect = Make_Button("Start Multiplayer", 300, NewMultiplayer);
         }
 
         private void Help_Screen(object sender, RoutedEventArgs e)
@@ -869,6 +897,29 @@ namespace JoustClient
                 "every time they earn 10000 points.\n";
 
             Button back = Make_BackButton(625.0, Help_Screen);
+        }
+
+        private void Esc_Screen(object sender, RoutedEventArgs e)
+        {
+            if (! inEscScreen)
+            {
+                inEscScreen = true;
+                control.updateTimer.Stop();
+                TextBlock paused = Make_TextBlock(300, 620, 50, 200);
+                paused.Text = "Game Paused";
+                Button unpause = Make_Button("Unpause", 360, ResumeGame);
+                Button mainMenu = Make_Button("MainMenu", 470, Title_Screen);
+            }
+        }
+
+        private void ResumeGame(object sender, RoutedEventArgs e)
+        {
+            control.updateTimer.Start();
+            if (inEscScreen)
+            {
+                canvas.Children.RemoveRange(canvas.Children.Count - 3, 3);
+                inEscScreen = false;
+            }
         }
     }
 }

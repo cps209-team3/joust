@@ -13,6 +13,7 @@ namespace JoustModel
         // Public instance variables
         public List<WorldObject> objects;
         public List<Enemy> enemies;
+        public List<Ostrich> players;
         public Ostrich player;
         public Base basePlatform;
         public int stage;
@@ -30,6 +31,7 @@ namespace JoustModel
         {
             objects = new List<WorldObject>();
             enemies = new List<Enemy>();
+            players = new List<Ostrich>();
         }
 
         private static World instance = new World();
