@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 
 namespace JoustModel
 {
@@ -83,7 +84,7 @@ namespace JoustModel
 
             if (!charging) {
                 // Determine the next state
-                EnemyState.GetNextState(this);
+                Task.Run(() => EnemyState.GetNextState(this));
                 stateMachine.currentState.Update();
             }
 

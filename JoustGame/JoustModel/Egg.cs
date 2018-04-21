@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 
 namespace JoustModel
 {
@@ -74,7 +75,7 @@ namespace JoustModel
             CheckEnemyCollision();
 
             // Determine the next state
-            EnemyState.GetNextState(this);
+            Task.Run(() => EnemyState.GetNextState(this));
             stateMachine.currentState.Update();
 
             if (stateMachine.currentState is EggHatchedState) {
