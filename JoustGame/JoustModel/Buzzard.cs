@@ -160,16 +160,17 @@ namespace JoustModel
             WorldObject objHit = CheckCollision();
             if (objHit != null && stateMachine.currentState.ToString() != "JoustModel.BuzzardFleeingState") // special case for fleeing, fix later. 
             {
-                if (objHit.ToString() == "Ostrich")
+                if (objHit.ToString() == "Ostrich" && (objHit as Ostrich).stateMachine.currentState.ToString() != "dead")
                 {
                     Console.WriteLine("Collisionstate = " + stateMachine.currentState.ToString());
-                    if (this.coords.y > objHit.coords.y)
+                    if (this.coords.y > objHit.coords.y) // who wins the joust?
                     {
                         this.stateMachine.Change("flee");
                         stateMachine.currentState.Update();
                     }
-                    else if ((objHit as Ostrich).stateMachine.currentState.ToString() != "dead")
+                    else
                     {
+                        Console.WriteLine("State of ostrich = " + (objHit as Ostrich).stateMachine.currentState.ToString());
                         (objHit as Ostrich).Die();
                     }
                 }
