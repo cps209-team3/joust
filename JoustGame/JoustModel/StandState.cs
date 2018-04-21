@@ -1,4 +1,6 @@
-﻿namespace JoustModel
+﻿using System;
+
+namespace JoustModel
 {
     public class StandState : IState
     {
@@ -45,9 +47,25 @@
             return "stand";
         }
 
+
         public void CheckCollisions()
         {
-            ostrich.CheckEnemyCollision(ostrich.CheckCollision());
+            bool collisionDetected = false;
+            foreach (WorldObject wo in World.Instance.objects)
+            {       // Don't collide with itself! and check for collision
+                if (wo.ToString() != ostrich.ToString() && (ostrich.coords.x < wo.coords.x + wo.width && ostrich.coords.x + ostrich.width > wo.coords.x && ostrich.coords.y  < wo.coords.y + wo.height && ostrich.height + ostrich.coords.y + 1 > wo.coords.y))
+                {
+                    collisionDetected = true;
+                }
+            }
+            if (collisionDetected != true)
+            {
+                stateMachine.Change("fall"); // no collision
+            }
+            else
+            {
+                // do something else
+            }    
         }
     }
 }

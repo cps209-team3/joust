@@ -68,7 +68,7 @@ namespace JoustModel
 
         public override void Update()
         {
-            stateMachine.currentState.CheckCollisions();
+            Console.WriteLine("Ostrich Initial state = " + stateMachine.currentState.ToString());
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
@@ -92,7 +92,13 @@ namespace JoustModel
 
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
 
+            Console.WriteLine("Ostrich 2nd state = " + stateMachine.currentState.ToString());
+
             stateMachine.Update();
+            Console.WriteLine("Ostrich 3rd state = " + stateMachine.currentState.ToString());
+
+            stateMachine.currentState.CheckCollisions();
+            Console.WriteLine("Ostrich 4th state = " + stateMachine.currentState.ToString());
         }
 
         public void WrapAround()
