@@ -1,18 +1,28 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace JoustModel
 {
     public class GameController
     {
+        public DispatcherTimer updateTimer;
         public World WorldRef { get; set; }
 
         public GameController()
         {
             WorldRef = World.Instance;
+
+            updateTimer = new DispatcherTimer(
+            TimeSpan.FromMilliseconds(5),
+            DispatcherPriority.Render,
+            Update,
+            Dispatcher.CurrentDispatcher);
+            //updateTimer.Start();
         }
 
-        public void Update()
+
+        public void Update(object sender, EventArgs e)
         {
             try
             {
