@@ -240,9 +240,15 @@ namespace JoustClient
 
         public void NotifyLost(object sender, int e)
         {
+            controls_on = false;
+            updateTimer.Stop();
+            control.WorldRef.objects.Clear();
+            control.WorldRef.basePlatform = null;
+            control.WorldRef.stage = 0;
             Announce.Text = "GAME OVER";
             canvas.Children.Add(Announce);
             control.WorldRef.player.ostrichDied -= this.NotifyLost;
+            control.WorldRef.player = null;
             Task.Run(() =>
             {
                 Thread.Sleep(3000);
