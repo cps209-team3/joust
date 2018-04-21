@@ -151,7 +151,7 @@ namespace JoustModel
         // Serialization
         public override string Serialize()
         {
-            return string.Format("Ostrich,{0},{1},{2},{3},{4},{5}", score, lives, speed, angle, coords.x, coords.y);
+            return string.Format("Ostrich,{0},{1},{2},{3},{4},{5},{6}", score, lives, speed, angle, coords.x, coords.y, stateMachine.currentState.ToString());
         }
 
         public override void Deserialize(string data)
@@ -163,6 +163,8 @@ namespace JoustModel
             angle = Convert.ToDouble(properties[4]); // set angle
             coords.x = Convert.ToDouble(properties[5]); // set x coord
             coords.y = Convert.ToDouble(properties[6]); // set y coord
+            stateMachine.Change(properties[7]);
+
         }
 
         public override string ToString()
