@@ -20,8 +20,7 @@ namespace JoustModel
                 // Update everything 50 times per second (subject to change)
                 foreach (WorldObject worldObject in WorldRef.objects)
                 {
-                    Entity entity = worldObject as Entity;
-                    
+                    Entity entity = worldObject as Entity;                  
                     if (entity != null)
                     {
                         entity.Update();

@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace JoustModel {
 
@@ -434,7 +436,12 @@ namespace JoustModel {
             stateMachine = StateEnemy.stateMachine;
         }
 
-        public override void Update() {
+        public override void Update()
+        {
+            Task.Run(() => UpdateEnemy());
+        }
+
+        public void UpdateEnemy() {
             if (StateEnemy is Buzzard) {
                 Buzzard b = StateEnemy as Buzzard;
                 TargetEgg = b.pickupEgg;
