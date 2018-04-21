@@ -16,14 +16,15 @@ namespace JoustModel
         public int score;
         public override int Value { get; set; }
         public string input;
-        public string oLock;
         public bool leftDown;
         public bool rightDown;
         public bool cheatMode;
         public bool changing;
+        public string spawnLock;
 
         public Ostrich()
         {
+            spawnLock = "spawn";
             changing = false;
             height = 67;
             width = 50;
