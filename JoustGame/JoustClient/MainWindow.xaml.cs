@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using JoustModel;
+using System.Diagnostics;
 
 namespace JoustClient
 {
@@ -64,9 +65,9 @@ namespace JoustClient
             // If you need a different screen on window load, comment out the line below
             //NewGame();
 
-            //Title_Screen(null, EventArgs.Empty);
+            Title_Screen(null, EventArgs.Empty);
             //Finish_HighScores(null, EventArgs.Empty);
-            Test_Screen(null, EventArgs.Empty);
+            //Test_Screen(null, EventArgs.Empty);
         }
         
         private void Canvas_KeyUp(object sender, KeyEventArgs e)
@@ -189,6 +190,7 @@ namespace JoustClient
                     Platform pl = worldObject as Platform;
                     i = new PlatformControl(pl.imagePath);
                     PlatformControl pC = i as PlatformControl;
+                    pC.Resize(pl.width, pl.height);
                     break;
                 case "Respawn":
                     Respawn r = worldObject as Respawn;
@@ -338,6 +340,54 @@ namespace JoustClient
             
             updateTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(5), 
+                DispatcherPriority.Render,
+                UpdateTick,
+                Dispatcher.CurrentDispatcher);
+            updateTimer.Start();
+        }
+
+        public void CustomStage_Screen(object sender, EventArgs e) {
+            canvas.Children.Clear();
+            canvas.Background = Brushes.Black;
+            // Get the save files in the Custom Stages directory
+            System.IO.DirectoryInfo info = new System.IO.DirectoryInfo("../../Saves/Custom Stages/");
+            System.IO.FileInfo[] files = info.GetFiles();
+            for (int fileNum = 0; fileNum < files.Length; fileNum++) Make_Button(files[fileNum].Name.Substring(0, (files[fileNum].Name.Length - 4)), (fileNum + 1) * 100, LoadStage);
+        }
+
+        public void LoadStage(object sender, EventArgs e) {
+            canvas.Children.Clear();
+            canvas.Background = Brushes.Black;
+            Button b = sender as Button;
+            control.StageLoad(b.Content + ".txt");
+            // Make the controls for each world object
+            foreach (WorldObject obj in control.WorldRef.objects) {
+                WorldObjectControlFactory(obj);
+            }
+
+            controls_on = true;
+            control.WorldRef.win += this.NotifyWon;
+
+            Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
+            control.WorldRef.player = o;
+            playerStateMachine = control.WorldRef.player.stateMachine;
+            if (cheatMode) {
+                o.cheatMode = true;
+            }
+
+            // difficulty setting
+            int difficulty = 0;
+            bool result = Int32.TryParse(diff.Text, out difficulty);
+            if (difficulty < 0) {
+                difficulty = 0;
+            }
+            control.WorldRef.stage = difficulty;
+
+            SpawnEnemies();
+            InitiateWorldObject("Base", 375, 775);
+
+            updateTimer = new DispatcherTimer(
+                TimeSpan.FromMilliseconds(5),
                 DispatcherPriority.Render,
                 UpdateTick,
                 Dispatcher.CurrentDispatcher);
@@ -508,7 +558,9 @@ namespace JoustClient
 
             Button back = Make_BackButton(625.0, Title_Screen);
 
-            Button game = Make_Button("Start Game", 200.0, NewGame);
+            Button game = Make_Button("Start Game", 100.0, NewGame);
+
+            Button customStage = Make_Button("Custom Stage", 200.0, CustomStage_Screen);
 
             Button cheat = Make_Button("CHEAT OFF", 350.0, Cheat_Toggle);
             cheat.Height = 50;

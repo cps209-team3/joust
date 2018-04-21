@@ -1,0 +1,1 @@
+Platform,long,1,50,100
