@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.IO;
 using JoustModel;
 
 namespace JoustClient
@@ -241,12 +242,8 @@ namespace JoustClient
         }
 
         public void NotifyLost(object sender, int e)
-        {
-            controls_on = false;
-            control.updateTimer.Stop();
-            control.WorldRef.objects.Clear();
-            control.WorldRef.basePlatform = null;
-            control.WorldRef.stage = 0;
+        {  
+            ResetGame();
             Announce.Text = "GAME OVER";
             canvas.Children.Add(Announce);
             localPlayer.ostrichDied -= this.NotifyLost;
@@ -502,11 +499,7 @@ namespace JoustClient
         private void Title_Screen(object sender, EventArgs e)
         {
             inEscScreen = false;
-            controls_on = false;
-            control.updateTimer.Stop();
-            control.WorldRef.objects.Clear();
-            control.WorldRef.basePlatform = null;
-            control.WorldRef.stage = 0;
+            ResetGame();
 
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
@@ -542,7 +535,6 @@ namespace JoustClient
             cheat.Height = 50;
             cheatMode = false;
 
-
             TextBlock descrip = Make_TextBlock(425, 620, 50, 200);
             descrip.Text = "Set stage:{0-99}";
             descrip.Height = 40;
@@ -560,6 +552,42 @@ namespace JoustClient
             diff.BorderBrush = Brushes.Red;
             diff.MaxLength = 2;
             canvas.Children.Add(diff);
+
+            TextBlock saves = Make_TextBlock(200, 850, 35, 200);
+            saves.Text = "Game Saves";
+            saves.TextAlignment = TextAlignment.Center;
+
+            ScrollViewer scrollViewer = new ScrollViewer();
+            StackPanel listOfSaves = new StackPanel();
+            Canvas.SetLeft(scrollViewer, 850);
+            Canvas.SetTop(scrollViewer, 245);
+            scrollViewer.MaxHeight = 480;
+            scrollViewer.Content = listOfSaves;
+            canvas.Children.Add(scrollViewer);
+            String[] saveFiles = Directory.GetFiles("../../Saves/GameSaves/", "*", SearchOption.TopDirectoryOnly);
+            int numOfSaves =saveFiles.Length;
+            for (int i = 0; i < numOfSaves; i++)
+            {
+                Button btn = new Button();
+                btn.Width = 183;
+                btn.Content = saveFiles[i].Substring(saveFiles[i].Length-12, 8);
+                btn.Click += (object s, RoutedEventArgs ee) =>
+                {
+                    ResetGame();
+                    NewGame(s, ee);
+                    control.Load(btn.Content.ToString());
+                };
+                listOfSaves.Children.Add(btn);
+            }        
+        }
+
+        private void ResetGame()
+        {
+            controls_on = false;
+            control.updateTimer.Stop();
+            control.WorldRef.objects.Clear();
+            control.WorldRef.basePlatform = null;
+            control.WorldRef.stage = 0;
         }
 
         private void Cheat_Toggle(object sender, RoutedEventArgs e)
