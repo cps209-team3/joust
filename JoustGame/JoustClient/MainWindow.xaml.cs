@@ -33,13 +33,17 @@ namespace JoustClient
         public bool controls_on = false;
         public TextBox diff = new TextBox();
         TextBlock Announce;
+        TextBox ipAddress;
+        TextBox playerName;
+        public bool host = false;
+        public bool connected = false;
+        public ClientCommunicationManager comm = new ClientCommunicationManager();
 
         // This makes flying create fewer threads
         // to change the animation which makes the
         // game run better
         private OstrichControl ostrichCtrl;
-
-
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -637,6 +641,8 @@ namespace JoustClient
 
         private void Multi_Screen(object sender, RoutedEventArgs e)
         {
+            host = false;
+
             Task.Run(() =>
             {
                 PlaySounds.Instance.Play_Select();
@@ -644,7 +650,81 @@ namespace JoustClient
 
             canvas.Children.Clear();
 
+            Button hostButton = Make_Button("Host Lobby", 280, Lobby_Screen);
+            Button join = Make_Button("Join Lobby", 380, Lobby_Screen);
+
+            ipAddress = new TextBox();
+            ipAddress.Text = "localhost";//"Server Address";
+            ipAddress.Height = 40;
+            ipAddress.Width = 200;
+            Canvas.SetLeft(ipAddress, 620);
+            Canvas.SetTop(ipAddress, 220);
+            ipAddress.Background = Brushes.Blue;
+            ipAddress.Foreground = Brushes.Yellow;
+            ipAddress.FontFamily = new FontFamily("Century Gothic");
+            ipAddress.FontSize = 25;
+            canvas.Children.Add(ipAddress);
+
+            playerName = new TextBox();
+            playerName.Text = "Player Name";
+            playerName.Height = 40;
+            playerName.Width = 200;
+            Canvas.SetLeft(playerName, 620);
+            Canvas.SetTop(playerName, 180);
+            playerName.Background = Brushes.Blue;
+            playerName.Foreground = Brushes.Yellow;
+            playerName.FontFamily = new FontFamily("Century Gothic");
+            playerName.FontSize = 25;
+            canvas.Children.Add(playerName);
+
             Button back = Make_BackButton(625.0, Title_Screen);
+        }
+
+        private async void Lobby_Screen(object sender, RoutedEventArgs e)
+        {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
+            Button button = sender as Button;
+            if ((string)button.Content == "HOST LOBBY")
+            {
+                host = true;
+            }
+
+            string ip = ipAddress.Text;
+            
+            if (!connected)
+            {
+                connected = true;
+                await comm.ConnectToServerAsync(ip);
+            }
+
+            canvas.Children.Clear();
+
+            int left = host ? 395 : 570;
+
+            for (int i = 0; i < 8; i++)
+            {
+                Border border = new Border();
+                border.BorderThickness = new Thickness(3);
+                border.BorderBrush = new SolidColorBrush(Colors.White);
+                TextBlock playerBlock = Make_TextBlock(175 + (40 * i), left, 40, 300);
+                canvas.Children.Remove(playerBlock);
+                border.Child = playerBlock;
+                Canvas.SetTop(border, 175 + (40 * i));
+                Canvas.SetLeft(border, left);
+                canvas.Children.Add(border);
+            }
+
+            if (host)
+            {
+                Button startButton = Make_Button("Start Game", 285, NewGame);
+                Canvas.SetLeft(startButton, 745);
+            }
+
+            Button back = Make_BackButton(625.0, Multi_Screen);
         }
 
         private void Help_Screen(object sender, RoutedEventArgs e)
