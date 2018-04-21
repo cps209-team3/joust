@@ -168,7 +168,7 @@ namespace JoustModel
                         this.stateMachine.Change("flee");
                         stateMachine.currentState.Update();
                     }
-                    else
+                    else if ((objHit as Ostrich).stateMachine.currentState.ToString() != "dead")
                     {
                         (objHit as Ostrich).Die();
                     }

@@ -1,4 +1,6 @@
-﻿namespace JoustModel
+﻿using System;
+
+namespace JoustModel
 {
     public class DeadState : IState
     {
