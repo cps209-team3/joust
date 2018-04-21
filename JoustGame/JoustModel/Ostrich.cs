@@ -50,6 +50,7 @@ namespace JoustModel
 
         public override void Die()
         {
+            Console.WriteLine("Ostrich has died!");
             if (!cheatMode)
             {
                 lives -= 1;
@@ -59,7 +60,6 @@ namespace JoustModel
                 }
                 else
                 {
-                    cheatMode = true;
                     stateMachine.Change("dead");
                 }
             }
@@ -68,25 +68,7 @@ namespace JoustModel
 
         public override void Update()
         {
-            // Check for collisions
-            WorldObject objHit = CheckCollision();
-            if (objHit != null)
-            {
-                if (objHit.ToString() == "Buzzard" && (objHit as Buzzard).stateMachine.currentState.ToString() == "JoustModel.BuzzardFleeingState") // special case for fleeing buzzard, change later
-                {
-                    //do nothing
-                }
-                else
-                {
-                    Point minTV = FindMinTV(objHit);
-                    coords.x -= minTV.x;
-                    coords.y -= minTV.y;
-                    if (minTV.y > 0)
-                    {
-                        stateMachine.Change("stand");
-                    }
-                }
-            }
+
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
@@ -128,6 +110,27 @@ namespace JoustModel
             else if (rightDown && !leftDown)
             {
                 Task.Run(() => stateMachine.HandleInput("right"));
+            }
+        }
+
+        public void CheckEnemyCollision(WorldObject objHit)
+        {
+            if (objHit != null)
+            {
+                if (objHit.ToString() == "Buzzard" && (objHit as Buzzard).stateMachine.currentState.ToString() == "JoustModel.BuzzardFleeingState") // special case for fleeing buzzard, change later
+                {
+                    //do nothing
+                }
+                else
+                {
+                    Point minTV = FindMinTV(objHit);
+                    coords.x -= minTV.x;
+                    coords.y -= minTV.y;
+                    if (minTV.y > 0)
+                    {
+                        stateMachine.Change("stand");
+                    }
+                }
             }
         }
 
