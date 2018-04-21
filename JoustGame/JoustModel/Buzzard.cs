@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading.Tasks;
 
 namespace JoustModel
 {
@@ -100,7 +99,7 @@ namespace JoustModel
             CheckEnemyCollision();
 
             // Determine the next state
-            Task.Run(() => EnemyState.GetNextState(this));
+            EnemyState.GetNextState(this);
             stateMachine.currentState.Update();
             
             if (stateMachine.currentState is EnemyFlappingState) {
@@ -159,19 +158,17 @@ namespace JoustModel
         {
             // Check Collision
             WorldObject objHit = CheckCollision();
-            if (objHit != null && stateMachine.currentState.ToString() != "JoustModel.BuzzardFleeingState") // special case for fleeing, fix later. 
+            if (objHit != null) // special case for fleeing, fix later. 
             {
-                if (objHit.ToString() == "Ostrich" && (objHit as Ostrich).stateMachine.currentState.ToString() != "dead")
+                if (objHit.ToString() == "Ostrich")
                 {
-                    Console.WriteLine("Collisionstate = " + stateMachine.currentState.ToString());
-                    if (this.coords.y > objHit.coords.y) // who wins the joust?
+                    if (this.coords.y > objHit.coords.y)
                     {
                         this.stateMachine.Change("flee");
                         stateMachine.currentState.Update();
                     }
                     else
                     {
-                        Console.WriteLine("State of ostrich = " + (objHit as Ostrich).stateMachine.currentState.ToString());
                         (objHit as Ostrich).Die();
                     }
                 }
