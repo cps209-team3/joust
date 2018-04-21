@@ -79,7 +79,7 @@ namespace JoustModel
         public override void Update()
         {
             // Check Collision
-            //CheckCollision();
+            CheckEnemyCollision();
 
             if (!charging) {
                 // Determine the next state
@@ -138,6 +138,47 @@ namespace JoustModel
             if (updateGraphic == 0) {
                 if (PterodactylStateChange != null)
                     PterodactylStateChange(this, null);
+            }
+        }
+
+        public void CheckEnemyCollision()
+        {
+            // Check Collision
+            WorldObject objHit = CheckCollision();
+            if (objHit != null) // special case for fleeing, fix later. 
+            {
+                if (objHit.ToString() == "Ostrich")
+                {
+                    if (this.coords.y > objHit.coords.y)
+                    {
+                        this.stateMachine.Change("destroyed");
+                        stateMachine.currentState.Update();
+                    }
+                    else
+                    {
+                        (objHit as Ostrich).Die();
+                    }
+                }
+                else
+                {
+                    Point minTV = FindMinTV(objHit);
+                    if (minTV.y > 0)
+                    {
+                        this.stateMachine.Change("stand"); //if hit top
+                    }
+                    else if (minTV.y < 0)
+                    {
+                        this.stateMachine.Change("fall"); // if hit bottom
+                    }
+                    else if (minTV.x > 0)
+                    {
+                        this.stateMachine.Change("flap_left"); // if hit left
+                    }
+                    else if (minTV.x < 0)
+                    {
+                        this.stateMachine.Change("flap_right"); // if hit right
+                    }
+                }
             }
         }
 

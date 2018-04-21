@@ -109,6 +109,20 @@ namespace JoustModel
             }
         }
 
+        public void CheckEnemyCollision()
+        {
+            // Check Collision
+            WorldObject objHit = CheckCollision();
+            if (objHit != null) // special case for fleeing, fix later. 
+            {
+                if (objHit.ToString() == "Ostrich")
+                {
+                    collected = true;
+                }
+
+            }
+        }
+
         //Serialization
         public override string Serialize()
         {
