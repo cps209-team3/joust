@@ -158,10 +158,11 @@ namespace JoustModel
         {
             // Check Collision
             WorldObject objHit = CheckCollision();
-            if (objHit != null) // special case for fleeing, fix later. 
+            if (objHit != null && stateMachine.currentState.ToString() != "JoustModel.BuzzardFleeingState") // special case for fleeing, fix later. 
             {
                 if (objHit.ToString() == "Ostrich")
                 {
+                    Console.WriteLine("Collisionstate = " + stateMachine.currentState.ToString());
                     if (this.coords.y > objHit.coords.y)
                     {
                         this.stateMachine.Change("flee");
