@@ -13,50 +13,7 @@ namespace JoustModel {
         public EnemyState state;
         public StateMachine stateMachine;
 
-        public void CheckEnemyCollision()
-        {
-            // Check Collision
-            WorldObject objHit = CheckCollision();
-            if (objHit != null && stateMachine.currentState.ToString() != "JoustModel.BuzzardFleeingState") // special case for sleeing, fix later. 
-            {
-                if (objHit.ToString() == "Ostrich")
-                {
-                    if (this is Egg) {
-                        Egg egg = this as Egg;
-                        egg.collected = true;
-                    }
-                    if (this is Buzzard) {
-                        if (this.coords.y > objHit.coords.y) {
-                            this.stateMachine.Change("flee");
-                            stateMachine.currentState.Update();
-                        }
-                        else {
-                            (objHit as Ostrich).Die();
-                        }
-                    }
-                }
-                else
-                {
-                    if (objHit is Egg || stateMachine.currentState is BuzzardPickupState || this is Egg) { }
-                    else {
-                        Point minTV = FindMinTV(objHit);
-                        if (minTV.y > 0) {
-                            this.stateMachine.Change("stand"); //if hit top
-                        }
-                        else if (minTV.y < 0) {
-                            this.stateMachine.Change("fall"); // if hit bottom
-                        }
-                        else if (minTV.x > 0) {
-                            this.stateMachine.Change("flap_left"); // if hit left
-                        }
-                        else if (minTV.x < 0) {
-                            this.stateMachine.Change("flap_right"); // if hit right
-                        }
-                    }
-                }
-
-            }
-        }
+        
     }
 
     /// <summary>

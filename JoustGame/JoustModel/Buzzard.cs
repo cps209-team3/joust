@@ -154,6 +154,47 @@ namespace JoustModel
             }
         }
 
+        public void CheckEnemyCollision()
+        {
+            // Check Collision
+            WorldObject objHit = CheckCollision();
+            if (objHit != null && stateMachine.currentState.ToString() != "JoustModel.BuzzardFleeingState") // special case for fleeing, fix later. 
+            {
+                if (objHit.ToString() == "Ostrich")
+                {
+                    if (this.coords.y > objHit.coords.y)
+                    {
+                        this.stateMachine.Change("flee");
+                        stateMachine.currentState.Update();
+                    }
+                    else
+                    {
+                        (objHit as Ostrich).Die();
+                    }
+                }
+                else
+                {
+                    Point minTV = FindMinTV(objHit);
+                    if (minTV.y > 0)
+                    {
+                        this.stateMachine.Change("stand"); //if hit top
+                    }
+                    else if (minTV.y < 0)
+                    {
+                        this.stateMachine.Change("fall"); // if hit bottom
+                    }
+                    else if (minTV.x > 0)
+                    {
+                        this.stateMachine.Change("flap_left"); // if hit left
+                    }
+                    else if (minTV.x < 0)
+                    {
+                        this.stateMachine.Change("flap_right"); // if hit right
+                    }
+                }
+            }
+        }
+
         public override string Serialize()
         {
             return string.Format("Buzzard,{0},{1},{2},{3}", speed, angle, coords.x, coords.y);
