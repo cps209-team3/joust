@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace JoustModel
 {
@@ -17,7 +18,7 @@ namespace JoustModel
         {
             currentState.Exit();
             IState nextState = stateDict[id];
-            nextState.Enter();
+            nextState.Enter();            
             currentState = nextState;
         }
 

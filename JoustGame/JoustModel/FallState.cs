@@ -20,9 +20,6 @@ namespace JoustModel
 
         public void Update()
         {
-            // Check for collisions
-            WorldObject objHit = ostrich.CheckCollision();
-            ostrich.CheckEnemyCollision(objHit);
             ostrich.nSpeed = 200;
             ostrich.nAngle = 270;
             ostrich.MoveLeftRight();
