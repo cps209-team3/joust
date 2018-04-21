@@ -70,7 +70,7 @@ namespace JoustModel
 
         public override void Update()
         {
-            Console.WriteLine("Ostrich Initial state = " + stateMachine.currentState.ToString());
+          //Console.WriteLine("Ostrich Initial state = " + stateMachine.currentState.ToString());
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
