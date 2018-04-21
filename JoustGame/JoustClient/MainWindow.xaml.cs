@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using JoustModel;
 using System.Diagnostics;
+using System.IO;
 
 namespace JoustClient
 {
@@ -46,6 +47,12 @@ namespace JoustClient
         private System.Windows.Point mousePosition;
         private bool dragging = false;
         private Image currImg;
+        private PlatformControl currPlat;
+        private Button ex2;
+        private TextBlock errorBlock;
+        private int ids = 0;
+        private bool designer_on = false;
+
 
         // This makes flying create fewer threads
         // to change the animation which makes the
@@ -67,7 +74,7 @@ namespace JoustClient
 
             Title_Screen(null, EventArgs.Empty);
             //Finish_HighScores(null, EventArgs.Empty);
-            //Test_Screen(null, EventArgs.Empty);
+            //Designer_Screen(null, EventArgs.Empty);
         }
         
         private void Canvas_KeyUp(object sender, KeyEventArgs e)
@@ -352,7 +359,19 @@ namespace JoustClient
             // Get the save files in the Custom Stages directory
             System.IO.DirectoryInfo info = new System.IO.DirectoryInfo("../../Saves/Custom Stages/");
             System.IO.FileInfo[] files = info.GetFiles();
-            for (int fileNum = 0; fileNum < files.Length; fileNum++) Make_Button(files[fileNum].Name.Substring(0, (files[fileNum].Name.Length - 4)), (fileNum + 1) * 100, LoadStage);
+            ListBox listv = new ListBox();
+            listv.SetValue(Canvas.TopProperty, 100.0);
+            listv.SetValue(Canvas.LeftProperty, 613.0);
+            listv.Width = 233;
+            listv.Height = 500;
+            canvas.Children.Add(listv);
+            for (int fileNum = 0; fileNum < files.Length; fileNum++)
+            {
+                Button b = Make_Button(files[fileNum].Name.Substring(0, (files[fileNum].Name.Length - 4)), (fileNum + 1) * 100, LoadStage);
+                canvas.Children.Remove(b);
+                listv.Items.Add(b);
+            }
+            Button back = Make_BackButton(625.0, Single_Screen);
         }
 
         public void LoadStage(object sender, EventArgs e) {
@@ -526,9 +545,9 @@ namespace JoustClient
 
         private void Title_Screen(object sender, EventArgs e)
         {
-            controls_on = false;
 
-            
+            controls_on = false;
+            designer_on = true;
 
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
@@ -538,6 +557,7 @@ namespace JoustClient
             Button help = Make_Button("Help", 400.0, Help_Screen);
             Button about = Make_Button("About", 500.0, About_Screen);
             Button scores = Make_Button("High Scores", 600.0, HighScores_Screen);
+            Button designer = Make_Button("Level Designer", 700.0, Designer_Screen);
 
             Image image = Make_Image("\\Images\\joust2.png", 25.0, 510.0, 150, 400);
 
@@ -922,115 +942,357 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Help_Screen);
         }
 
-        private void Test_Screen(object sender, EventArgs e)
+        private void Designer_Screen(object sender, EventArgs e)
         {
+            canvas.Children.Clear();
 
-            //for (int y = 0; y < 6; y++)
-            //{
-            //    double top = (105.0 * y) + 105.0;
+            designer_on = true;
 
-            //    for (int x = 0; x < 7; x++)
-            //    {
-            //        double left = 200.0 * x;
-
-            //        Button btnReturn = new Button();
-            //        btnReturn.SetValue(Canvas.TopProperty, top);
-            //        btnReturn.SetValue(Canvas.LeftProperty, left);
-            //        btnReturn.Height = 30;
-            //        btnReturn.Width = 200;
-            //        canvas.Children.Add(btnReturn);
-
-            //        Image option;
-            //        option = Make_Image("//Images//Sprites//platform_short1.png", 0, 0, 30, 200);
-            //        canvas.Children.Remove(option);
-
-            //        btnReturn.Content = option;
-
-            //        btnReturn.Tag = new System.Windows.Point(x, y);
-
-            //        btnReturn.Click += new RoutedEventHandler(click_switch);
-            //    }
-            //}
+            ids = 0;
 
             Image one = Make_Image("//Images//Sprites//platform_short1.png", 0, 0, 30, 200);
             Image two = Make_Image("//Images//Sprites//pterodactyl_die1.png", 0, 0, 30, 200);
             canvas.Children.Remove(one);
             canvas.Children.Remove(two);
 
-            Button ex1 = Make_Button("heh", 0.0, plat_button);
+            Button ex1 = Make_Button("PLATFORM", 0.0, plat_button);
             ex1.Height = 30;
             ex1.Width = 200;
-            ex1.Content = one;
+            ex1.Background = Brushes.Orange;
 
-            Button ex2 = Make_Button("heh", 0.0, spawn_button);
+            ex2 = Make_Button("SPAWN", 0.0, spawn_button);
             ex2.Height = 30;
             ex2.Width = 200;
             ex2.SetValue(Canvas.LeftProperty, 420.0);
-            ex2.Content = two;
+            ex2.Background = Brushes.Orange;
+
+            namebox.Height = 30;
+            namebox.Width = 200;
+            Canvas.SetLeft(namebox, 820);
+            Canvas.SetTop(namebox, 0);
+            namebox.Text = "[Name]";
+            namebox.FontSize = 18;
+            namebox.FontFamily = new FontFamily("Century Gothic");
+            namebox.BorderBrush = Brushes.Red;
+            namebox.MaxLength = 10;
+            canvas.Children.Add(namebox);
+
+            Button save = Make_Button("Save", 0.0, Level_Save);
+            save.SetValue(Canvas.LeftProperty, 1020.0);
+            save.Width = 100;
+            save.Height = 30;
+
+            Button exit = Make_Button("Exit", 0.0, Title_Screen);
+            exit.SetValue(Canvas.LeftProperty, 1120.0);
+            exit.Width = 100;
+            exit.Height = 30;
+
+            Button delete = Make_Button("Delete", 0.0, Plat_Delete);
+            delete.SetValue(Canvas.LeftProperty, 1220.0);
+            delete.Width = 100;
+            delete.Height = 30;
+
+            errorBlock = Make_TextBlock(0.0, 220.0, 30, 200);
+            ex2.IsEnabled = true;
+
+            TextBlock editArea = Make_TextBlock(30.0, 0.0, 730, 1414);
+            editArea.Background = Brushes.Gray;
+
+            TextBlock editAreaPlayer = Make_TextBlock(350.0, 720.0, 75, 50);
+            editAreaPlayer.Background = Brushes.Black;
+            editAreaPlayer.Text = "player\nspawn";
+            editAreaPlayer.FontSize = 12;
+
+            InitiateWorldObject("Base", 375, 775);
 
         }
 
-        private void click_switch(object sender, RoutedEventArgs e)
+        private void Level_Save(object sender, EventArgs e)
         {
-            Image one = Make_Image("//Images//Sprites//platform_short1.png", 0, 0, 30, 200);
-            Image two = Make_Image("//Images//Sprites//pterodactyl_die1.png", 0, 0, 30, 200);
-            canvas.Children.Remove(one);
-            canvas.Children.Remove(two);
 
-            Button sent = sender as Button;
-            tester = String.Copy(sent.Content.ToString());
+            string newpath = HighScoreManager.Instance.path;
+            int indexPos = newpath.IndexOf("\\JoustModel");
+            newpath = newpath.Substring(0, indexPos);
+            newpath += "\\JoustClient\\Saves\\Custom Stages";
 
-            if (tester.Equals(one.ToString()))
+            int indextracker = 0;
+            FileStream fs = File.Create(newpath + "\\" + namebox.Text + ".txt");
+            using (fs)
             {
-                sent.Content = two;
+                using (StreamWriter writer = new StreamWriter(fs))
+                {
+                    foreach(object o in canvas.Children)
+                    {
+                        indextracker++;
+
+                        PlatformControl pc = o as PlatformControl;
+                        if (pc != null)
+                        {
+                            Platform platty = new Platform();
+                            System.Windows.Point point = pc.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
+                            platty.coords.x = point.X;
+                            platty.coords.y = point.Y;
+                            platty.SetType("short", ids + 1);
+                            ids++;
+                            string x = platty.Serialize();
+                            writer.Write(x);
+
+                            if (indextracker < canvas.Children.Count) { writer.Write(":"); }
+                        }
+                    }
+                }
             }
-            else if (tester.Equals(two.ToString()))
-            {
-                sent.Content = "none";
-            }
-            else if (tester.Equals("none"))
-            {
-                sent.Content = one;
-            }
+
+            canvas.Children.Clear();
+            designer_on = false;
+            TextBlock message = Make_TextBlock(300, 620.0, 50, 200);
+            message.Text = "Level Created!";
+            message.TextAlignment = TextAlignment.Center;
+            Button back = Make_BackButton(625.0, Title_Screen);
 
         }
 
         private void plat_button(object sender, EventArgs e)
         {
-            Image one = Make_Image("//Images//Sprites//platform_short1.png", 0, 0, 30, 200);
-            one.MouseDown += img_MouseDown;
+            PlatformControl platctrl = new PlatformControl("Images/Platform/platform_short1.png");
+            platctrl.SetValue(Canvas.TopProperty, 0.0);
+            platctrl.SetValue(Canvas.LeftProperty, 0.0);
+            canvas.Children.Add(platctrl);
+            platctrl.MouseDown += plat_MouseDown;
         }
 
         private void spawn_button(object sender, EventArgs e)
         {
-            Image one = Make_Image("//Images//Sprites//pterodactyl_die1.png", 0, 0, 30, 200);
-            one.MouseDown += img_MouseDown;
+
+            PlatformControl platctrl = new PlatformControl("Images/Enemy/pterodactyl_die1.png");
+            platctrl.SetValue(Canvas.TopProperty, 0.0);
+            platctrl.SetValue(Canvas.LeftProperty, 0.0);
+            platctrl.Width = 200;
+            platctrl.Height = 30;
+            platctrl.Tag = "disposeable";
+            canvas.Children.Add(platctrl);
+            platctrl.MouseDown += plat_MouseDown;
+
+            Button sent = sender as Button;
+            sent.IsEnabled = false;
         }
 
-        private void img_MouseDown(object sender, MouseButtonEventArgs e)
+        private void Plat_Delete(object sender, EventArgs e)
+        {
+            canvas.Children.Remove(currPlat);
+            if (currPlat.Tag != null)
+            {
+                ex2.IsEnabled = true;
+            }
+        }
+
+        private void plat_MouseDown(object sender, MouseButtonEventArgs e)
         {
             mousePosition = e.GetPosition(canvas);
             dragging = true;
 
-            currImg = (Image) sender;
+            currPlat = (PlatformControl)sender;
+            currImg = null;
         }
 
         private void canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            if (!designer_on) return;
+
             dragging = false;
+            Positioning();
+        }
+
+        private void Positioning()
+        {
+            foreach (object x in canvas.Children)
+            {
+                if (currPlat != null)
+                {
+                    PlatformControl z = x as PlatformControl;
+
+                    if (z != null)
+                    {
+                        System.Windows.Point relativePoint = z.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
+                        System.Windows.Point relativePoint2 = currPlat.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
+
+                        if ((relativePoint2.Y <= 30.0) || (relativePoint2.Y > 730))
+                        {
+                            //canvas.Children.Remove(currPlat);
+                            currPlat.SetValue(Canvas.TopProperty, 0.0);
+                            currPlat.SetValue(Canvas.LeftProperty, 0.0);
+
+                            Task.Run(() =>
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    errorBlock.Background = Brushes.Red;
+                                    errorBlock.Text = "out of edit area";
+                                });
+                                Thread.Sleep(2000);
+                                Dispatcher.Invoke(() =>
+                                {
+                                    errorBlock.Background = Brushes.Blue;
+                                    errorBlock.Text = "";
+                                });
+                            });
+
+                            break;
+                        }
+
+                        if ((relativePoint2.X < 0.0) || (relativePoint2.X > 1240))
+                        {
+                            //canvas.Children.Remove(currPlat);
+                            currPlat.SetValue(Canvas.TopProperty, 0.0);
+                            currPlat.SetValue(Canvas.LeftProperty, 0.0);
+
+                            Task.Run(() =>
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    errorBlock.Background = Brushes.Red;
+                                    errorBlock.Text = "out of edit area";
+                                });
+                                Thread.Sleep(2000);
+                                Dispatcher.Invoke(() =>
+                                {
+                                    errorBlock.Background = Brushes.Blue;
+                                    errorBlock.Text = "";
+                                });
+                            });
+
+                            break;
+                        }
+
+                        if (((relativePoint2.Y >= 350) && (relativePoint.Y <= 425)) && ((relativePoint.X >= 720.0) && (relativePoint.X <= 770.0)))
+                        {
+
+                            //canvas.Children.Remove(currPlat);
+                            currPlat.SetValue(Canvas.TopProperty, 0.0);
+                            currPlat.SetValue(Canvas.LeftProperty, 0.0);
+
+                            Task.Run(() =>
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    errorBlock.Background = Brushes.Red;
+                                    errorBlock.Text = "spawn block";
+                                    ex2.IsEnabled = true;
+
+                                });
+                                Thread.Sleep(2000);
+                                Dispatcher.Invoke(() =>
+                                {
+                                    errorBlock.Background = Brushes.Blue;
+                                    errorBlock.Text = "";
+                                });
+                            });
+
+                            break;
+                        }
+
+                        if (((relativePoint2.X >= 520) && (relativePoint2.X <= 770)) && ((relativePoint2.Y >= 320) && (relativePoint2.Y <= 425)))
+                        {
+                            //TextBlock editAreaPlayer = Make_TextBlock(350.0, 720.0, 75, 50);
+
+                            //canvas.Children.Remove(currPlat);
+                            currPlat.SetValue(Canvas.TopProperty, 0.0);
+                            currPlat.SetValue(Canvas.LeftProperty, 0.0);
+
+                            Task.Run(() =>
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    errorBlock.Background = Brushes.Red;
+                                    errorBlock.Text = "spawn block";
+                                    ex2.IsEnabled = true;
+
+                                });
+                                Thread.Sleep(2000);
+                                Dispatcher.Invoke(() =>
+                                {
+                                    errorBlock.Background = Brushes.Blue;
+                                    errorBlock.Text = "";
+                                });
+                            });
+
+                            break;
+                        }
+
+                        if (!Object.ReferenceEquals(z, currPlat))
+                        {
+                            if (System.Math.Abs((relativePoint.Y - relativePoint2.Y)) <= 75.0 && System.Math.Abs((relativePoint.X - relativePoint2.X)) <= z.Width)
+                            {
+                                //canvas.Children.Remove(currPlat);
+                                currPlat.SetValue(Canvas.TopProperty, 0.0);
+                                currPlat.SetValue(Canvas.LeftProperty, 0.0);
+
+                                Task.Run(() =>
+                                {
+                                    Dispatcher.Invoke(() =>
+                                    {
+                                        errorBlock.Background = Brushes.Red;
+                                        errorBlock.Text = "bad collision";
+                                        ///
+                                        if (currPlat.Tag != null)
+                                        {
+                                            ex2.IsEnabled = true;
+                                            Task.Run(() =>
+                                            {
+                                                Dispatcher.Invoke(() =>
+                                                {
+                                                    errorBlock.Text = "invalid spawn";
+                                                });
+                                                Thread.Sleep(2000);
+                                                Dispatcher.Invoke(() =>
+                                                {
+                                                    errorBlock.Text = "";
+                                                });
+                                            });
+                                        }
+                                        ///
+                                    });
+                                    Thread.Sleep(2000);
+                                    Dispatcher.Invoke(() =>
+                                    {
+                                        errorBlock.Background = Brushes.Blue;
+                                        errorBlock.Text = "";
+                                    });
+                                });
+
+                                break;
+                            }
+                        }
+
+
+                    }
+                }
+            }
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
+            if (!designer_on) return;
             if (!dragging) return;
 
-            var position = e.GetPosition(canvas);
-            var offset = position - mousePosition;
-            mousePosition = position;
-            Canvas.SetLeft(currImg, Canvas.GetLeft(currImg) + offset.X);
-            Canvas.SetTop(currImg, Canvas.GetTop(currImg) + offset.Y);
+            if (currImg == null)
+            {
+                var position = e.GetPosition(canvas);
+                var offset = position - mousePosition;
+                mousePosition = position;
+                Canvas.SetLeft(currPlat, Canvas.GetLeft(currPlat) + offset.X);
+                Canvas.SetTop(currPlat, Canvas.GetTop(currPlat) + offset.Y);
+            }
+
+            else if (currPlat == null)
+            {
+                var position = e.GetPosition(canvas);
+                var offset = position - mousePosition;
+                mousePosition = position;
+                Canvas.SetLeft(currImg, Canvas.GetLeft(currImg) + offset.X);
+                Canvas.SetTop(currImg, Canvas.GetTop(currImg) + offset.Y);
+            }
         }
     }
-    
     
 }
