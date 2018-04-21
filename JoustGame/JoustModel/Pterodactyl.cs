@@ -79,7 +79,7 @@ namespace JoustModel
         public override void Update()
         {
             // Check Collision
-            //CheckCollision();
+            CheckCollision();
 
             if (!charging) {
                 // Determine the next state
