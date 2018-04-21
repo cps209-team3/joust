@@ -59,7 +59,8 @@ namespace JoustModel
 
             // Determine the color of the Mik
             Random rand = new Random();
-            switch (rand.Next(3)) {
+            switch (rand.Next(3))
+            {
                 case 0:
                     color = "red";
                     break;
@@ -102,34 +103,42 @@ namespace JoustModel
             EnemyState.GetNextState(this);
             stateMachine.currentState.Update();
             
-            if (stateMachine.currentState is EnemyFlappingState) {
+            if (stateMachine.currentState is EnemyFlappingState)
+            {
                 // "Gravity" purposes
-                if (speed > TERMINAL_VELOCITY) {
+                if (speed > TERMINAL_VELOCITY)
+                {
                     if (prevAngle == 225 || prevAngle == 270 || prevAngle == 315) speed = 0.05;
                     else speed = TERMINAL_VELOCITY;
                 }
             }
-            else if (stateMachine.currentState is EnemyFallingState) {
+            else if (stateMachine.currentState is EnemyFallingState)
+            {
                 // "Gravity" purposes
-                if (speed > TERMINAL_VELOCITY) {
+                if (speed > TERMINAL_VELOCITY)
+                {
                     if (prevAngle == 45 || prevAngle == 90 || prevAngle == 135) speed = 0.05;
                     else speed = TERMINAL_VELOCITY;
                 }
             }
-            else if (stateMachine.currentState is EnemyRunningState) {
+            else if (stateMachine.currentState is EnemyRunningState)
+            {
                 speed = SPEED;
             }
-            else if (stateMachine.currentState is BuzzardFleeingState) {
+            else if (stateMachine.currentState is BuzzardFleeingState)
+            {
                 // When the Buzzard has been hit, it drops an egg and
                 // flies to the left side. Destroy the Buzzard when
                 // close enough to the edge of the screen.
-                if (!droppedEgg) {
+                if (!droppedEgg)
+                {
                     if (BuzzardDropEgg != null)
                         BuzzardDropEgg(this, null);
                     droppedEgg = true;
                 }
 
-                if (coords.x < 3) {
+                if (coords.x < 3)
+                {
                     if (BuzzardDestroyed != null)
                         BuzzardDestroyed(this, null);
                     Die();
@@ -148,7 +157,8 @@ namespace JoustModel
                 BuzzardMoveEvent(this, null); // Raise event
 
             // Slow the rate of updating the graphic
-            if (updateGraphic == 0) {
+            if (updateGraphic == 0)
+            {
                 if (BuzzardStateChange != null)
                     BuzzardStateChange(this, null);
             }

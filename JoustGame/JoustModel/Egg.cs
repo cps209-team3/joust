@@ -77,10 +77,13 @@ namespace JoustModel
             EnemyState.GetNextState(this);
             stateMachine.currentState.Update();
 
-            if (stateMachine.currentState is EggHatchedState) {
+            if (stateMachine.currentState is EggHatchedState)
+            {
                 // Allow the hatched animation to run before notifying
-                if (milliseconds > 30 && !alreadyHatched) {
-                    if (EggHatched != null) {
+                if (milliseconds > 30 && !alreadyHatched)
+                {
+                    if (EggHatched != null)
+                    {
                         EggHatched(this, null);
                         alreadyHatched = true;
                     }
@@ -88,7 +91,8 @@ namespace JoustModel
             }
 
             // Check if the hatched Mik has mounted a Buzzard
-            if (mounted || collected) {
+            if (mounted || collected)
+            {
                 if (EggDestroyed != null)
                     EggDestroyed(this, null);
                 Die();
@@ -103,7 +107,8 @@ namespace JoustModel
                 EggMoveEvent(this, null);
 
             // Slow the rate of updating the graphic
-            if (updateGraphic == 0) {
+            if (updateGraphic == 0)
+            {
                 if (EggStateChange != null)
                     EggStateChange(this, null);
             }
