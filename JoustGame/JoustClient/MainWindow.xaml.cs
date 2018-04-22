@@ -52,6 +52,7 @@ namespace JoustClient
         private TextBlock errorBlock;
         private int ids = 0;
         private bool designer_on = false;
+        private bool isLastCheck = false;
 
 
         // This makes flying create fewer threads
@@ -951,7 +952,7 @@ namespace JoustClient
             ids = 0;
 
             Image one = Make_Image("//Images//Sprites//platform_short1.png", 0, 0, 30, 200);
-            Image two = Make_Image("//Images//Sprites//pterodactyl_die1.png", 0, 0, 30, 200);
+            Image two = Make_Image("//Images//Sprites//platform_respawn1.png", 0, 0, 30, 200);
             canvas.Children.Remove(one);
             canvas.Children.Remove(two);
 
@@ -965,6 +966,7 @@ namespace JoustClient
             ex2.Width = 200;
             ex2.SetValue(Canvas.LeftProperty, 420.0);
             ex2.Background = Brushes.Orange;
+            ex2.IsEnabled = false;
 
             namebox.Height = 30;
             namebox.Width = 200;
@@ -993,7 +995,6 @@ namespace JoustClient
             delete.Height = 30;
 
             errorBlock = Make_TextBlock(0.0, 220.0, 30, 200);
-            ex2.IsEnabled = true;
 
             TextBlock editArea = Make_TextBlock(30.0, 0.0, 730, 1414);
             editArea.Background = Brushes.Gray;
@@ -1055,23 +1056,26 @@ namespace JoustClient
         private void plat_button(object sender, EventArgs e)
         {
             PlatformControl platctrl = new PlatformControl("Images/Platform/platform_short1.png");
+            platctrl.isRespawn = false;
             platctrl.SetValue(Canvas.TopProperty, 0.0);
             platctrl.SetValue(Canvas.LeftProperty, 0.0);
             canvas.Children.Add(platctrl);
             platctrl.MouseDown += plat_MouseDown;
+            ex2.IsEnabled = true;
         }
 
         private void spawn_button(object sender, EventArgs e)
         {
-
-            PlatformControl platctrl = new PlatformControl("Images/Enemy/pterodactyl_die1.png");
-            platctrl.SetValue(Canvas.TopProperty, 0.0);
-            platctrl.SetValue(Canvas.LeftProperty, 0.0);
-            platctrl.Width = 200;
-            platctrl.Height = 30;
-            platctrl.Tag = "disposeable";
-            canvas.Children.Add(platctrl);
-            platctrl.MouseDown += plat_MouseDown;
+            PlatformControl spwnctrl = new PlatformControl("Images/Platform/platform_respawn1.png");
+            spwnctrl.isRespawn = true;
+            spwnctrl.SetValue(Canvas.TopProperty, 0.0);
+            spwnctrl.SetValue(Canvas.LeftProperty, 0.0);
+            spwnctrl.Width = 100;
+            spwnctrl.Height = 15;
+            spwnctrl.Tag = "disposeable";
+            Canvas.SetZIndex(spwnctrl, 3);
+            canvas.Children.Add(spwnctrl);
+            spwnctrl.MouseDown += plat_MouseDown;
 
             Button sent = sender as Button;
             sent.IsEnabled = false;
@@ -1082,7 +1086,7 @@ namespace JoustClient
             canvas.Children.Remove(currPlat);
             if (currPlat.Tag != null)
             {
-                ex2.IsEnabled = true;
+                ex2.IsEnabled = false;
             }
         }
 
@@ -1113,159 +1117,262 @@ namespace JoustClient
 
                     if (z != null)
                     {
-                        System.Windows.Point relativePoint = z.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
-                        System.Windows.Point relativePoint2 = currPlat.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
+                        if (currPlat.isRespawn) {
+                            int objects = 0;
+                            foreach (object test in canvas.Children) {
+                                PlatformControl testCtrl = test as PlatformControl;
+                                objects++;
+                                if (objects >= canvas.Children.Count - 1) {
+                                    isLastCheck = true;
+                                    objects = 0;
+                                }
+                                else {
+                                    isLastCheck = false;
+                                }
 
-                        if ((relativePoint2.Y <= 30.0) || (relativePoint2.Y > 730))
-                        {
-                            //canvas.Children.Remove(currPlat);
-                            currPlat.SetValue(Canvas.TopProperty, 0.0);
-                            currPlat.SetValue(Canvas.LeftProperty, 0.0);
-
-                            Task.Run(() =>
-                            {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    errorBlock.Background = Brushes.Red;
-                                    errorBlock.Text = "out of edit area";
-                                });
-                                Thread.Sleep(2000);
-                                Dispatcher.Invoke(() =>
-                                {
-                                    errorBlock.Background = Brushes.Blue;
-                                    errorBlock.Text = "";
-                                });
-                            });
-
-                            break;
+                                if (testCtrl != null && !testCtrl.isRespawn) {
+                                    Trace.WriteLine(testCtrl.isRespawn);
+                                    CheckBadPlacementRespawn(testCtrl);
+                                }
+                            }
+                        }
+                        else {
+                            CheckBadPlacement(z);
                         }
 
-                        if ((relativePoint2.X < 0.0) || (relativePoint2.X > 1240))
-                        {
-                            //canvas.Children.Remove(currPlat);
-                            currPlat.SetValue(Canvas.TopProperty, 0.0);
-                            currPlat.SetValue(Canvas.LeftProperty, 0.0);
+                    }
+                }
+            }
+        }
 
-                            Task.Run(() =>
-                            {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    errorBlock.Background = Brushes.Red;
-                                    errorBlock.Text = "out of edit area";
-                                });
-                                Thread.Sleep(2000);
-                                Dispatcher.Invoke(() =>
-                                {
-                                    errorBlock.Background = Brushes.Blue;
-                                    errorBlock.Text = "";
-                                });
-                            });
+        private void CheckBadPlacement(PlatformControl z) {
+            System.Windows.Point relativePoint = z.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
+            System.Windows.Point relativePoint2 = currPlat.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
 
-                            break;
-                        }
+            if ((relativePoint2.Y <= 30.0) || (relativePoint2.Y > 730)) {
+                //canvas.Children.Remove(currPlat);
+                currPlat.SetValue(Canvas.TopProperty, 0.0);
+                currPlat.SetValue(Canvas.LeftProperty, 0.0);
 
-                        if (((relativePoint2.Y >= 350) && (relativePoint.Y <= 425)) && ((relativePoint.X >= 720.0) && (relativePoint.X <= 770.0)))
-                        {
+                Task.Run(() => {
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Red;
+                        errorBlock.Text = "out of edit area";
+                    });
+                    Thread.Sleep(2000);
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Blue;
+                        errorBlock.Text = "";
+                    });
+                });
+            }
 
-                            //canvas.Children.Remove(currPlat);
-                            currPlat.SetValue(Canvas.TopProperty, 0.0);
-                            currPlat.SetValue(Canvas.LeftProperty, 0.0);
+            if ((relativePoint2.X < 0.0) || (relativePoint2.X > 1240)) {
+                //canvas.Children.Remove(currPlat);
+                currPlat.SetValue(Canvas.TopProperty, 0.0);
+                currPlat.SetValue(Canvas.LeftProperty, 0.0);
 
-                            Task.Run(() =>
-                            {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    errorBlock.Background = Brushes.Red;
-                                    errorBlock.Text = "spawn block";
-                                    ex2.IsEnabled = true;
+                Task.Run(() => {
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Red;
+                        errorBlock.Text = "out of edit area";
+                    });
+                    Thread.Sleep(2000);
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Blue;
+                        errorBlock.Text = "";
+                    });
+                });
+            }
 
-                                });
-                                Thread.Sleep(2000);
-                                Dispatcher.Invoke(() =>
-                                {
-                                    errorBlock.Background = Brushes.Blue;
-                                    errorBlock.Text = "";
-                                });
-                            });
+            if (((relativePoint2.Y >= 350) && (relativePoint.Y <= 425)) && ((relativePoint.X >= 720.0) && (relativePoint.X <= 770.0))) {
+                //canvas.Children.Remove(currPlat);
+                currPlat.SetValue(Canvas.TopProperty, 0.0);
+                currPlat.SetValue(Canvas.LeftProperty, 0.0);
 
-                            break;
-                        }
+                Task.Run(() => {
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Red;
+                        errorBlock.Text = "spawn block";
+                    });
+                    Thread.Sleep(2000);
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Blue;
+                        errorBlock.Text = "";
+                    });
+                });
+            }
 
-                        if (((relativePoint2.X >= 520) && (relativePoint2.X <= 770)) && ((relativePoint2.Y >= 320) && (relativePoint2.Y <= 425)))
-                        {
-                            //TextBlock editAreaPlayer = Make_TextBlock(350.0, 720.0, 75, 50);
+            if (((relativePoint2.X >= 520) && (relativePoint2.X <= 770)) && ((relativePoint2.Y >= 320) && (relativePoint2.Y <= 425))) {
+                //TextBlock editAreaPlayer = Make_TextBlock(350.0, 720.0, 75, 50);
 
-                            //canvas.Children.Remove(currPlat);
-                            currPlat.SetValue(Canvas.TopProperty, 0.0);
-                            currPlat.SetValue(Canvas.LeftProperty, 0.0);
+                //canvas.Children.Remove(currPlat);
+                currPlat.SetValue(Canvas.TopProperty, 0.0);
+                currPlat.SetValue(Canvas.LeftProperty, 0.0);
 
-                            Task.Run(() =>
-                            {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    errorBlock.Background = Brushes.Red;
-                                    errorBlock.Text = "spawn block";
-                                    ex2.IsEnabled = true;
+                Task.Run(() => {
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Red;
+                        errorBlock.Text = "spawn block";
 
-                                });
-                                Thread.Sleep(2000);
-                                Dispatcher.Invoke(() =>
-                                {
-                                    errorBlock.Background = Brushes.Blue;
-                                    errorBlock.Text = "";
-                                });
-                            });
+                    });
+                    Thread.Sleep(2000);
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Blue;
+                        errorBlock.Text = "";
+                    });
+                });
+            }
 
-                            break;
-                        }
+            if (!Object.ReferenceEquals(z, currPlat)) {
+                if (System.Math.Abs((relativePoint.Y - relativePoint2.Y)) <= 75.0 && System.Math.Abs((relativePoint.X - relativePoint2.X)) <= z.Width) {
+                    //canvas.Children.Remove(currPlat);
+                    currPlat.SetValue(Canvas.TopProperty, 0.0);
+                    currPlat.SetValue(Canvas.LeftProperty, 0.0);
 
-                        if (!Object.ReferenceEquals(z, currPlat))
-                        {
-                            if (System.Math.Abs((relativePoint.Y - relativePoint2.Y)) <= 75.0 && System.Math.Abs((relativePoint.X - relativePoint2.X)) <= z.Width)
-                            {
-                                //canvas.Children.Remove(currPlat);
-                                currPlat.SetValue(Canvas.TopProperty, 0.0);
-                                currPlat.SetValue(Canvas.LeftProperty, 0.0);
-
-                                Task.Run(() =>
-                                {
-                                    Dispatcher.Invoke(() =>
-                                    {
-                                        errorBlock.Background = Brushes.Red;
-                                        errorBlock.Text = "bad collision";
-                                        ///
-                                        if (currPlat.Tag != null)
-                                        {
-                                            ex2.IsEnabled = true;
-                                            Task.Run(() =>
-                                            {
-                                                Dispatcher.Invoke(() =>
-                                                {
-                                                    errorBlock.Text = "invalid spawn";
-                                                });
-                                                Thread.Sleep(2000);
-                                                Dispatcher.Invoke(() =>
-                                                {
-                                                    errorBlock.Text = "";
-                                                });
-                                            });
-                                        }
-                                        ///
+                    Task.Run(() => {
+                        Dispatcher.Invoke(() => {
+                            errorBlock.Background = Brushes.Red;
+                            errorBlock.Text = "bad collision";
+                            ///
+                            if (currPlat.Tag != null) {
+                                Task.Run(() => {
+                                    Dispatcher.Invoke(() => {
+                                        errorBlock.Text = "invalid spawn";
                                     });
                                     Thread.Sleep(2000);
-                                    Dispatcher.Invoke(() =>
-                                    {
-                                        errorBlock.Background = Brushes.Blue;
+                                    Dispatcher.Invoke(() => {
                                         errorBlock.Text = "";
                                     });
                                 });
-
-                                break;
                             }
-                        }
+                            ///
+                        });
+                        Thread.Sleep(2000);
+                        Dispatcher.Invoke(() => {
+                            errorBlock.Background = Brushes.Blue;
+                            errorBlock.Text = "";
+                        });
+                    });
+                }
+            }
+        }
 
+        private void CheckBadPlacementRespawn(PlatformControl z) {
+            System.Windows.Point relativePoint = z.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
+            System.Windows.Point relativePoint2 = currPlat.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
 
+            if ((relativePoint2.Y <= 30.0) || (relativePoint2.Y > 730)) {
+                //canvas.Children.Remove(currPlat);
+                currPlat.SetValue(Canvas.TopProperty, 0.0);
+                currPlat.SetValue(Canvas.LeftProperty, 0.0);
+
+                Task.Run(() => {
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Red;
+                        errorBlock.Text = "out of edit area";
+                    });
+                    Thread.Sleep(2000);
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Blue;
+                        errorBlock.Text = "";
+                    });
+                });
+            }
+
+            if ((relativePoint2.X < 0.0) || (relativePoint2.X > 1240)) {
+                //canvas.Children.Remove(currPlat);
+                currPlat.SetValue(Canvas.TopProperty, 0.0);
+                currPlat.SetValue(Canvas.LeftProperty, 0.0);
+
+                Task.Run(() => {
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Red;
+                        errorBlock.Text = "out of edit area";
+                    });
+                    Thread.Sleep(2000);
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Blue;
+                        errorBlock.Text = "";
+                    });
+                });
+            }
+
+            if (((relativePoint2.Y >= 350) && (relativePoint.Y <= 425)) && ((relativePoint.X >= 720.0) && (relativePoint.X <= 770.0))) {
+                //canvas.Children.Remove(currPlat);
+                currPlat.SetValue(Canvas.TopProperty, 0.0);
+                currPlat.SetValue(Canvas.LeftProperty, 0.0);
+
+                Task.Run(() => {
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Red;
+                        errorBlock.Text = "spawn block";
+
+                    });
+                    Thread.Sleep(2000);
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Blue;
+                        errorBlock.Text = "";
+                    });
+                });
+            }
+
+            if (((relativePoint2.X >= 520) && (relativePoint2.X <= 770)) && ((relativePoint2.Y >= 320) && (relativePoint2.Y <= 425))) {
+                //TextBlock editAreaPlayer = Make_TextBlock(350.0, 720.0, 75, 50);
+
+                //canvas.Children.Remove(currPlat);
+                currPlat.SetValue(Canvas.TopProperty, 0.0);
+                currPlat.SetValue(Canvas.LeftProperty, 0.0);
+
+                Task.Run(() => {
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Red;
+                        errorBlock.Text = "spawn block";
+
+                    });
+                    Thread.Sleep(2000);
+                    Dispatcher.Invoke(() => {
+                        errorBlock.Background = Brushes.Blue;
+                        errorBlock.Text = "";
+                    });
+                });
+            }
+
+            if (!Object.ReferenceEquals(z, currPlat)) {
+                if (System.Math.Abs((relativePoint.Y - relativePoint2.Y)) > 20 || System.Math.Abs((relativePoint.X - relativePoint2.X)) > z.Width) {
+                    //canvas.Children.Remove(currPlat);
+                    currPlat.SetValue(Canvas.TopProperty, 0.0);
+                    currPlat.SetValue(Canvas.LeftProperty, 0.0);
+                    if (isLastCheck) {
+                        Task.Run(() => {
+                            Dispatcher.Invoke(() => {
+                                errorBlock.Background = Brushes.Red;
+                                errorBlock.Text = "bad collision";
+                                ///
+                                if (currPlat.Tag != null) {
+                                    Task.Run(() => {
+                                        Dispatcher.Invoke(() => {
+                                            errorBlock.Text = "invalid spawn";
+                                        });
+                                        Thread.Sleep(2000);
+                                        Dispatcher.Invoke(() => {
+                                            errorBlock.Text = "";
+                                        });
+                                    });
+                                }
+                                ///
+                            });
+                            Thread.Sleep(2000);
+                            Dispatcher.Invoke(() => {
+                                errorBlock.Background = Brushes.Blue;
+                                errorBlock.Text = "";
+                            });
+                        });
                     }
+                }
+                else {
+                    Canvas.SetLeft(currPlat, Canvas.GetLeft(z) + 50);
+                    Canvas.SetTop(currPlat, Canvas.GetTop(z));
                 }
             }
         }
