@@ -266,14 +266,9 @@ namespace JoustClient
 
         public void LoadGame(object sender, RoutedEventArgs e)
         {
-            string fileName = "";
-            foreach (UIElement element in canvas.Children)
-            {
-                if ((element as FrameworkElement).Name == "LoadName")
-                {
-                    fileName = (element as TextBox).Text;
-                }
-            }
+            Console.WriteLine("sender.content = " + (sender as Button).Content.ToString());
+            string fileName = (sender as Button).Content.ToString();
+            
             control.WorldRef.objects.Clear();
             
             control.Load(fileName);
@@ -293,6 +288,7 @@ namespace JoustClient
                 }
                 WorldObjectControlFactory(obj);
             }
+            controls_on = true;
             // end refresh method
         }
 
@@ -410,22 +406,6 @@ namespace JoustClient
             control.updateTimer.Start();
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
-            Button saveBtn = new Button();
-            saveBtn.Content = "Save";
-            saveBtn.Click += new RoutedEventHandler(SaveGame);
-            canvas.Children.Add(saveBtn);
-
-            TextBox loadName = new TextBox();
-            loadName.Name = "LoadName";
-            loadName.Text = "file2load";
-            loadName.Margin = new Thickness(0, 20, 0, 0);
-            canvas.Children.Add(loadName);
-
-            Button loadBtn = new Button();
-            loadBtn.Content = "Load";
-            loadBtn.Click += new RoutedEventHandler(LoadGame);
-            loadBtn.Margin = new Thickness(0, 40, 0, 0);
-            canvas.Children.Add(loadBtn);
         }
 
 
@@ -557,6 +537,7 @@ namespace JoustClient
             diff.MaxLength = 2;
             canvas.Children.Add(diff);
 
+            // saves logic
             TextBlock saves = Make_TextBlock(200, 850, 35, 200);
             saves.Text = "Game Saves";
             saves.TextAlignment = TextAlignment.Center;
@@ -569,7 +550,7 @@ namespace JoustClient
             scrollViewer.Content = listOfSaves;
             canvas.Children.Add(scrollViewer);
             String[] saveFiles = Directory.GetFiles("../../Saves/GameSaves/", "*", SearchOption.TopDirectoryOnly);
-            int numOfSaves =saveFiles.Length;
+            int numOfSaves = saveFiles.Length;
             for (int i = 0; i < numOfSaves; i++)
             {
                 Button btn = new Button();
@@ -577,9 +558,8 @@ namespace JoustClient
                 btn.Content = saveFiles[i].Substring(saveFiles[i].Length-12, 8);
                 btn.Click += (object s, RoutedEventArgs ee) =>
                 {
-                    ResetGame();
-                    NewGame(s, ee);
-                    control.Load(btn.Content.ToString());
+                    LoadGame(s, ee);
+                    // btn.Content.ToString()
                 };
                 listOfSaves.Children.Add(btn);
             }        
@@ -1035,6 +1015,7 @@ namespace JoustClient
                 paused.Text = "Game Paused";
                 Button unpause = Make_Button("Unpause", 360, ResumeGame);
                 Button mainMenu = Make_Button("MainMenu", 470, Title_Screen);
+                Button save = Make_Button("Save Game", 580, SaveGame);
             }
         }
 

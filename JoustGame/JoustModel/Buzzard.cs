@@ -173,7 +173,7 @@ namespace JoustModel
                 if (objHit.ToString() == "Ostrich")
                 {
                     string state = (objHit as Ostrich).stateMachine.currentState.ToString();
-                    Console.WriteLine("ostrich state = " + state);
+                    //Console.WriteLine("ostrich state = " + state);
                     if (state != "dead" && state != "spawn")
                     {
                         if (this.coords.y > objHit.coords.y)
