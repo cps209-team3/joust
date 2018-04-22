@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.IO;
 using JoustModel;
 
 namespace JoustClient
@@ -247,12 +248,8 @@ namespace JoustClient
         }
 
         public void NotifyLost(object sender, int e)
-        {
-            controls_on = false;
-            control.updateTimer.Stop();
-            control.WorldRef.objects.Clear();
-            control.WorldRef.basePlatform = null;
-            control.WorldRef.stage = 0;
+        {  
+            ResetGame();
             Announce.Text = "GAME OVER";
             canvas.Children.Add(Announce);
             localPlayer.ostrichDied -= this.NotifyLost;
@@ -271,14 +268,9 @@ namespace JoustClient
 
         public void LoadGame(object sender, RoutedEventArgs e)
         {
-            string fileName = "";
-            foreach (UIElement element in canvas.Children)
-            {
-                if ((element as FrameworkElement).Name == "LoadName")
-                {
-                    fileName = (element as TextBox).Text;
-                }
-            }
+            Console.WriteLine("sender.content = " + (sender as Button).Content.ToString());
+            string fileName = (sender as Button).Content.ToString();
+            
             control.WorldRef.objects.Clear();
             
             control.Load(fileName);
@@ -298,6 +290,7 @@ namespace JoustClient
                 }
                 WorldObjectControlFactory(obj);
             }
+            controls_on = true;
             // end refresh method
         }
 
@@ -441,22 +434,6 @@ namespace JoustClient
             control.updateTimer.Start();
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
-            Button saveBtn = new Button();
-            saveBtn.Content = "Save";
-            saveBtn.Click += new RoutedEventHandler(SaveGame);
-            canvas.Children.Add(saveBtn);
-
-            TextBox loadName = new TextBox();
-            loadName.Name = "LoadName";
-            loadName.Text = "file2load";
-            loadName.Margin = new Thickness(0, 20, 0, 0);
-            canvas.Children.Add(loadName);
-
-            Button loadBtn = new Button();
-            loadBtn.Content = "Load";
-            loadBtn.Click += new RoutedEventHandler(LoadGame);
-            loadBtn.Margin = new Thickness(0, 40, 0, 0);
-            canvas.Children.Add(loadBtn);
         }
 
 
@@ -534,11 +511,7 @@ namespace JoustClient
         private void Title_Screen(object sender, EventArgs e)
         {
             inEscScreen = false;
-            controls_on = false;
-            control.updateTimer.Stop();
-            control.WorldRef.objects.Clear();
-            control.WorldRef.basePlatform = null;
-            control.WorldRef.stage = 0;
+            ResetGame();
 
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
@@ -574,7 +547,6 @@ namespace JoustClient
             cheat.Height = 50;
             cheatMode = false;
 
-
             TextBlock descrip = Make_TextBlock(425, 620, 50, 200);
             descrip.Text = "Set stage:{0-99}";
             descrip.Height = 40;
@@ -592,6 +564,42 @@ namespace JoustClient
             diff.BorderBrush = Brushes.Red;
             diff.MaxLength = 2;
             canvas.Children.Add(diff);
+
+            // saves logic
+            TextBlock saves = Make_TextBlock(200, 850, 35, 200);
+            saves.Text = "Game Saves";
+            saves.TextAlignment = TextAlignment.Center;
+
+            ScrollViewer scrollViewer = new ScrollViewer();
+            StackPanel listOfSaves = new StackPanel();
+            Canvas.SetLeft(scrollViewer, 850);
+            Canvas.SetTop(scrollViewer, 245);
+            scrollViewer.MaxHeight = 480;
+            scrollViewer.Content = listOfSaves;
+            canvas.Children.Add(scrollViewer);
+            String[] saveFiles = Directory.GetFiles("../../Saves/GameSaves/", "*", SearchOption.TopDirectoryOnly);
+            int numOfSaves = saveFiles.Length;
+            for (int i = 0; i < numOfSaves; i++)
+            {
+                Button btn = new Button();
+                btn.Width = 183;
+                btn.Content = saveFiles[i].Substring(saveFiles[i].Length-12, 8);
+                btn.Click += (object s, RoutedEventArgs ee) =>
+                {
+                    LoadGame(s, ee);
+                    // btn.Content.ToString()
+                };
+                listOfSaves.Children.Add(btn);
+            }        
+        }
+
+        private void ResetGame()
+        {
+            controls_on = false;
+            control.updateTimer.Stop();
+            control.WorldRef.objects.Clear();
+            control.WorldRef.basePlatform = null;
+            control.WorldRef.stage = 0;
         }
 
         private void Cheat_Toggle(object sender, RoutedEventArgs e)
@@ -1085,6 +1093,7 @@ namespace JoustClient
                 paused.Text = "Game Paused";
                 Button unpause = Make_Button("Unpause", 360, ResumeGame);
                 Button mainMenu = Make_Button("MainMenu", 470, Title_Screen);
+                Button save = Make_Button("Save Game", 580, SaveGame);
             }
         }
 

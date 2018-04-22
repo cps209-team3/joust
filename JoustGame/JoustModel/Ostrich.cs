@@ -53,7 +53,7 @@ namespace JoustModel
 
         public override void Die()
         {
-            Console.WriteLine("Ostrich has died!");
+            //Console.WriteLine("Ostrich has died!");
             if (!cheatMode)
             {
                 lives -= 1;
