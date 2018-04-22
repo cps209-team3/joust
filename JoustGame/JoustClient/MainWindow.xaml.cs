@@ -243,6 +243,7 @@ namespace JoustClient
             EndStage.Foreground = new SolidColorBrush(Colors.White);
             EndStage.Text = "WAVE CLEARED!";
             canvas.Children.Add(EndStage);
+            control.GetSpawnPoints();
             Task.Run(() =>
             {
                 Thread.Sleep(1000);
@@ -330,13 +331,6 @@ namespace JoustClient
             }
             control.WorldRef.stage = difficulty;
 
-            /*  Comment:    Clayton Cockrell
-             *  Pterodactyls start spawning at stage 5. stage is set this for testing
-             *  purposes.
-             */
-
-            SpawnEnemies();
-
             InitiateWorldObject("Platform", 100, 300);
             InitiateWorldObject("Platform", 700, 500);
             InitiateWorldObject("Platform", 500, 300);
@@ -345,7 +339,11 @@ namespace JoustClient
             InitiateWorldObject("Respawn", 1100, 600);
             InitiateWorldObject("Respawn", 200, 600);
             InitiateWorldObject("Base", 375, 775);
-            
+
+            control.GetSpawnPoints();
+
+            SpawnEnemies();
+
             updateTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(5), 
                 DispatcherPriority.Render,
@@ -403,6 +401,8 @@ namespace JoustClient
             }
             control.WorldRef.stage = difficulty;
 
+            control.GetSpawnPoints();
+
             SpawnEnemies();
             InitiateWorldObject("Base", 375, 775);
 
@@ -422,7 +422,16 @@ namespace JoustClient
 
             for (int i = 0; i < numBuzzards; i++)
             {
-                Dispatcher.Invoke(() => InitiateWorldObject("Buzzard", 100, 300));
+                int spawnX = 0;
+                int spawnY = 0;
+                int randNum = new Random().Next(control.SpawnPoints.Count - 1);
+
+                JoustModel.Point[] p = control.SpawnPoints[randNum];
+
+                spawnX = (int)(((p[1].x - p[0].x) / 2) + p[0].x);
+                spawnY = (int)p[0].y - 75;
+
+                Dispatcher.Invoke(() => InitiateWorldObject("Buzzard", spawnX, spawnY));
             }
 
             for (int i = 0; i < numPterodactyls; i++)

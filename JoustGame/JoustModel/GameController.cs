@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace JoustModel
@@ -6,10 +7,12 @@ namespace JoustModel
     public class GameController
     {
         public World WorldRef { get; set; }
+        public List<Point[]> SpawnPoints { get; set; }
 
         public GameController()
         {
             WorldRef = World.Instance;
+            SpawnPoints = new List<Point[]>();
         }
 
         public void Update()
@@ -94,6 +97,17 @@ namespace JoustModel
             string path = string.Format(@"../../Saves/GameSaves/{0}.txt", filename);
             System.IO.File.WriteAllText(path, line2save); 
             return line2save;
+        }
+
+        public void GetSpawnPoints() {
+            SpawnPoints = new List<Point[]>();
+            foreach (WorldObject obj in WorldRef.objects) {
+                Trace.WriteLine("obj = " + obj.ToString());
+                if (obj is Respawn) {
+                    Respawn respwn = obj as Respawn;
+                    SpawnPoints.Add(new Point[] { new Point(respwn.coords.x, respwn.coords.y), new Point(respwn.coords.x + 100, respwn.coords.y + 15) });
+                }
+            }
         }
 
         public WorldObject CreateWorldObj(string type)
