@@ -48,6 +48,9 @@ namespace JoustClient
         /// </summary>
         public void NotifyState(object sender, EventArgs e) {
             Buzzard buzzard = sender as Buzzard;
+            if (buzzard.stateMachine.currentState is EnemySpawningState) Clip = new RectangleGeometry(new System.Windows.Rect(0, 0, ActualWidth, buzzard.respawning / 2));
+            else Clip = new RectangleGeometry(new System.Windows.Rect(0, 0, ActualWidth, ActualHeight));
+            
             Source = new BitmapImage(new Uri(buzzard.imagePath, UriKind.Relative));
         }
 

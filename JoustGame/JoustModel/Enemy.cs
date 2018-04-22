@@ -411,6 +411,29 @@ namespace JoustModel
         public override void Exit() { }
     }
 
+    public class EnemySpawningState : EnemyState {
+        StateMachine stateMachine;
+
+        public EnemySpawningState(Enemy enemy) {
+            StateEnemy = enemy;
+            stateMachine = StateEnemy.stateMachine;
+        }
+
+        public override void Update() {
+            if (StateEnemy is Buzzard) {
+                Buzzard b = StateEnemy as Buzzard;
+                b.speed = 0.5;
+                b.angle = 90;
+
+                b.imagePath = "Images/Enemy/mik_respawn.png";
+            }
+        }
+
+        public override void HandleInput(string command) { }
+        public override void Enter() { }
+        public override void Exit() { }
+    }
+
     public class BuzzardFleeingState : EnemyState
     {
         StateMachine stateMachine;
@@ -469,6 +492,7 @@ namespace JoustModel
             {
                 Buzzard b = StateEnemy as Buzzard;
                 TargetEgg = b.pickupEgg;
+                b.speed = 5;
 
                 if (TargetEgg != null)
                 {

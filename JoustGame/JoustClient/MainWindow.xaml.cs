@@ -76,19 +76,20 @@ namespace JoustClient
                         break;
                     case Key.W:
                     case Key.Up:
-                        if (!flapLock)
-                        {
-                            Task.Run(() => playerStateMachine.HandleInput("flap"));
+                        if (playerStateMachine.Current is DeadState || playerStateMachine.Current is SpawnState) { }
+                        else {
+                            if (!flapLock) {
+                                Task.Run(() => playerStateMachine.HandleInput("flap"));
+                            }
+                            flapLock = true;
+                            Task.Run(() => {
+                                PlaySounds.Instance.Play_Flap();
+                                Dispatcher.Invoke(() => ostrichCtrl.Source = new BitmapImage(new Uri("Sprites/player_fly2.png", UriKind.Relative)));
+                                Thread.Sleep(100);
+                                Dispatcher.Invoke(() => ostrichCtrl.Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative)));
+                                flapLock = false;
+                            });
                         }
-                        flapLock = true;
-                        Task.Run(() =>
-                        {
-                            PlaySounds.Instance.Play_Flap();
-                            Dispatcher.Invoke(() => ostrichCtrl.Source = new BitmapImage(new Uri("Sprites/player_fly2.png", UriKind.Relative)));
-                            Thread.Sleep(100);
-                            Dispatcher.Invoke(() => ostrichCtrl.Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative)));
-                            flapLock = false;
-                        });
                         break;
                     case Key.A:
                     case Key.Left:
@@ -152,11 +153,6 @@ namespace JoustClient
                     b.BuzzardStateChange += bC.NotifyState;
                     b.BuzzardDropEgg += bC.NotifyDrop;
                     b.BuzzardDestroyed += bC.NotifyDestroy;
-                    // Used to update all enemies in the world
-                    //DispatcherTimer moveTimer = new DispatcherTimer();
-                    //moveTimer.Interval = new TimeSpan(0, 0, 0, 0, 33);
-                    //moveTimer.Tick += World.Instance.UpdateAllEnemies_Position;
-                    //moveTimer.Start();
 
                     /*  Comment:    Clayton Cockrell
                      *  The Random object in Buzzard would give the same random number to all the 
@@ -358,7 +354,7 @@ namespace JoustClient
 
             for (int i = 0; i < numBuzzards; i++)
             {
-                Dispatcher.Invoke(() => InitiateWorldObject("Buzzard", 100, 300));
+                Dispatcher.Invoke(() => InitiateWorldObject("Buzzard", 200, 300));
             }
 
             for (int i = 0; i < numPterodactyls; i++)

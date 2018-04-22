@@ -21,7 +21,7 @@ namespace JoustModel
         public void Enter()
         {
             ostrich.coords.x = World.Instance.basePlatform.coords.x + 350;
-            ostrich.coords.y = World.Instance.basePlatform.coords.y - 76;
+            ostrich.coords.y = World.Instance.basePlatform.coords.y + 90;
             ostrich.speed = 0;
             ostrich.angle = 0;
             Task.Run(() =>
