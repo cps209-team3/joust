@@ -110,6 +110,34 @@ namespace JoustModel
                     return new Egg();
                 case "Platform":
                     return new Platform();
+                case "Long Platform 1":
+                    Platform pltfm1 = new Platform();
+                    pltfm1.SetType("long", 1);
+                    return pltfm1;
+                case "Long Platform 2":
+                    Platform pltfm2 = new Platform();
+                    pltfm2.SetType("long", 2);
+                    return pltfm2;
+                case "Long Platform 3":
+                    Platform pltfm3 = new Platform();
+                    pltfm3.SetType("long", 3);
+                    return pltfm3;
+                case "Short Platform 1":
+                    Platform pltfms1 = new Platform();
+                    pltfms1.SetType("short", 1);
+                    return pltfms1;
+                case "Short Platform 2":
+                    Platform pltfms2 = new Platform();
+                    pltfms2.SetType("short", 2);
+                    return pltfms2;
+                case "Short Platform 3":
+                    Platform pltfms3 = new Platform();
+                    pltfms3.SetType("short", 3);
+                    return pltfms3;
+                case "Short Platform 4":
+                    Platform pltfms4 = new Platform();
+                    pltfms4.SetType("short", 4);
+                    return pltfms4;
                 case "Pterodactyl":
                     return new Pterodactyl();
                 case "Respawn":

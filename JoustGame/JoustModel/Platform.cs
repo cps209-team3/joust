@@ -8,8 +8,8 @@ namespace JoustModel
 {
     public class Platform : WorldObject
     {
-        private string platformType;
-        private int platformNumber;
+        private string PlatformType { get; set; }
+        private int PlatformNumber { get; set; }
         public Platform()
         {
             width = 200;
@@ -20,8 +20,8 @@ namespace JoustModel
         }
 
         public void SetType(string type, int number) {
-            platformType = type;
-            platformNumber = number;
+            PlatformType = type;
+            PlatformNumber = number;
             switch (type) {
                 case "long":
                     width = 400;
@@ -45,7 +45,7 @@ namespace JoustModel
 
         public override string Serialize()
         {
-            return string.Format("Platform,{0},{1},{2},{3}", platformType, platformNumber, coords.x, coords.y);
+            return string.Format("Platform,{0},{1},{2},{3}", PlatformType, PlatformNumber, coords.x, coords.y);
         }
 
         // Set coords to value read from file

@@ -47,7 +47,7 @@ namespace JoustClient
         private System.Windows.Point mousePosition;
         private bool dragging = false;
         private Image currImg;
-        private PlatformControl currPlat;
+        private WorldObjectControl currPlat;
         private Button ex2;
         private TextBlock errorBlock;
         private int ids = 0;
@@ -1040,6 +1040,19 @@ namespace JoustClient
 
                             if (indextracker < canvas.Children.Count) { writer.Write(":"); }
                         }
+
+                        RespawnControl rc = o as RespawnControl;
+                        if (rc != null) {
+                            Respawn platty = new Respawn();
+                            System.Windows.Point point = rc.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
+                            platty.coords.x = point.X;
+                            platty.coords.y = point.Y;
+                            ids++;
+                            string x = platty.Serialize();
+                            writer.Write(x);
+
+                            if (indextracker < canvas.Children.Count) { writer.Write(":"); }
+                        }
                     }
                 }
             }
@@ -1056,7 +1069,6 @@ namespace JoustClient
         private void plat_button(object sender, EventArgs e)
         {
             PlatformControl platctrl = new PlatformControl("Images/Platform/platform_short1.png");
-            platctrl.isRespawn = false;
             platctrl.SetValue(Canvas.TopProperty, 0.0);
             platctrl.SetValue(Canvas.LeftProperty, 0.0);
             canvas.Children.Add(platctrl);
@@ -1066,13 +1078,13 @@ namespace JoustClient
 
         private void spawn_button(object sender, EventArgs e)
         {
-            PlatformControl spwnctrl = new PlatformControl("Images/Platform/platform_respawn1.png");
-            spwnctrl.isRespawn = true;
+            RespawnControl spwnctrl = new RespawnControl("Images/Platform/platform_respawn1.png");
             spwnctrl.SetValue(Canvas.TopProperty, 0.0);
             spwnctrl.SetValue(Canvas.LeftProperty, 0.0);
             spwnctrl.Width = 100;
             spwnctrl.Height = 15;
             spwnctrl.Tag = "disposeable";
+            // Bring forward
             Canvas.SetZIndex(spwnctrl, 3);
             canvas.Children.Add(spwnctrl);
             spwnctrl.MouseDown += plat_MouseDown;
@@ -1095,7 +1107,12 @@ namespace JoustClient
             mousePosition = e.GetPosition(canvas);
             dragging = true;
 
-            currPlat = (PlatformControl)sender;
+            if (sender is PlatformControl) {
+                currPlat = sender as PlatformControl;
+            }
+            else if (sender is RespawnControl) {
+                currPlat = sender as RespawnControl;
+            }
             currImg = null;
         }
 
@@ -1113,11 +1130,10 @@ namespace JoustClient
             {
                 if (currPlat != null)
                 {
-                    PlatformControl z = x as PlatformControl;
+                    if (x is PlatformControl) {
+                        PlatformControl z = x as PlatformControl;
 
-                    if (z != null)
-                    {
-                        if (currPlat.isRespawn) {
+                        if (currPlat is RespawnControl) {
                             int objects = 0;
                             foreach (object test in canvas.Children) {
                                 PlatformControl testCtrl = test as PlatformControl;
@@ -1130,16 +1146,16 @@ namespace JoustClient
                                     isLastCheck = false;
                                 }
 
-                                if (testCtrl != null && !testCtrl.isRespawn) {
-                                    Trace.WriteLine(testCtrl.isRespawn);
+                                if (testCtrl != null) {
                                     CheckBadPlacementRespawn(testCtrl);
                                 }
                             }
                         }
                         else {
-                            CheckBadPlacement(z);
+                            if (z != null) {
+                                CheckBadPlacement(z);
+                            }
                         }
-
                     }
                 }
             }

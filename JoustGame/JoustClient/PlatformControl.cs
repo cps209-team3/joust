@@ -18,8 +18,6 @@ namespace JoustClient
 {
     public class PlatformControl : WorldObjectControl
     {
-        public bool isRespawn;
-
         public PlatformControl(string imagePath) : base(imagePath)
         {
             Height = 30;

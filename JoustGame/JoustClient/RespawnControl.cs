@@ -20,8 +20,8 @@ namespace JoustClient
     {
         public RespawnControl(string imagePath) : base(imagePath)
         {
-            Height = 30;
-            Width = 200;
+            Height = 15;
+            Width = 100;
         }
     }
 }
