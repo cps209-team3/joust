@@ -5,18 +5,17 @@ namespace JoustModel
 {
     public class StateMachine
     {
-        public Dictionary<string, IState> stateDict = new Dictionary<string, IState>();
-        public IState currentState = new EmptyState();
-
-        public IState Current { get { return currentState; } }
-        public void Add(string id, IState state) { stateDict.Add(id, state); }
+        public Dictionary<string, State> stateDict = new Dictionary<string, State>();
+        public State currentState = new EmptyState();
+        
+        public void Add(string id, State state) { stateDict.Add(id, state); }
         public void Remove(string id) { stateDict.Remove(id); }
         public void Clear() { stateDict.Clear(); }
 
         public void Change(string id)
         {
             currentState.Exit();
-            IState nextState = stateDict[id];
+            State nextState = stateDict[id];
             nextState.Enter();            
             currentState = nextState;
         }

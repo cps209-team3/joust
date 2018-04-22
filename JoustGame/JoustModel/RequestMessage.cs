@@ -30,14 +30,8 @@ namespace JoustModel
             
             ctrl.WorldRef.playerNames.Add(PlayerName);
             response.PlayerNames = ctrl.WorldRef.playerNames;
-            if (ctrl.WorldRef.hosted)
-            {
-                response.CanHost = false;
-            }
-            else
-            {
-                response.CanHost = true;
-            }
+            response.CanHost = !(ctrl.WorldRef.hosted);
+
             return response;
         }
     }
@@ -51,7 +45,7 @@ namespace JoustModel
             StartResponseMessage response = new StartResponseMessage();
 
             ctrl.SetPlatforms();
-            ctrl.SetPlayers();
+            ctrl.InitializePlayers();
             ctrl.WorldRef.multiplayerStarted = true;
 
             return response;
@@ -107,7 +101,6 @@ namespace JoustModel
             GameStatusResponseMessage response = new GameStatusResponseMessage();
 
             response.PlayerNames = ctrl.WorldRef.playerNames;
-            response.Ostriches = ctrl.WorldRef.players;
             response.Platforms = ctrl.WorldRef.platforms;
 
             return response;

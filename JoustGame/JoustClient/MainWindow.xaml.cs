@@ -42,7 +42,6 @@ namespace JoustClient
         public ClientCommunicationManager comm = new ClientCommunicationManager();
         public Ostrich localPlayer;
         TextBlock[] playerNameBlocks = new TextBlock[8];
-        DispatcherTimer serverUpdate;
 
         // This makes flying create fewer threads
         // to change the animation which makes the
@@ -358,18 +357,21 @@ namespace JoustClient
                         await comm.SendMessageAsync(new StartRequestMessage());
                         comm.sending = false;
                         sentStart = true;
-                        Console.WriteLine("getting status");
                     }
                 }
             }
 
+            control.WorldRef.multiplayerStarted = true;
             controls_on = true;
            
             control.WorldRef.win += this.NotifyWon;
             flapLock = false;
-            canvas.Children.Clear();
-            canvas.Background = Brushes.Black;
-            canvas.Children.Clear();
+
+            Dispatcher.Invoke(() =>
+            {
+                canvas.Children.Clear();
+                canvas.Background = Brushes.Black;
+            });
 
             GameStatusResponseMessage gameStatus = new GameStatusResponseMessage();
             bool gotStatus = false;
@@ -385,20 +387,28 @@ namespace JoustClient
             }
             
             control.WorldRef.playerNames = gameStatus.PlayerNames;
-            control.WorldRef.players = gameStatus.Ostriches;
             control.WorldRef.platforms = gameStatus.Platforms;
+            control.InitializePlayers();
 
-            foreach (Ostrich p in control.WorldRef.players)
+            Dispatcher.Invoke(() =>
             {
-                WorldObjectControlFactory(p);
-                p.ostrichDied += NotifyLost;
-            }
+                foreach (Ostrich p in control.WorldRef.players)
+                {
+                    WorldObjectControlFactory(p);
+                    p.ostrichDied += NotifyLost;
+                }
+
+                foreach (Platform pl in control.WorldRef.platforms)
+                {
+                    WorldObjectControlFactory(pl);
+                }
+            });
 
             control.WorldRef.player = control.WorldRef.players[control.WorldRef.playerNames.FindIndex(s => s == control.WorldRef.playerName)];
-            localPlayer = control.WorldRef.player;
+            localPlayer = control.WorldRef.player;  
             playerStateMachine = localPlayer.stateMachine;
 
-            control.updateTimer.Start();
+            Dispatcher.Invoke(() => control.updateTimer.Start());
         }
 
         public void SpawnEnemies()
@@ -779,6 +789,8 @@ namespace JoustClient
                 }
             }
 
+            control.WorldRef.hosted = true;
+
             canvas.Children.Clear();
 
             control.WorldRef.playerName = playerName.Text;
@@ -807,9 +819,7 @@ namespace JoustClient
                 Canvas.SetLeft(border, left);
                 canvas.Children.Add(border);
             }
-
             
-
             Button back = Make_BackButton(625.0, Multi_Screen);
 
             if (host)
@@ -818,25 +828,27 @@ namespace JoustClient
 
                 Canvas.SetLeft(startButton, 745);
             }
-            else
+
+            Task.Run(() =>
             {
                 while (!control.WorldRef.multiplayerStarted)
                 {
                     if (!comm.sending)
                     {
                         comm.sending = true;
-                        await StatusCheck();
+                        StatusCheck();
                         comm.sending = false;
                     }
+                    Thread.Sleep(1000);
                 }
-            }
+            });
         }
 
         private async Task StatusCheck()
         {
             LobbyResponseMessage statusCheck = await comm.SendMessageAsync(new LobbyRequestMessage()) as LobbyResponseMessage;
             
-            if (statusCheck.Start)
+            if (statusCheck.Start && !host)
             {
                 control.WorldRef.multiplayerStarted = true;
                 NewMultiplayer(statusCheck, EventArgs.Empty);
@@ -849,11 +861,11 @@ namespace JoustClient
                 {
                     if (i < playerNames.Count)
                     {
-                        playerNameBlocks[i].Text = playerNames[i];
+                        Dispatcher.Invoke(() => playerNameBlocks[i].Text = playerNames[i]);
                     }
                     else
                     {
-                        playerNameBlocks[i].Text = "";
+                        Dispatcher.Invoke(() => playerNameBlocks[i].Text = "");
                     }
                 }
             }

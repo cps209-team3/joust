@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
-    public class EmptyState : IState
+    public class EmptyState : State
     {
-        public void Update() { }
-        public void HandleInput(string data) { }
-        public void Enter() { }
-        public void Exit() { }
-        public void CheckCollisions() { }
+        public EmptyState() : base() { }
+        public EmptyState(string name) : base(name) { }
+
+        public override void Update() { }
+        public override void HandleInput(string data) { }
+        public override void Enter() { }
+        public override void Exit() { }
+        public override void CheckCollisions() { }
     }
 }

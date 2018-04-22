@@ -37,7 +37,6 @@ namespace JoustServer
         {
             TcpClient client = await listener.AcceptTcpClientAsync();
             clients.Add(client);
-            Console.WriteLine(ctrl.WorldRef.hosted);
             return client;
         }
 
@@ -76,10 +75,6 @@ namespace JoustServer
             {
                 RemoveClient(tcpClient);
             }
-            catch (Exception ex)
-            {
-                window.Log(ex.Message);
-            }
         }
 
         private void RemoveClient(TcpClient tcpClient)
@@ -95,7 +90,7 @@ namespace JoustServer
 
         private string ProcessMessage(String requestMsgStr)
         {
-            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
             
             RequestMessage requestMsg = JsonConvert.DeserializeObject(requestMsgStr, settings) as RequestMessage;
             ResponseMessage responseMsg = requestMsg.Execute(ctrl);

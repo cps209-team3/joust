@@ -35,7 +35,6 @@ namespace JoustModel
     public class GameStatusResponseMessage : ResponseMessage
     {
         public List<string> PlayerNames { get; set; }
-        public List<Ostrich> Ostriches { get; set; }
         public List<Platform> Platforms { get; set; }
     }
 }

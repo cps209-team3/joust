@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace JoustModel
 {
-    public class SpawnState : IState
+    public class SpawnState : State
     {
-        StateMachine stateMachine;
-        Ostrich ostrich;
+        public SpawnState() : base() { }
+        public SpawnState(string name) : base(name) { }
+        [JsonConstructor]
+        public SpawnState(string name, int o) : base(name, o) { }
 
-        public SpawnState(Ostrich ostrich)
-        {
-            this.ostrich = ostrich;
-            this.stateMachine = ostrich.stateMachine;
-        }
+        public override void Update() { }
 
-        public void Update() { }
-
-        public void HandleInput(string command) { }
-        public void Enter()
+        public override void HandleInput(string command) { }
+        public override void Enter()
         {
             ostrich.coords.x = World.Instance.basePlatform.coords.x + 350;
             ostrich.coords.y = World.Instance.basePlatform.coords.y - 76;
@@ -30,13 +27,13 @@ namespace JoustModel
                 stateMachine.Change("stand");
             });
         }
-        public void Exit() { }
+        public override void Exit() { }
 
         public override string ToString()
         {
             return "spawn";
         }
 
-        public void CheckCollisions() { }
+        public override void CheckCollisions() { }
     }
 }

@@ -19,14 +19,14 @@ namespace JoustModel
     /// This Class is the base class for all other enemy states. It contains
     /// a Factory Method that produces the next state.
     /// </summary>
-    public class EnemyState : IState
+    public class EnemyState : State
     {
         // Properties used in child states
         public int Angle { get; set; }
         public Enemy StateEnemy { get; set; }
 
         // Class Constructor
-        public EnemyState() { }
+        public EnemyState() : base() { }
 
         /// <summary>
         /// This Factory Method produces the next state for every enemy calling it.
@@ -196,20 +196,16 @@ namespace JoustModel
             }
         }
 
-        public virtual void Update() { }
-        public virtual void HandleInput(string data) { }
-        public virtual void Enter() { }
-        public virtual void Exit() { }
-        public virtual void CheckCollisions() { }
+        public override void Update() { }
+        public override void HandleInput(string data) { }
+        public override void Enter() { }
+        public override void Exit() { }
+        public override void CheckCollisions() { }
     }
-
-
-
+    
 
     public class EnemyStandingState : EnemyState
     {
-        StateMachine stateMachine;
-
         public EnemyStandingState(Enemy enemy)
         {
             StateEnemy = enemy;
@@ -255,8 +251,6 @@ namespace JoustModel
 
     public class EnemyRunningState : EnemyState
     {
-        StateMachine stateMachine;
-
         public EnemyRunningState(Enemy enemy)
         {
             StateEnemy = enemy;
@@ -299,8 +293,6 @@ namespace JoustModel
 
     public class EnemyFallingState : EnemyState
     {
-        StateMachine stateMachine;
-
         public EnemyFallingState(Enemy enemy)
         {
             StateEnemy = enemy;
@@ -354,8 +346,6 @@ namespace JoustModel
 
     public class EnemyFlappingState : EnemyState
     {
-        StateMachine stateMachine;
-
         public EnemyFlappingState(Enemy enemy)
         {
             StateEnemy = enemy;
@@ -413,8 +403,6 @@ namespace JoustModel
 
     public class BuzzardFleeingState : EnemyState
     {
-        StateMachine stateMachine;
-
         public BuzzardFleeingState(Enemy enemy)
         {
             StateEnemy = enemy;
@@ -450,7 +438,6 @@ namespace JoustModel
     public class BuzzardPickupState : EnemyState
     {
         public Egg TargetEgg { get; set; }
-        StateMachine stateMachine;
 
         public BuzzardPickupState(Enemy enemy)
         {
@@ -551,8 +538,6 @@ namespace JoustModel
 
     public class EggHatchingState : EnemyState
     {
-        StateMachine stateMachine;
-
         public EggHatchingState(Enemy enemy)
         {
             StateEnemy = enemy;
@@ -592,8 +577,6 @@ namespace JoustModel
 
     public class EggHatchedState : EnemyState
     {
-        StateMachine stateMachine;
-
         public EggHatchedState(Enemy enemy)
         {
             StateEnemy = enemy;
@@ -624,8 +607,6 @@ namespace JoustModel
 
     public class PterodactylDestroyedState : EnemyState
     {
-        StateMachine stateMachine;
-
         public PterodactylDestroyedState(Enemy enemy)
         {
             StateEnemy = enemy;
@@ -658,8 +639,6 @@ namespace JoustModel
 
     public class PterodactylChargeState : EnemyState
     {
-        StateMachine stateMachine;
-
         public PterodactylChargeState(Enemy enemy)
         {
             StateEnemy = enemy;

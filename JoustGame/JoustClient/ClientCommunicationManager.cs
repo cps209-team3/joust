@@ -38,7 +38,7 @@ namespace JoustClient
 
         public async Task<ResponseMessage> SendMessageAsync(RequestMessage msg)
         {
-            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
             string serializedMessage = JsonConvert.SerializeObject(msg, settings);
             await wr.WriteLineAsync(serializedMessage);
             await wr.FlushAsync();

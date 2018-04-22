@@ -20,23 +20,32 @@ namespace JoustModel
                 Update,
                 Dispatcher.CurrentDispatcher);
         }
-
-
+        
         public void Update(object sender, EventArgs e)
         {
             try
             {
                 //Trace.WriteLine("WorldObject Count: " + WorldRef.objects.Count);
-                // Update everything 50 times per second (subject to change)
-                foreach (WorldObject worldObject in WorldRef.objects)
+                // Update everything 200 times per second (subject to change)
+                if (WorldRef.multiplayerStarted)
                 {
-                    Entity entity = worldObject as Entity;                  
-                    if (entity != null)
+                    foreach (Ostrich ostrich in WorldRef.players)
                     {
-                        entity.Update();
+                        ostrich.Update();
                         World.Instance.TrackTime();
                     }
-
+                }
+                else
+                {
+                    foreach (WorldObject worldObject in WorldRef.objects)
+                    {
+                        Entity entity = worldObject as Entity;
+                        if (entity != null)
+                        {
+                            entity.Update();
+                            World.Instance.TrackTime();
+                        }
+                    }
                 }
             }
             catch (InvalidOperationException)
@@ -57,19 +66,20 @@ namespace JoustModel
             InitiateWorldObject("Base", 375, 775);
         }
 
-        public void InitiateWorldObject(string type, double x, double y)
+        public WorldObject InitiateWorldObject(string type, double x, double y)
         {
             WorldObject obj = CreateWorldObj(type);
             obj.coords.x = x;
             obj.coords.y = y;
+            return obj;
         }
 
-        public void SetPlayers()
+        public void InitializePlayers()
         {
             for (int i = 0; i < WorldRef.playerNames.Count; i++)
             {
                 Platform spawn = WorldRef.platforms[i];
-                InitiateWorldObject("Ostrich", spawn.coords.x + spawn.width / 2, spawn.coords.y - 75);
+                Ostrich o = InitiateWorldObject("Ostrich", spawn.coords.x + spawn.width / 2, spawn.coords.y - 75) as Ostrich;
             }
         }
 
@@ -126,8 +136,16 @@ namespace JoustModel
             switch (type)
             {
                 case "Ostrich":
-                    Ostrich ostrich = new Ostrich();
-                    WorldRef.players.Add(ostrich);
+                    string name;
+                    if (WorldRef.hosted)
+                    {
+                        name = WorldRef.playerNames[WorldRef.players.Count];
+                    }
+                    else
+                    {
+                        name = "single";
+                    }
+                    Ostrich ostrich = new Ostrich(name);
                     return ostrich;
                 case "Base":
                     return new Base();
