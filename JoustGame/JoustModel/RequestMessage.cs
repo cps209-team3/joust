@@ -5,6 +5,7 @@
 //----------------------------------------------------------- 
 
 using System;
+using System.Collections.Generic;
 
 namespace JoustModel
 {
@@ -41,6 +42,37 @@ namespace JoustModel
         }
     }
 
+    public class StartRequestMessage : RequestMessage
+    {
+        public StartRequestMessage() { }
+
+        public override ResponseMessage Execute(GameController ctrl)
+        {
+            StartResponseMessage response = new StartResponseMessage();
+
+            ctrl.SetPlatforms();
+            ctrl.SetPlayers();
+            ctrl.WorldRef.multiplayerStarted = true;
+
+            return response;
+        }
+    }
+
+    public class LobbyRequestMessage : RequestMessage
+    {
+        public LobbyRequestMessage() { }
+
+        public override ResponseMessage Execute(GameController ctrl)
+        {
+            LobbyResponseMessage response = new LobbyResponseMessage();
+
+            response.PlayerNames = ctrl.WorldRef.playerNames;
+            response.Start = ctrl.WorldRef.multiplayerStarted;
+
+            return response;
+        }
+    }
+
     public class PlayerMoveRequestMessage : RequestMessage
     {
         public int Index { get; set; }
@@ -68,9 +100,15 @@ namespace JoustModel
 
     public class GameStatusRequestMessage : RequestMessage
     {
+        public GameStatusRequestMessage() { }
+
         public override ResponseMessage Execute(GameController ctrl)
         {
             GameStatusResponseMessage response = new GameStatusResponseMessage();
+
+            response.PlayerNames = ctrl.WorldRef.playerNames;
+            response.Ostriches = ctrl.WorldRef.players;
+            response.Platforms = ctrl.WorldRef.platforms;
 
             return response;
         }

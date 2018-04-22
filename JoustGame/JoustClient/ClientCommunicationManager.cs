@@ -17,6 +17,7 @@ namespace JoustClient
         TcpClient tcpClient;
         StreamReader rd;
         StreamWriter wr;
+        public bool sending = false;
 
         public ClientCommunicationManager()
         {

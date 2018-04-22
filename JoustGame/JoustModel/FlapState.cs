@@ -11,6 +11,7 @@ namespace JoustModel
 
         public FlapState(Ostrich ostrich)
         {
+            Console.WriteLine("hi");
             this.ostrich = ostrich;
             this.stateMachine = ostrich.stateMachine;
         }

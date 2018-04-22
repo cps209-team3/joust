@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Threading;
+using System.Collections.Generic;
 
 namespace JoustModel
 {
@@ -14,11 +15,10 @@ namespace JoustModel
             WorldRef = World.Instance;
 
             updateTimer = new DispatcherTimer(
-            TimeSpan.FromMilliseconds(5),
-            DispatcherPriority.Render,
-            Update,
-            Dispatcher.CurrentDispatcher);
-            //updateTimer.Start();
+                TimeSpan.FromMilliseconds(5),
+                DispatcherPriority.Render,
+                Update,
+                Dispatcher.CurrentDispatcher);
         }
 
 
@@ -43,6 +43,34 @@ namespace JoustModel
             {
                 return;
             } 
+        }
+
+        public void SetPlatforms()
+        {
+            InitiateWorldObject("Platform", 100, 300);
+            InitiateWorldObject("Platform", 700, 500);
+            InitiateWorldObject("Platform", 500, 300);
+            InitiateWorldObject("Platform", 950, 200);
+            InitiateWorldObject("Respawn", 700, 100);
+            InitiateWorldObject("Respawn", 1100, 600);
+            InitiateWorldObject("Respawn", 200, 600);
+            InitiateWorldObject("Base", 375, 775);
+        }
+
+        public void InitiateWorldObject(string type, double x, double y)
+        {
+            WorldObject obj = CreateWorldObj(type);
+            obj.coords.x = x;
+            obj.coords.y = y;
+        }
+
+        public void SetPlayers()
+        {
+            for (int i = 0; i < WorldRef.playerNames.Count; i++)
+            {
+                Platform spawn = WorldRef.platforms[i];
+                InitiateWorldObject("Ostrich", spawn.coords.x + spawn.width / 2, spawn.coords.y - 75);
+            }
         }
 
         public void CalculateNumEnemies(ref int numBuzzards, ref int numPterodactyls)
@@ -98,7 +126,9 @@ namespace JoustModel
             switch (type)
             {
                 case "Ostrich":
-                    return new Ostrich();
+                    Ostrich ostrich = new Ostrich();
+                    WorldRef.players.Add(ostrich);
+                    return ostrich;
                 case "Base":
                     return new Base();
                 case "Buzzard":
@@ -106,7 +136,9 @@ namespace JoustModel
                 case "Egg":
                     return new Egg();
                 case "Platform":
-                    return new Platform();
+                    Platform platform = new Platform();
+                    WorldRef.platforms.Add(platform);
+                    return platform;
                 case "Pterodactyl":
                     return new Pterodactyl();
                 case "Respawn":

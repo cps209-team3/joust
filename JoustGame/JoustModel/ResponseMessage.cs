@@ -17,6 +17,14 @@ namespace JoustModel
         public bool CanHost { get; set; }
     }
 
+    public class StartResponseMessage : ResponseMessage { }
+
+    public class LobbyResponseMessage : ResponseMessage
+    {
+        public List<string> PlayerNames { get; set; }
+        public bool Start { get; set; }
+    }
+
     public class PlayerMoveResponseMessage : ResponseMessage
     {
         public int Index { get; set; }
@@ -26,8 +34,8 @@ namespace JoustModel
 
     public class GameStatusResponseMessage : ResponseMessage
     {
-        public int Index { get; set; }
-        public double Speed { get; set; }
-        public double Angle { get; set; }
+        public List<string> PlayerNames { get; set; }
+        public List<Ostrich> Ostriches { get; set; }
+        public List<Platform> Platforms { get; set; }
     }
 }

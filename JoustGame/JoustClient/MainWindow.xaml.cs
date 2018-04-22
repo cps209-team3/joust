@@ -40,6 +40,8 @@ namespace JoustClient
         public bool connected = false;
         public ClientCommunicationManager comm = new ClientCommunicationManager();
         public Ostrich localPlayer;
+        TextBlock[] playerNameBlocks = new TextBlock[8];
+        DispatcherTimer serverUpdate;
 
         // This makes flying create fewer threads
         // to change the animation which makes the
@@ -348,11 +350,26 @@ namespace JoustClient
             InitiateWorldObject("Respawn", 1100, 600);
             InitiateWorldObject("Respawn", 200, 600);
             InitiateWorldObject("Base", 375, 775);
-           
         }
 
-        public void NewMultiplayer(object sender, EventArgs e)
+        public async void NewMultiplayer(object sender, EventArgs e)
         {
+            if (host)
+            {
+                bool sentStart = false;
+                while (!sentStart)
+                {
+                    if (!comm.sending)
+                    {
+                        comm.sending = true;
+                        await comm.SendMessageAsync(new StartRequestMessage());
+                        comm.sending = false;
+                        sentStart = true;
+                        Console.WriteLine("getting status");
+                    }
+                }
+            }
+
             controls_on = true;
            
             control.WorldRef.win += this.NotifyWon;
@@ -361,23 +378,34 @@ namespace JoustClient
             canvas.Background = Brushes.Black;
             canvas.Children.Clear();
 
-            // Get stage num from controls once the proper screens are implemented
-            Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
-            o.ostrichDied += NotifyLost;
-            playerStateMachine = o.stateMachine;
-            control.WorldRef.players.Add(o);
-            localPlayer = o;
+            GameStatusResponseMessage gameStatus = new GameStatusResponseMessage();
+            bool gotStatus = false;
+            while (!gotStatus)
+            {
+                if (!comm.sending)
+                {
+                    comm.sending = true;
+                    gameStatus = await comm.SendMessageAsync(new GameStatusRequestMessage()) as GameStatusResponseMessage;
+                    comm.sending = false;
+                    gotStatus = true;
+                }
+            }
+            
+            control.WorldRef.playerNames = gameStatus.PlayerNames;
+            control.WorldRef.players = gameStatus.Ostriches;
+            control.WorldRef.platforms = gameStatus.Platforms;
+
+            foreach (Ostrich p in control.WorldRef.players)
+            {
+                WorldObjectControlFactory(p);
+                p.ostrichDied += NotifyLost;
+            }
+
+            control.WorldRef.player = control.WorldRef.players[control.WorldRef.playerNames.FindIndex(s => s == control.WorldRef.playerName)];
+            localPlayer = control.WorldRef.player;
+            playerStateMachine = localPlayer.stateMachine;
 
             control.updateTimer.Start();
-
-            InitiateWorldObject("Platform", 100, 300);
-            InitiateWorldObject("Platform", 700, 500);
-            InitiateWorldObject("Platform", 500, 300);
-            InitiateWorldObject("Platform", 950, 200);
-            InitiateWorldObject("Respawn", 700, 100);
-            InitiateWorldObject("Respawn", 1100, 600);
-            InitiateWorldObject("Respawn", 200, 600);
-            InitiateWorldObject("Base", 375, 775);
         }
 
         public void SpawnEnemies()
@@ -669,6 +697,7 @@ namespace JoustClient
         private void Multi_Screen(object sender, RoutedEventArgs e)
         {
             host = false;
+            playerNameBlocks = new TextBlock[8];
 
             Task.Run(() =>
             {
@@ -724,7 +753,6 @@ namespace JoustClient
                 connected = true;
                 await comm.ConnectToServerAsync(ip);
                 initialResponse = await comm.SendMessageAsync(new InitialRequestMessage(playerName.Text)) as InitialResponseMessage;
-                Console.WriteLine(initialResponse.CanHost);
                 control.WorldRef.playerNames = initialResponse.PlayerNames;
             }
             
@@ -737,12 +765,15 @@ namespace JoustClient
                 else
                 {
                     comm.Disconnect();
+                    connected = false;
                     Multi_Screen(button, new RoutedEventArgs());
                     return;
                 }
             }
 
             canvas.Children.Clear();
+
+            control.WorldRef.playerName = playerName.Text;
 
             int left = host ? 395 : 570;
 
@@ -757,6 +788,11 @@ namespace JoustClient
                 {
                     playerBlock.Text = control.WorldRef.playerNames[i];
                 }
+                else
+                {
+                    playerBlock.Text = "";
+                }
+                playerNameBlocks[i] = playerBlock;
                 canvas.Children.Remove(playerBlock);
                 border.Child = playerBlock;
                 Canvas.SetTop(border, 175 + (40 * i));
@@ -764,13 +800,55 @@ namespace JoustClient
                 canvas.Children.Add(border);
             }
 
+            
+
+            Button back = Make_BackButton(625.0, Multi_Screen);
+
             if (host)
             {
                 Button startButton = Make_Button("Start Game", 285, NewMultiplayer);
+
                 Canvas.SetLeft(startButton, 745);
             }
+            else
+            {
+                while (!control.WorldRef.multiplayerStarted)
+                {
+                    if (!comm.sending)
+                    {
+                        comm.sending = true;
+                        await StatusCheck();
+                        comm.sending = false;
+                    }
+                }
+            }
+        }
 
-            Button back = Make_BackButton(625.0, Multi_Screen);
+        private async Task StatusCheck()
+        {
+            LobbyResponseMessage statusCheck = await comm.SendMessageAsync(new LobbyRequestMessage()) as LobbyResponseMessage;
+            
+            if (statusCheck.Start)
+            {
+                control.WorldRef.multiplayerStarted = true;
+                NewMultiplayer(statusCheck, EventArgs.Empty);
+            }
+            else
+            {
+                List<string> playerNames = control.WorldRef.playerNames;
+                playerNames = statusCheck.PlayerNames;
+                for (int i = 0; i < playerNameBlocks.Length; i++)
+                {
+                    if (i < playerNames.Count)
+                    {
+                        playerNameBlocks[i].Text = playerNames[i];
+                    }
+                    else
+                    {
+                        playerNameBlocks[i].Text = "";
+                    }
+                }
+            }
         }
 
         private void Help_Screen(object sender, RoutedEventArgs e)
