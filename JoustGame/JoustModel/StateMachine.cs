@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace JoustModel
 {
@@ -12,12 +13,11 @@ namespace JoustModel
         public void Remove(string id) { stateDict.Remove(id); }
         public void Clear() { stateDict.Clear(); }
 
-
         public void Change(string id)
         {
             currentState.Exit();
             IState nextState = stateDict[id];
-            nextState.Enter();
+            nextState.Enter();            
             currentState = nextState;
         }
 

@@ -12,5 +12,6 @@ namespace JoustModel
         void HandleInput(string data);
         void Enter();
         void Exit();
+        void CheckCollisions();
     }
 }

@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace JoustModel
 {
     public class StandState : IState
@@ -15,6 +16,7 @@ namespace JoustModel
         public void Update()
         {
             ostrich.MoveLeftRight();
+            ostrich.WrapAround();
         }
 
         public void HandleInput(string command)
@@ -43,6 +45,26 @@ namespace JoustModel
         public override string ToString()
         {
             return "stand";
+        }
+
+        public void CheckCollisions()
+        {
+            bool collisionDetected = false;
+            foreach (WorldObject wo in World.Instance.objects)
+            {       // Don't collide with itself! and check for collision
+                if (wo.ToString() != ostrich.ToString() && (ostrich.coords.x < wo.coords.x + wo.width && ostrich.coords.x + ostrich.width > wo.coords.x && ostrich.coords.y  < wo.coords.y + wo.height && ostrich.height + ostrich.coords.y + 1 > wo.coords.y))
+                {
+                    collisionDetected = true;
+                }
+            }
+            if (collisionDetected != true)
+            {
+                stateMachine.Change("fall");
+            }
+            else
+            {
+                // do something else
+            }    
         }
     }
 }

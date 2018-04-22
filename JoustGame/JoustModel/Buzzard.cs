@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JoustModel
@@ -20,8 +21,10 @@ namespace JoustModel
         // Public instance variables
         public bool droppedEgg;
         public Egg pickupEgg;
+        public int respawning;
         // Private instance variables
         private string color;
+        private bool isSpawning;
         private int updateGraphic;
         private double prevAngle;
         // Constants
@@ -42,8 +45,8 @@ namespace JoustModel
             droppedEgg = false;
             // Starting state is standing
             stateMachine = new StateMachine();
-            EnemyStandingState stand = new EnemyStandingState(this);
-            stateMachine.stateDict.Add("stand", stand);
+            EnemySpawningState spawn = new EnemySpawningState(this);
+            stateMachine.stateDict.Add("stand", new EnemyStandingState(this));
             stateMachine.stateDict.Add("run_right", new EnemyRunningState(this) { Angle = 0 });
             stateMachine.stateDict.Add("run_left", new EnemyRunningState(this) { Angle = 180 });
             stateMachine.stateDict.Add("flap", new EnemyFlappingState(this) { Angle = 90 });
@@ -54,12 +57,15 @@ namespace JoustModel
             stateMachine.stateDict.Add("fall_left", new EnemyFallingState(this) { Angle = 225 });
             stateMachine.stateDict.Add("flee", new BuzzardFleeingState(this));
             stateMachine.stateDict.Add("pickup", new BuzzardPickupState(this));
+            stateMachine.stateDict.Add("spawn", spawn);
 
-            stateMachine.currentState = stand;
+            stateMachine.currentState = spawn;
+            isSpawning = true;
 
             // Determine the color of the Mik
             Random rand = new Random();
-            switch (rand.Next(3)) {
+            switch (rand.Next(3))
+            {
                 case 0:
                     color = "red";
                     break;
@@ -96,43 +102,75 @@ namespace JoustModel
         /// </summary>
         public override void Update()
         {
-            CheckEnemyCollision();
+            if (!isSpawning) {
+                if (!droppedEgg) CheckEnemyCollision();
 
-            // Determine the next state
-            EnemyState.GetNextState(this);
-            stateMachine.currentState.Update();
+                // Determine the next state
+                EnemyState.GetNextState(this);
+                stateMachine.currentState.Update();
+            }
             
-            if (stateMachine.currentState is EnemyFlappingState) {
+            if (stateMachine.currentState is EnemyFlappingState)
+            {
                 // "Gravity" purposes
-                if (speed > TERMINAL_VELOCITY) {
+                if (speed > TERMINAL_VELOCITY)
+                {
                     if (prevAngle == 225 || prevAngle == 270 || prevAngle == 315) speed = 0.05;
                     else speed = TERMINAL_VELOCITY;
                 }
             }
-            else if (stateMachine.currentState is EnemyFallingState) {
+            else if (stateMachine.currentState is EnemyFallingState)
+            {
                 // "Gravity" purposes
-                if (speed > TERMINAL_VELOCITY) {
+                if (speed > TERMINAL_VELOCITY)
+                {
                     if (prevAngle == 45 || prevAngle == 90 || prevAngle == 135) speed = 0.05;
                     else speed = TERMINAL_VELOCITY;
                 }
             }
-            else if (stateMachine.currentState is EnemyRunningState) {
+            else if (stateMachine.currentState is EnemyRunningState)
+            {
                 speed = SPEED;
             }
-            else if (stateMachine.currentState is BuzzardFleeingState) {
+            else if (stateMachine.currentState is BuzzardFleeingState)
+            {
                 // When the Buzzard has been hit, it drops an egg and
                 // flies to the left side. Destroy the Buzzard when
                 // close enough to the edge of the screen.
-                if (!droppedEgg) {
+                if (!droppedEgg)
+                {
                     if (BuzzardDropEgg != null)
                         BuzzardDropEgg(this, null);
                     droppedEgg = true;
                 }
 
-                if (coords.x < 3) {
+                if (coords.x < 3)
+                {
                     if (BuzzardDestroyed != null)
                         BuzzardDestroyed(this, null);
                     Die();
+                }
+            }
+            else if (stateMachine.currentState is EnemySpawningState) {
+                respawning++;
+                Trace.WriteLine("Spawning...");
+                isSpawning = true;
+                prevAngle = 90;
+                angle = 90;
+                speed = 0.5;
+                imagePath = "Images/Enemy/mik_respawn.png";
+                if (respawning > 100) {
+                    if (droppedEgg) {
+                        stateMachine.Change("pickup");
+                        BuzzardPickupState pState = stateMachine.currentState as BuzzardPickupState;
+                        pState.TargetEgg = pickupEgg;
+                        stateMachine.currentState.Update();
+                    }
+                    else {
+                        stateMachine.Change("spawn");
+                    }
+                    respawning = 0;
+                    isSpawning = false;
                 }
             }
 
@@ -148,9 +186,56 @@ namespace JoustModel
                 BuzzardMoveEvent(this, null); // Raise event
 
             // Slow the rate of updating the graphic
-            if (updateGraphic == 0) {
+            if (updateGraphic == 0)
+            {
                 if (BuzzardStateChange != null)
                     BuzzardStateChange(this, null);
+            }
+        }
+
+        public void CheckEnemyCollision()
+        {
+            // Check Collision
+            WorldObject objHit = CheckCollision();
+            if (objHit != null && stateMachine.currentState.ToString() != "JoustModel.BuzzardFleeingState") // special case for fleeing, fix later. 
+            {
+                if (objHit.ToString() == "Ostrich")
+                {
+                    string state = (objHit as Ostrich).stateMachine.currentState.ToString();
+                    Console.WriteLine("ostrich state = " + state);
+                    if (state != "dead" && state != "spawn")
+                    {
+                        if (this.coords.y > objHit.coords.y)
+                        {
+                            this.stateMachine.Change("flee");
+                            stateMachine.currentState.Update();
+                        }
+                        else
+                        {
+                            (objHit as Ostrich).Die();
+                        }
+                    }
+                }
+                else
+                {
+                    Point minTV = FindMinTV(objHit);
+                    if (minTV.y > 0)
+                    {
+                        this.stateMachine.Change("stand"); //if hit top
+                    }
+                    else if (minTV.y < 0)
+                    {
+                        this.stateMachine.Change("fall"); // if hit bottom
+                    }
+                    else if (minTV.x > 0)
+                    {
+                        this.stateMachine.Change("flap_left"); // if hit left
+                    }
+                    else if (minTV.x < 0)
+                    {
+                        this.stateMachine.Change("flap_right"); // if hit right
+                    }
+                }
             }
         }
 

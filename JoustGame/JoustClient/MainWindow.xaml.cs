@@ -41,6 +41,7 @@ namespace JoustClient
         public bool cheatMode = false;
         public bool controls_on = false;
         public TextBox diff = new TextBox();
+        TextBlock Announce;
 
         public string tester;
 
@@ -72,8 +73,16 @@ namespace JoustClient
             // This is only here for faster testing
             // If you need a different screen on window load, comment out the line below
             //NewGame();
-
             Title_Screen(null, EventArgs.Empty);
+            Announce = new TextBlock();
+            Canvas.SetTop(Announce, 425);
+            Canvas.SetLeft(Announce, 550);
+            Canvas.SetLeft(Announce, 790);
+            Announce.HorizontalAlignment = HorizontalAlignment.Center;
+            Announce.VerticalAlignment = VerticalAlignment.Center;
+            Announce.FontSize = 32;
+            Announce.Height = 50;
+            Announce.Foreground = new SolidColorBrush(Colors.White);
             //Finish_HighScores(null, EventArgs.Empty);
             //Designer_Screen(null, EventArgs.Empty);
         }
@@ -91,19 +100,20 @@ namespace JoustClient
                         break;
                     case Key.W:
                     case Key.Up:
-                        if (!flapLock)
-                        {
-                            Task.Run(() => playerStateMachine.HandleInput("flap"));
+                        if (playerStateMachine.Current is DeadState || playerStateMachine.Current is SpawnState) { }
+                        else {
+                            if (!flapLock) {
+                                Task.Run(() => playerStateMachine.HandleInput("flap"));
+                            }
+                            flapLock = true;
+                            Task.Run(() => {
+                                PlaySounds.Instance.Play_Flap();
+                                Dispatcher.Invoke(() => ostrichCtrl.Source = new BitmapImage(new Uri("Sprites/player_fly2.png", UriKind.Relative)));
+                                Thread.Sleep(100);
+                                Dispatcher.Invoke(() => ostrichCtrl.Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative)));
+                                flapLock = false;
+                            });
                         }
-                        flapLock = true;
-                        Task.Run(() =>
-                        {
-                            PlaySounds.Instance.Play_Flap();
-                            Dispatcher.Invoke(() => ostrichCtrl.Source = new BitmapImage(new Uri("Sprites/player_fly2.png", UriKind.Relative)));
-                            Thread.Sleep(100);
-                            Dispatcher.Invoke(() => ostrichCtrl.Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative)));
-                            flapLock = false;
-                        });
                         break;
                     case Key.A:
                     case Key.Left:
@@ -167,11 +177,6 @@ namespace JoustClient
                     b.BuzzardStateChange += bC.NotifyState;
                     b.BuzzardDropEgg += bC.NotifyDrop;
                     b.BuzzardDestroyed += bC.NotifyDestroy;
-                    // Used to update all enemies in the world
-                    //DispatcherTimer moveTimer = new DispatcherTimer();
-                    //moveTimer.Interval = new TimeSpan(0, 0, 0, 0, 33);
-                    //moveTimer.Tick += World.Instance.UpdateAllEnemies_Position;
-                    //moveTimer.Start();
 
                     /*  Comment:    Clayton Cockrell
                      *  The Random object in Buzzard would give the same random number to all the 
@@ -232,31 +237,45 @@ namespace JoustClient
                 stage += 1;
             }
             control.WorldRef.stage = stage;
-            TextBlock EndStage = new TextBlock();
-            Canvas.SetTop(EndStage, 425);
-            Canvas.SetLeft(EndStage, 550);
-            Canvas.SetLeft(EndStage, 790);
-            EndStage.HorizontalAlignment = HorizontalAlignment.Center;
-            EndStage.VerticalAlignment = VerticalAlignment.Center;
-            EndStage.FontSize = 32;
-            EndStage.Height = 50;
-            EndStage.Foreground = new SolidColorBrush(Colors.White);
-            EndStage.Text = "WAVE CLEARED!";
-            canvas.Children.Add(EndStage);
             control.GetSpawnPoints();
+            Announce.Text = "WAVE CLEARED!";
+            canvas.Children.Add(Announce);
+
             Task.Run(() =>
             {
                 Thread.Sleep(1000);
-                Dispatcher.Invoke(() => EndStage.Text = "3");
+                Dispatcher.Invoke(() => Announce.Text = "3");
                 Thread.Sleep(1000);
-                Dispatcher.Invoke(() => EndStage.Text = "2");
+                Dispatcher.Invoke(() => Announce.Text = "2");
                 Thread.Sleep(1000);
-                Dispatcher.Invoke(() => EndStage.Text = "1");
+                Dispatcher.Invoke(() => Announce.Text = "1");
                 Thread.Sleep(1000);
-                Dispatcher.Invoke(() => EndStage.Text = String.Format("WAVE {0}", Convert.ToString(stage)));
+                Dispatcher.Invoke(() => Announce.Text = String.Format("WAVE {0}", Convert.ToString(stage)));
                 Thread.Sleep(1000);
                 SpawnEnemies();
-                Dispatcher.Invoke(() => canvas.Children.Remove(EndStage));
+                Dispatcher.Invoke(() =>
+                {
+                    Announce.Text = "";
+                    canvas.Children.Remove(Announce);
+                });
+            });
+        }
+
+        public void NotifyLost(object sender, int e)
+        {
+            controls_on = false;
+            updateTimer.Stop();
+            control.WorldRef.objects.Clear();
+            control.WorldRef.basePlatform = null;
+            control.WorldRef.stage = 0;
+            Announce.Text = "GAME OVER";
+            canvas.Children.Add(Announce);
+            control.WorldRef.player.ostrichDied -= this.NotifyLost;
+            control.WorldRef.player = null;
+            Task.Run(() =>
+            {
+                Thread.Sleep(3000);
+                Dispatcher.Invoke(() => HighScores_Screen(sender, new RoutedEventArgs()));
             });
         }
 
@@ -301,9 +320,7 @@ namespace JoustClient
         {
             // switched bool to activate controls
             controls_on = true;
-
             
-
             control.WorldRef.win += this.NotifyWon;
             flapLock = false;
             canvas.Children.Clear();
@@ -316,6 +333,7 @@ namespace JoustClient
             // Get stage num from controls once the proper screens are implemented
             Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
             control.WorldRef.player = o;
+            control.WorldRef.player.ostrichDied += this.NotifyLost;
             playerStateMachine = control.WorldRef.player.stateMachine;
             if (cheatMode)
             {
@@ -555,10 +573,8 @@ namespace JoustClient
 
         private void Title_Screen(object sender, EventArgs e)
         {
-
             controls_on = false;
             designer_on = true;
-
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
 

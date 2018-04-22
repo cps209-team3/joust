@@ -12,5 +12,6 @@ namespace JoustModel
         public void HandleInput(string data) { }
         public void Enter() { }
         public void Exit() { }
+        public void CheckCollisions() { }
     }
 }

@@ -23,6 +23,7 @@ namespace JoustModel
             ostrich.nSpeed = 200;
             ostrich.nAngle = 270;
             ostrich.MoveLeftRight();
+            ostrich.WrapAround();
         }
 
         public void HandleInput(string command)
@@ -51,6 +52,11 @@ namespace JoustModel
         public override string ToString()
         {
             return "fall";
+        }
+
+        public void CheckCollisions()
+        {
+            ostrich.CheckEnemyCollision(ostrich.CheckCollision());
         }
     }
 }

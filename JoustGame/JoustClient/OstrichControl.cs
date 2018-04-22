@@ -55,6 +55,20 @@ namespace JoustClient
             else if (o.stateMachine.Current is FallState) {
                 Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative));
             }
+            else if (o.stateMachine.Current is SpawnState) {
+                if (o.coords.y > World.Instance.basePlatform.coords.y - 70) o.coords.y -= 1;
+                Source = new BitmapImage(new Uri("Sprites/player_respawn.png", UriKind.Relative));
+            }
+            else if (o.stateMachine.Current is DeadState) {
+                if (currentMove.EndsWith("fly1.png")) currentMove = "Images/Player/ostrich_fly2.png";
+                else currentMove = "Images/Player/ostrich_fly1.png";
+
+                LayoutTransform = new ScaleTransform() { ScaleX = 1 };
+
+                Task.Run(() => {
+                    Dispatcher.Invoke(() => Source = new BitmapImage(new Uri(currentMove, UriKind.Relative)));
+                });
+            }
 
         }
     }

@@ -10,19 +10,23 @@ namespace JoustModel
     public class Ostrich : Entity
     {
         public event EventHandler<int> ostrichMoved;
+        public event EventHandler<int> ostrichDied;
         public StateMachine stateMachine;
         public int lives;
         public int score;
         public override int Value { get; set; }
         public string input;
-        public string oLock;
         public bool leftDown;
         public bool rightDown;
         public bool cheatMode;
+        public bool changing;
+        public string spawnLock;
 
         public Ostrich()
         {
-            height = 75;
+            spawnLock = "spawn";
+            changing = false;
+            height = 67;
             width = 50;
             cheatMode = false;
             type = "Ostrich";
@@ -38,6 +42,8 @@ namespace JoustModel
             stateMachine.stateDict.Add("flap", new FlapState(this));
             stateMachine.stateDict.Add("stand", stand);
             stateMachine.stateDict.Add("fall", new FallState(this));
+            stateMachine.stateDict.Add("dead", new DeadState(this));
+            stateMachine.stateDict.Add("spawn", new SpawnState(this));
             stateMachine.currentState = stand;
             imagePath = "Images/Player/player_stand.png";
             leftDown = false;
@@ -47,28 +53,25 @@ namespace JoustModel
 
         public override void Die()
         {
+            Console.WriteLine("Ostrich has died!");
             if (!cheatMode)
             {
-                World.Instance.objects.Remove(this);
+                lives -= 1;
+                if (lives == 0)
+                {
+                    ostrichDied(this, 0);
+                }
+                else
+                {
+                    stateMachine.Change("dead");
+                }
             }
         }
 
 
         public override void Update()
         {
-            // Check for collisions
-            WorldObject objHit = CheckCollision();
-            if (objHit != null)
-            {
-                Point minTV = FindMinTV(objHit);
-                Console.WriteLine("Ostrich has detected a collision");
-                coords.x -= minTV.x;
-                coords.y -= minTV.y;
-                if (minTV.y > 0)
-                {
-                    stateMachine.Change("stand");
-                }
-            }
+          //Console.WriteLine("Ostrich Initial state = " + stateMachine.currentState.ToString());
 
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
@@ -87,15 +90,24 @@ namespace JoustModel
             coords.x += xNew;
             coords.y -= yNew;
 
-            if (coords.x < -25) coords.x = 1465;
-            else if (coords.x > 1465) coords.x = -25;
-
             if (coords.y < 0) coords.y = 0;
             else if (coords.y > 900) coords.y = 900;
 
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
 
+            //Console.WriteLine("Ostrich 2nd state = " + stateMachine.currentState.ToString());
+
             stateMachine.Update();
+            //Console.WriteLine("Ostrich 3rd state = " + stateMachine.currentState.ToString());
+
+            stateMachine.currentState.CheckCollisions();
+            //Console.WriteLine("Ostrich 4th state = " + stateMachine.currentState.ToString());
+        }
+
+        public void WrapAround()
+        {
+            if (coords.x < -25) coords.x = 1465;
+            else if (coords.x > 1465) coords.x = -25;
         }
 
         public void MoveLeftRight()
@@ -110,10 +122,36 @@ namespace JoustModel
             }
         }
 
+        public void CheckEnemyCollision(WorldObject objHit)
+        {
+            if (objHit != null)
+            {
+                //Console.WriteLine("Player detected collision with " + objHit.ToString());
+                if (objHit.ToString() == "Buzzard") 
+                {
+
+                }
+                else
+                {
+                    Point minTV = FindMinTV(objHit);
+                    coords.x -= minTV.x;
+                    coords.y -= minTV.y;
+                    if (minTV.y > 0)
+                    {
+                        Console.WriteLine(objHit.ToString());
+                        if (!changing)
+                        {
+                            stateMachine.Change("stand");
+                        }
+                    }
+                }
+            }
+        }
+
         // Serialization
         public override string Serialize()
         {
-            return string.Format("Ostrich,{0},{1},{2},{3},{4},{5}", score, lives, speed, angle, coords.x, coords.y);
+            return string.Format("Ostrich,{0},{1},{2},{3},{4},{5},{6}", score, lives, speed, angle, coords.x, coords.y, stateMachine.currentState.ToString());
         }
 
         public override void Deserialize(string data)
@@ -125,6 +163,8 @@ namespace JoustModel
             angle = Convert.ToDouble(properties[4]); // set angle
             coords.x = Convert.ToDouble(properties[5]); // set x coord
             coords.y = Convert.ToDouble(properties[6]); // set y coord
+            stateMachine.Change(properties[7]);
+
         }
 
         public override string ToString()

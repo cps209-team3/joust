@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JoustModel
@@ -16,14 +17,19 @@ namespace JoustModel
 
         public void Update()
         {
+
             ostrich.nSpeed = 1000;
             ostrich.nAngle = 90;
             Task.Run(() =>
             {
                 Thread.Sleep(100);
-                stateMachine.Change("fall");
+                if (stateMachine.currentState.ToString() == "flap")
+                {
+                    stateMachine.Change("fall");
+                }
             });
             ostrich.MoveLeftRight();
+            ostrich.WrapAround();
         }
 
         public void HandleInput(string command)
@@ -43,13 +49,18 @@ namespace JoustModel
             }
         }
 
-        public void Enter() { }
+        public void Enter() { ostrich.changing = true; }
 
-        public void Exit() { }
+        public void Exit() { ostrich.changing = false; }
 
         public override string ToString()
         {
             return "flap";
+        }
+
+        public void CheckCollisions()
+        {
+            ostrich.CheckEnemyCollision(ostrich.CheckCollision());
         }
     }
 }

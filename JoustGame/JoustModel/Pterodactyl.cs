@@ -79,45 +79,54 @@ namespace JoustModel
         public override void Update()
         {
             // Check Collision
-            //CheckCollision();
+            CheckEnemyCollision();
 
-            if (!charging) {
+            if (!charging)
+            {
                 // Determine the next state
                 EnemyState.GetNextState(this);
                 stateMachine.currentState.Update();
             }
 
-            if (stateMachine.currentState is EnemyFlappingState) {
+            if (stateMachine.currentState is EnemyFlappingState)
+            {
                 // "Gravity" purposes
-                if (speed > TERMINAL_VELOCITY) {
+                if (speed > TERMINAL_VELOCITY)
+                {
                     if (prevAngle == 225 || prevAngle == 270 || prevAngle == 315) speed = 0.05;
                     else speed = TERMINAL_VELOCITY;
                 }
             }
-            else if (stateMachine.currentState is EnemyFallingState) {
+            else if (stateMachine.currentState is EnemyFallingState)
+            {
                 // "Gravity" purposes
-                if (speed > TERMINAL_VELOCITY) {
+                if (speed > TERMINAL_VELOCITY)
+                {
                     if (prevAngle == 45 || prevAngle == 90 || prevAngle == 135) speed = 0.05;
                     else speed = TERMINAL_VELOCITY;
                 }
             }
-            else if (stateMachine.currentState is PterodactylDestroyedState) {
+            else if (stateMachine.currentState is PterodactylDestroyedState)
+            {
                 // Slow the last 2 frames of the destroyed pterodactyl
                 dieAnimateTime++;
                 updateGraphicRate = 10;
-                if (dieAnimateTime > 18) {
+                if (dieAnimateTime > 18)
+                {
                     if (PterodactylDestroyed != null)
                         PterodactylDestroyed(this, null);
                     Die();
                 }
             }
-            else if (stateMachine.currentState is PterodactylChargeState) {
+            else if (stateMachine.currentState is PterodactylChargeState)
+            {
                 // Don't allow the state to change when charging
                 Trace.WriteLine("Charging: " + chargeTime);
                 charging = true;
                 chargeTime++;
                 speed = 10;
-                if (chargeTime > 50) {
+                if (chargeTime > 50)
+                {
                     charging = false;
                     chargeTime = 0;
                 }
@@ -135,9 +144,51 @@ namespace JoustModel
                 PterodactylMoveEvent(this, null);
 
             // Slow the rate of updating the graphic
-            if (updateGraphic == 0) {
+            if (updateGraphic == 0)
+            {
                 if (PterodactylStateChange != null)
                     PterodactylStateChange(this, null);
+            }
+        }
+
+        public void CheckEnemyCollision()
+        {
+            // Check Collision
+            WorldObject objHit = CheckCollision();
+            if (objHit != null) // special case for fleeing, fix later. 
+            {
+                if (objHit.ToString() == "Ostrich")
+                {
+                    if (this.coords.y > objHit.coords.y)
+                    {
+                        this.stateMachine.Change("destroyed");
+                        stateMachine.currentState.Update();
+                    }
+                    else
+                    {
+                        (objHit as Ostrich).Die();
+                    }
+                }
+                else
+                {
+                    Point minTV = FindMinTV(objHit);
+                    if (minTV.y > 0)
+                    {
+                        this.stateMachine.Change("stand"); //if hit top
+                    }
+                    else if (minTV.y < 0)
+                    {
+                        this.stateMachine.Change("fall"); // if hit bottom
+                    }
+                    else if (minTV.x > 0)
+                    {
+                        this.stateMachine.Change("flap_left"); // if hit left
+                    }
+                    else if (minTV.x < 0)
+                    {
+                        this.stateMachine.Change("flap_right"); // if hit right
+                    }
+                }
             }
         }
 
