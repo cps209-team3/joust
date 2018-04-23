@@ -215,17 +215,14 @@ namespace JoustClient
                     Base ba = worldObject as Base;
                     i = new BaseControl(ba.imagePath);
                     baC = i as BaseControl;
-                    canvas.Children.Add(i);
-                    Canvas.SetTop(i, worldObject.coords.y);
-                    Canvas.SetLeft(i, worldObject.coords.x);
-                    baC.CreateSpawn((int)worldObject.coords.x, (int)worldObject.coords.y);
                     break;
             }
-            if (baC == null) {
-                canvas.Children.Add(i);
-                Canvas.SetTop(i, worldObject.coords.y);
-                Canvas.SetLeft(i, worldObject.coords.x);
-            }
+            Trace.WriteLine("Add object " + i.ToString());
+            canvas.Children.Add(i);
+            Canvas.SetTop(i, worldObject.coords.y);
+            Canvas.SetLeft(i, worldObject.coords.x);
+
+            if (baC != null) baC.CreateSpawn((int)worldObject.coords.x, (int)worldObject.coords.y);
 
             //Title_Screen(null, EventArgs.Empty);
             //Finish_HighScores(null, EventArgs.Empty);
@@ -327,6 +324,8 @@ namespace JoustClient
         {
             // switched bool to activate controls
             controls_on = true;
+
+            control.WorldRef.Reset();
             
             control.WorldRef.win += this.NotifyWon;
             flapLock = false;
@@ -400,6 +399,7 @@ namespace JoustClient
 
         public void LoadStage(object sender, EventArgs e) {
             canvas.Children.Clear();
+            control.WorldRef.Reset();
             canvas.Background = Brushes.Black;
             Button b = sender as Button;
             control.StageLoad(b.Content + ".txt");

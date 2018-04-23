@@ -102,13 +102,20 @@ namespace JoustModel
                 else if (b.stateMachine.currentState is BuzzardPickupState)
                 {
                     BuzzardPickupState set_state = b.stateMachine.currentState as BuzzardPickupState;
-                    // Determine if the Buzzard is close enough to the Mik being picked up
-                    if ((set_state.TargetEgg.coords.x - b.coords.x) > -5 && (set_state.TargetEgg.coords.x - b.coords.x) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) > -5) {
-                        // Picked up Mik
-                        set_state.TargetEgg.mounted = true;
-                        b.droppedEgg = false;
-                        Trace.WriteLine(set_state.TargetEgg.mounted);
-                        b.stateMachine.Change("stand");
+                    Trace.WriteLine("Buzzard picking up at " + set_state.TargetEgg.coords.x);
+                    if (set_state.TargetEgg.coords == null) {
+                        Trace.WriteLine("Egg gone");
+                        b.stateMachine.Change("flee");
+                    }
+                    else {
+                        // Determine if the Buzzard is close enough to the Mik being picked up
+                        if ((set_state.TargetEgg.coords.x - b.coords.x) > -5 && (set_state.TargetEgg.coords.x - b.coords.x) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) > -5) {
+                            // Picked up Mik
+                            set_state.TargetEgg.mounted = true;
+                            b.droppedEgg = false;
+                            Trace.WriteLine(set_state.TargetEgg.mounted);
+                            b.stateMachine.Change("stand");
+                        }
                     }
                 }
                 else
@@ -494,7 +501,9 @@ namespace JoustModel
                 TargetEgg = b.pickupEgg;
                 b.speed = 5;
 
-                if (TargetEgg != null)
+
+
+                if (TargetEgg != null && !TargetEgg.collected)
                 {
                     if (b.coords.x < TargetEgg.coords.x)
                     {

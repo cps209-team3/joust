@@ -26,10 +26,13 @@ namespace JoustClient
         }
 
         public void CreateSpawn(int x, int y) {
-            RespawnControl rCtrl = new RespawnControl("Images/Platform/platform_respawn1.png");
+            Respawn respawn = new Respawn();
+            RespawnControl rCtrl = new RespawnControl(respawn.imagePath);
             Canvas.SetZIndex(rCtrl, 3);
-            Canvas.SetLeft(rCtrl, ((Width / 2) - 20) + x);
-            Canvas.SetTop(rCtrl, y);
+            respawn.coords.x = ((Width / 2) - 20) + x;
+            respawn.coords.y = y;
+            Canvas.SetLeft(rCtrl, respawn.coords.x);
+            Canvas.SetTop(rCtrl, respawn.coords.y);
             Trace.WriteLine(Parent.ToString());
             Canvas canvas = Parent as Canvas;
             canvas.Children.Add(rCtrl);

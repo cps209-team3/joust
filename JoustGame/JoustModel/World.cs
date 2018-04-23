@@ -33,6 +33,11 @@ namespace JoustModel
             enemies = new List<Enemy>();
         }
 
+        public void Reset() {
+            objects = new List<WorldObject>();
+            enemies = new List<Enemy>();
+        }
+
         private static World instance = new World();
         public static World Instance
         {

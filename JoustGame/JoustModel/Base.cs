@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace JoustModel
 {
-    public class Base : Respawn
+    public class Base : Platform
     {
         public Base() : base()
         {

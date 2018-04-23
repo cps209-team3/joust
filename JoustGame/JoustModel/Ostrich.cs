@@ -130,7 +130,14 @@ namespace JoustModel
                 //Console.WriteLine("Player detected collision with " + objHit.ToString());
                 if (objHit.ToString() == "Buzzard") 
                 {
-
+                    Buzzard buzzard = objHit as Buzzard;
+                    if (buzzard.stateMachine.currentState is BuzzardFleeingState) { }
+                    else {
+                        Task.Run(() =>
+                        {
+                            PlaySounds.Instance.Play_Collide();
+                        });
+                    }
                 }
                 else
                 {

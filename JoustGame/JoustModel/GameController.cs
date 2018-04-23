@@ -102,6 +102,7 @@ namespace JoustModel
             foreach (WorldObject obj in WorldRef.objects) {
                 Trace.WriteLine("obj = " + obj.ToString());
                 if (obj is Respawn) {
+                    Trace.WriteLine("Respawn Detected at (" + obj.coords.x + ", " + obj.coords.y + ")");
                     Respawn respwn = obj as Respawn;
                     WorldRef.SpawnPoints.Add(new Point[] { new Point(respwn.coords.x, respwn.coords.y), new Point(respwn.coords.x + 100, respwn.coords.y + 15) });
                 }
