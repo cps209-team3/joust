@@ -174,7 +174,7 @@ namespace JoustModel
                     Point minTV = FindMinTV(objHit);
                     if (minTV.y > 0)
                     {
-                        this.stateMachine.Change("stand"); //if hit top
+                        this.stateMachine.Change("flap"); //if hit top
                     }
                     else if (minTV.y < 0)
                     {
