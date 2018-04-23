@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Threading;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace JoustModel
         public GameController()
         {
             WorldRef = World.Instance;
+            WorldRef.SpawnPoints = new List<Point[]>();
+        }
 
             updateTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(5),
@@ -117,6 +120,18 @@ namespace JoustModel
             }
         }
 
+        public void StageLoad(string filename) {
+            string loadedLine = System.IO.File.ReadAllText(string.Format(@"../../Saves/Custom Stages/{0}", filename));
+            string[] savedObjects = loadedLine.Split(':');
+            foreach (string savedObj in savedObjects) {
+                if (savedObj != "\r\n" && savedObj.Length > 0) {
+                    string type = savedObj.Substring(0, savedObj.IndexOf(","));
+                    WorldObject obj = CreateWorldObj(type);
+                    obj.Deserialize(savedObj);
+                }
+            }
+        }
+
         public string Save()
         {
             string filename = DateTime.Now.ToString("H-mm-ss");
@@ -129,6 +144,18 @@ namespace JoustModel
             string path = string.Format(@"../../Saves/GameSaves/{0}.txt", filename);
             System.IO.File.WriteAllText(path, line2save); 
             return line2save;
+        }
+
+        public void GetSpawnPoints() {
+            WorldRef.SpawnPoints = new List<Point[]>();
+            foreach (WorldObject obj in WorldRef.objects) {
+                Trace.WriteLine("obj = " + obj.ToString());
+                if (obj is Respawn) {
+                    Trace.WriteLine("Respawn Detected at (" + obj.coords.x + ", " + obj.coords.y + ")");
+                    Respawn respwn = obj as Respawn;
+                    WorldRef.SpawnPoints.Add(new Point[] { new Point(respwn.coords.x, respwn.coords.y), new Point(respwn.coords.x + 100, respwn.coords.y + 15) });
+                }
+            }
         }
 
         public WorldObject CreateWorldObj(string type)
@@ -154,9 +181,35 @@ namespace JoustModel
                 case "Egg":
                     return new Egg();
                 case "Platform":
-                    Platform platform = new Platform();
-                    WorldRef.platforms.Add(platform);
-                    return platform;
+                    return new Platform();
+                case "Long Platform 1":
+                    Platform pltfm1 = new Platform();
+                    pltfm1.SetType("long", 1);
+                    return pltfm1;
+                case "Long Platform 2":
+                    Platform pltfm2 = new Platform();
+                    pltfm2.SetType("long", 2);
+                    return pltfm2;
+                case "Long Platform 3":
+                    Platform pltfm3 = new Platform();
+                    pltfm3.SetType("long", 3);
+                    return pltfm3;
+                case "Short Platform 1":
+                    Platform pltfms1 = new Platform();
+                    pltfms1.SetType("short", 1);
+                    return pltfms1;
+                case "Short Platform 2":
+                    Platform pltfms2 = new Platform();
+                    pltfms2.SetType("short", 2);
+                    return pltfms2;
+                case "Short Platform 3":
+                    Platform pltfms3 = new Platform();
+                    pltfms3.SetType("short", 3);
+                    return pltfms3;
+                case "Short Platform 4":
+                    Platform pltfms4 = new Platform();
+                    pltfms4.SetType("short", 4);
+                    return pltfms4;
                 case "Pterodactyl":
                     return new Pterodactyl();
                 case "Respawn":

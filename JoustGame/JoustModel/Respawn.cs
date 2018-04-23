@@ -12,7 +12,7 @@ namespace JoustModel
         public Respawn() : base()
         {
             type = "Respawn";
-            imagePath = "Images/Platform/platform_short2.png";
+            imagePath = "Images/Platform/platform_respawn1.png";
         }
 
         public override string Serialize()

@@ -73,7 +73,8 @@ namespace JoustModel
                 lives -= 1;
                 if (lives == 0)
                 {
-                    ostrichDied(this, 0);
+                    if (ostrichDied != null)
+                        ostrichDied(this, 0);
                 }
                 else
                 {
@@ -142,7 +143,14 @@ namespace JoustModel
                 //Console.WriteLine("Player detected collision with " + objHit.ToString());
                 if (objHit.ToString() == "Buzzard") 
                 {
-
+                    Buzzard buzzard = objHit as Buzzard;
+                    if (buzzard.stateMachine.currentState is BuzzardFleeingState) { }
+                    else {
+                        Task.Run(() =>
+                        {
+                            PlaySounds.Instance.Play_Collide();
+                        });
+                    }
                 }
                 else
                 {
