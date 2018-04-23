@@ -16,6 +16,7 @@ namespace JoustModel
         public Ostrich player;
         public Base basePlatform;
         public int stage;
+        public List<Point[]> SpawnPoints { get; set; }
 
         // Handle stage time to spawn pterodactyls
         private int stageTimeMinutes;

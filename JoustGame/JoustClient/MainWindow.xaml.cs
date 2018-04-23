@@ -407,6 +407,7 @@ namespace JoustClient
             Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
             control.WorldRef.player = o;
             playerStateMachine = control.WorldRef.player.stateMachine;
+            control.WorldRef.player.ostrichDied += this.NotifyLost;
             if (cheatMode) {
                 o.cheatMode = true;
             }
@@ -442,12 +443,12 @@ namespace JoustClient
             {
                 int spawnX = 0;
                 int spawnY = 0;
-                int randNum = new Random().Next(control.SpawnPoints.Count - 1);
+                int randNum = new Random().Next(control.WorldRef.SpawnPoints.Count - 1);
 
-                JoustModel.Point[] p = control.SpawnPoints[randNum];
+                JoustModel.Point[] p = control.WorldRef.SpawnPoints[randNum];
 
-                spawnX = (int)(((p[1].x - p[0].x) / 2) + p[0].x);
-                spawnY = (int)p[0].y - 75;
+                spawnX = (int)(((p[1].x - p[0].x) / 2) + (p[0].x - 10));
+                spawnY = (int)p[0].y;
 
                 Dispatcher.Invoke(() => InitiateWorldObject("Buzzard", spawnX, spawnY));
             }

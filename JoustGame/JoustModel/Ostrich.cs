@@ -59,7 +59,8 @@ namespace JoustModel
                 lives -= 1;
                 if (lives == 0)
                 {
-                    ostrichDied(this, 0);
+                    if (ostrichDied != null)
+                        ostrichDied(this, 0);
                 }
                 else
                 {
