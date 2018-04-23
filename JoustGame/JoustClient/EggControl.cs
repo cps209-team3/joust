@@ -57,23 +57,14 @@ namespace JoustClient
         public void NotifyHatch(object sender, EventArgs e) {
             Egg egg = sender as Egg;
 
-            int spawnX = 0;
-            int spawnY = 0;
-            int randNum = new Random().Next(World.Instance.SpawnPoints.Count - 1);
-
-            Point[] pArray = World.Instance.SpawnPoints[randNum];
-
-            spawnX = (int)(((pArray[1].x - pArray[0].x) / 2) + (pArray[0].x - 10));
-            spawnY = (int)pArray[0].y;
-
-            Point p = new Point(spawnX, spawnY);
+            Point p = new Point(0, egg.coords.y - 70);
             // Create a new Buzzard
             Buzzard b = new Buzzard();
             b.coords = p;
             b.angle = 0;
             b.droppedEgg = true;
             // Set state to Pickup state
-            b.stateMachine.Change("spawn");
+            b.stateMachine.Change("pickup");
             b.pickupEgg = egg;
             b.stateMachine.currentState.Update();
             // Create a new BuzzardControl

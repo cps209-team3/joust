@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JoustModel
@@ -61,11 +59,9 @@ namespace JoustModel
         /// </summary>
         public override void Die()
         {
-            Trace.WriteLine("EGG DIED");
             World.Instance.objects.Remove(this);
             World.Instance.enemies.Remove(this);
             World.Instance.CheckWin();
-            coords = null;
         }
 
         /// <summary>
@@ -97,15 +93,9 @@ namespace JoustModel
             // Check if the hatched Mik has mounted a Buzzard
             if (mounted || collected)
             {
-                if (collected) {
-                    Task.Run(() => {
-                        PlaySounds.Instance.Play_Collect();
-                    });
-                }
                 if (EggDestroyed != null)
                     EggDestroyed(this, null);
                 Die();
-                Trace.WriteLine("EGG NEW COORDS" + coords);
             }
 
             // Slow the rate of updating the graphic

@@ -20,7 +20,6 @@ namespace JoustModel
         public Ostrich player;
         public Base basePlatform;
         public int stage;
-        public List<Point[]> SpawnPoints { get; set; }
         public bool hosted;
         public bool multiplayerStarted;
 
@@ -40,11 +39,6 @@ namespace JoustModel
             players = new List<Ostrich>();
             playerNames = new List<string>();
             platforms = new List<Platform>();
-        }
-
-        public void Reset() {
-            objects = new List<WorldObject>();
-            enemies = new List<Enemy>();
         }
 
         private static World instance = new World();

@@ -23,10 +23,5 @@ namespace JoustClient
             Height = 30;
             Width = 200;
         }
-
-        public void Resize(int width, int height) {
-            Width = width;
-            Height = height;
-        }
     }
 }
