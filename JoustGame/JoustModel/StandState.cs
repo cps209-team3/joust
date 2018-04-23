@@ -1,25 +1,22 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace JoustModel
 {
-    public class StandState : IState
+    public class StandState : State
     {
-        StateMachine stateMachine;
-        Ostrich ostrich;
+        public StandState() : base() { }
+        public StandState(string name) : base(name) { }
+        [JsonConstructor]
+        public StandState(string name, int o) : base(name, o) { }
 
-        public StandState(Ostrich ostrich)
-        {
-            this.ostrich = ostrich;
-            this.stateMachine = ostrich.stateMachine;
-        }
-
-        public void Update()
+        public override void Update()
         {
             ostrich.MoveLeftRight();
             ostrich.WrapAround();
         }
 
-        public void HandleInput(string command)
+        public override void HandleInput(string command)
         {
             switch (command)
             {
@@ -39,15 +36,15 @@ namespace JoustModel
             }
         }
 
-        public void Enter() { }
-        public void Exit() { }
+        public override void Enter() { }
+        public override void Exit() { }
 
         public override string ToString()
         {
             return "stand";
         }
 
-        public void CheckCollisions()
+        public override void CheckCollisions()
         {
             bool collisionDetected = false;
             foreach (WorldObject wo in World.Instance.objects)

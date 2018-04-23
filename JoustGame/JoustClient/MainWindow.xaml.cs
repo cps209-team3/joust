@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.IO;
 using JoustModel;
 using System.Diagnostics;
 using System.IO;
@@ -35,13 +36,21 @@ namespace JoustClient
     {
         public GameController control = new GameController();
         public TextBox namebox = new TextBox();
-        public DispatcherTimer updateTimer;
         public StateMachine playerStateMachine;
         public bool flapLock;
         public bool cheatMode = false;
         public bool controls_on = false;
+        public bool inEscScreen = false;
+        public bool multiplayer = false;
         public TextBox diff = new TextBox();
         TextBlock Announce;
+        TextBox ipAddress;
+        TextBox playerName;
+        public bool host = false;
+        public bool connected = false;
+        public ClientCommunicationManager comm = new ClientCommunicationManager();
+        public Ostrich localPlayer;
+        TextBlock[] playerNameBlocks = new TextBlock[8];
 
         public string tester;
 
@@ -60,9 +69,7 @@ namespace JoustClient
         // to change the animation which makes the
         // game run better
         private OstrichControl ostrichCtrl;
-
         
-
         public MainWindow()
         {
             InitializeComponent();
@@ -98,7 +105,7 @@ namespace JoustClient
                 switch (e.Key)
                 {
                     case Key.Escape:
-                        //show escape menu
+                        Esc_Screen(sender, e);
                         break;
                     case Key.W:
                     case Key.Up:
@@ -119,11 +126,11 @@ namespace JoustClient
                         break;
                     case Key.A:
                     case Key.Left:
-                        control.WorldRef.player.leftDown = false;
+                        localPlayer.leftDown = false;
                         break;
                     case Key.D:
                     case Key.Right:
-                        control.WorldRef.player.rightDown = false;
+                        localPlayer.rightDown = false;
                         break;
                     default:
                         break;
@@ -144,11 +151,11 @@ namespace JoustClient
                         break;
                     case Key.A:
                     case Key.Left:
-                        control.WorldRef.player.leftDown = true;
+                        localPlayer.leftDown = true;
                         break;
                     case Key.D:
                     case Key.Right:
-                        control.WorldRef.player.rightDown = true;
+                        localPlayer.rightDown = true;
                         break;
                     default:
                         break;
@@ -268,16 +275,12 @@ namespace JoustClient
         }
 
         public void NotifyLost(object sender, int e)
-        {
-            controls_on = false;
-            updateTimer.Stop();
-            control.WorldRef.objects.Clear();
-            control.WorldRef.basePlatform = null;
-            control.WorldRef.stage = 0;
+        {  
+            ResetGame();
             Announce.Text = "GAME OVER";
             canvas.Children.Add(Announce);
-            control.WorldRef.player.ostrichDied -= this.NotifyLost;
-            control.WorldRef.player = null;
+            localPlayer.ostrichDied -= this.NotifyLost;
+            localPlayer = null;
             Task.Run(() =>
             {
                 Thread.Sleep(3000);
@@ -301,6 +304,10 @@ namespace JoustClient
                     fileName = (element as TextBox).Text;
                 }
             }
+            //master
+            //Console.WriteLine("sender.content = " + (sender as Button).Content.ToString());
+            //string fileName = (sender as Button).Content.ToString();
+            
             control.WorldRef.objects.Clear();
             
             control.Load(fileName);
@@ -314,12 +321,13 @@ namespace JoustClient
                 // set player
                 if (obj.ToString() == "Ostrich")
                 {
-                    control.WorldRef.player = (obj as Ostrich);
-                    playerStateMachine = control.WorldRef.player.stateMachine;
+                    localPlayer = (obj as Ostrich);
+                    playerStateMachine = localPlayer.stateMachine;
                     Console.WriteLine("player has been set");
                 }
                 WorldObjectControlFactory(obj);
             }
+            controls_on = true;
             // end refresh method
         }
 
@@ -342,9 +350,10 @@ namespace JoustClient
 
             // Get stage num from controls once the proper screens are implemented
             Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
+            o.ostrichDied += this.NotifyLost;
+            playerStateMachine = o.stateMachine;
+            localPlayer = o;
             control.WorldRef.player = o;
-            control.WorldRef.player.ostrichDied += this.NotifyLost;
-            playerStateMachine = control.WorldRef.player.stateMachine;
             if (cheatMode)
             {
                 o.cheatMode = true;
@@ -378,6 +387,74 @@ namespace JoustClient
                 UpdateTick,
                 Dispatcher.CurrentDispatcher);
             updateTimer.Start();
+            InitiateWorldObject("Base", 375, 775);
+        }
+
+        public async void NewMultiplayer(object sender, EventArgs e)
+        {
+            if (host)
+            {
+                bool sentStart = false;
+                while (!sentStart)
+                {
+                    if (!comm.sending)
+                    {
+                        comm.sending = true;
+                        await comm.SendMessageAsync(new StartRequestMessage());
+                        comm.sending = false;
+                        sentStart = true;
+                    }
+                }
+            }
+
+            control.WorldRef.multiplayerStarted = true;
+            controls_on = true;
+           
+            control.WorldRef.win += this.NotifyWon;
+            flapLock = false;
+
+            Dispatcher.Invoke(() =>
+            {
+                canvas.Children.Clear();
+                canvas.Background = Brushes.Black;
+            });
+
+            GameStatusResponseMessage gameStatus = new GameStatusResponseMessage();
+            bool gotStatus = false;
+            while (!gotStatus)
+            {
+                if (!comm.sending)
+                {
+                    comm.sending = true;
+                    gameStatus = await comm.SendMessageAsync(new GameStatusRequestMessage()) as GameStatusResponseMessage;
+                    comm.sending = false;
+                    gotStatus = true;
+                }
+            }
+            
+            control.WorldRef.playerNames = gameStatus.PlayerNames;
+            control.WorldRef.platforms = gameStatus.Platforms;
+            control.InitializePlayers();
+
+            Dispatcher.Invoke(() =>
+            {
+                foreach (Ostrich p in control.WorldRef.players)
+                {
+                    WorldObjectControlFactory(p);
+                    p.ostrichDied += NotifyLost;
+                }
+
+                foreach (Platform pl in control.WorldRef.platforms)
+                {
+                    WorldObjectControlFactory(pl);
+                }
+            });
+
+            control.WorldRef.player = control.WorldRef.players[control.WorldRef.playerNames.FindIndex(s => s == control.WorldRef.playerName)];
+            localPlayer = control.WorldRef.player;  
+            playerStateMachine = localPlayer.stateMachine;
+
+            Dispatcher.Invoke(() => control.updateTimer.Start());
         }
 
         public void CustomStage_Screen(object sender, EventArgs e) {
@@ -480,37 +557,16 @@ namespace JoustClient
             return obj;
         }
 
-        public void UpdateTick(object sender, EventArgs e)
-        {
-            control.Update();
-        }
 
         // Title screens
         private void StartGameScreen(object sender, EventArgs e)
         {
-            
-
+            control.updateTimer.Start();
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
-            Button saveBtn = new Button();
-            saveBtn.Content = "Save";
-            saveBtn.Click += new RoutedEventHandler(SaveGame);
-            canvas.Children.Add(saveBtn);
-
-            TextBox loadName = new TextBox();
-            loadName.Name = "LoadName";
-            loadName.Text = "file2load";
-            loadName.Margin = new Thickness(0, 20, 0, 0);
-            canvas.Children.Add(loadName);
-
-            Button loadBtn = new Button();
-            loadBtn.Content = "Load";
-            loadBtn.Click += new RoutedEventHandler(LoadGame);
-            loadBtn.Margin = new Thickness(0, 40, 0, 0);
-            canvas.Children.Add(loadBtn);
         }
 
-        private Button Make_Button(object content, double top, RoutedEventHandler eventx)
+        private Button Make_Button(string content, double top, RoutedEventHandler eventx)
         {
             Button btnReturn = new Button();
 
@@ -588,6 +644,8 @@ namespace JoustClient
         {
             controls_on = false;
             designer_on = true;
+            inEscScreen = false;
+            ResetGame();
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
 
@@ -625,7 +683,6 @@ namespace JoustClient
             cheat.Height = 50;
             cheatMode = false;
 
-
             TextBlock descrip = Make_TextBlock(425, 620, 50, 200);
             descrip.Text = "Set stage:{0-99}";
             descrip.Height = 40;
@@ -643,6 +700,42 @@ namespace JoustClient
             diff.BorderBrush = Brushes.Red;
             diff.MaxLength = 2;
             canvas.Children.Add(diff);
+
+            // saves logic
+            TextBlock saves = Make_TextBlock(200, 850, 35, 200);
+            saves.Text = "Game Saves";
+            saves.TextAlignment = TextAlignment.Center;
+
+            ScrollViewer scrollViewer = new ScrollViewer();
+            StackPanel listOfSaves = new StackPanel();
+            Canvas.SetLeft(scrollViewer, 850);
+            Canvas.SetTop(scrollViewer, 245);
+            scrollViewer.MaxHeight = 480;
+            scrollViewer.Content = listOfSaves;
+            canvas.Children.Add(scrollViewer);
+            String[] saveFiles = Directory.GetFiles("../../Saves/GameSaves/", "*", SearchOption.TopDirectoryOnly);
+            int numOfSaves = saveFiles.Length;
+            for (int i = 0; i < numOfSaves; i++)
+            {
+                Button btn = new Button();
+                btn.Width = 183;
+                btn.Content = saveFiles[i].Substring(saveFiles[i].Length-12, 8);
+                btn.Click += (object s, RoutedEventArgs ee) =>
+                {
+                    LoadGame(s, ee);
+                    // btn.Content.ToString()
+                };
+                listOfSaves.Children.Add(btn);
+            }        
+        }
+
+        private void ResetGame()
+        {
+            controls_on = false;
+            control.updateTimer.Stop();
+            control.WorldRef.objects.Clear();
+            control.WorldRef.basePlatform = null;
+            control.WorldRef.stage = 0;
         }
 
         private void Cheat_Toggle(object sender, RoutedEventArgs e)
@@ -708,14 +801,14 @@ namespace JoustClient
             Score thisScore;
             try
             {
-                thisScore = new Score(control.WorldRef.player.score, namebox.Text);
+                thisScore = new Score(localPlayer.score, namebox.Text);
             }
             catch
             {
                 // for test
-                control.WorldRef.player = new Ostrich();
-                control.WorldRef.player.score = 100;
-                thisScore = new Score(control.WorldRef.player.score, namebox.Text);
+                localPlayer = new Ostrich();
+                localPlayer.score = 100;
+                thisScore = new Score(localPlayer.score, namebox.Text);
             }
             HighScoreManager.Instance.AddScore(thisScore);
 
@@ -747,6 +840,9 @@ namespace JoustClient
 
         private void Multi_Screen(object sender, RoutedEventArgs e)
         {
+            host = false;
+            playerNameBlocks = new TextBlock[8];
+
             Task.Run(() =>
             {
                 PlaySounds.Instance.Play_Select();
@@ -754,7 +850,151 @@ namespace JoustClient
 
             canvas.Children.Clear();
 
+            Button hostButton = Make_Button("Host Lobby", 280, Lobby_Screen);
+            Button join = Make_Button("Join Lobby", 380, Lobby_Screen);
+
+            ipAddress = new TextBox();
+            ipAddress.Text = "localhost";//"Server Address";
+            ipAddress.Height = 40;
+            ipAddress.Width = 200;
+            Canvas.SetLeft(ipAddress, 620);
+            Canvas.SetTop(ipAddress, 220);
+            ipAddress.Background = Brushes.Blue;
+            ipAddress.Foreground = Brushes.Yellow;
+            ipAddress.FontFamily = new FontFamily("Century Gothic");
+            ipAddress.FontSize = 25;
+            canvas.Children.Add(ipAddress);
+
+            playerName = new TextBox();
+            playerName.Text = "Player Name";
+            playerName.Height = 40;
+            playerName.Width = 200;
+            Canvas.SetLeft(playerName, 620);
+            Canvas.SetTop(playerName, 180);
+            playerName.Background = Brushes.Blue;
+            playerName.Foreground = Brushes.Yellow;
+            playerName.FontFamily = new FontFamily("Century Gothic");
+            playerName.FontSize = 25;
+            canvas.Children.Add(playerName);
+
             Button back = Make_BackButton(625.0, Title_Screen);
+        }
+
+        private async void Lobby_Screen(object sender, RoutedEventArgs e)
+        {
+            Task.Run(() =>
+            {
+                PlaySounds.Instance.Play_Select();
+            });
+
+            Button button = sender as Button;
+
+            string ip = ipAddress.Text;
+
+            InitialResponseMessage initialResponse = new InitialResponseMessage();
+            if (!connected)
+            {
+                connected = true;
+                await comm.ConnectToServerAsync(ip);
+                initialResponse = await comm.SendMessageAsync(new InitialRequestMessage(playerName.Text)) as InitialResponseMessage;
+                control.WorldRef.playerNames = initialResponse.PlayerNames;
+            }
+            
+            if ((string)button.Content == "HOST LOBBY")
+            {
+                if (initialResponse.CanHost)
+                {
+                    host = true;
+                }
+                else
+                {
+                    comm.Disconnect();
+                    connected = false;
+                    Multi_Screen(button, new RoutedEventArgs());
+                    return;
+                }
+            }
+
+            control.WorldRef.hosted = true;
+
+            canvas.Children.Clear();
+
+            control.WorldRef.playerName = playerName.Text;
+
+            int left = host ? 395 : 570;
+
+            for (int i = 0; i < 8; i++)
+            {
+                Border border = new Border();
+                border.BorderThickness = new Thickness(3);
+                border.BorderBrush = new SolidColorBrush(Colors.White);
+                TextBlock playerBlock = Make_TextBlock(175 + (40 * i), left, 40, 300);
+                List<string> names = control.WorldRef.playerNames;
+                if (i < names.Count)
+                {
+                    playerBlock.Text = control.WorldRef.playerNames[i];
+                }
+                else
+                {
+                    playerBlock.Text = "";
+                }
+                playerNameBlocks[i] = playerBlock;
+                canvas.Children.Remove(playerBlock);
+                border.Child = playerBlock;
+                Canvas.SetTop(border, 175 + (40 * i));
+                Canvas.SetLeft(border, left);
+                canvas.Children.Add(border);
+            }
+            
+            Button back = Make_BackButton(625.0, Multi_Screen);
+
+            if (host)
+            {
+                Button startButton = Make_Button("Start Game", 285, NewMultiplayer);
+
+                Canvas.SetLeft(startButton, 745);
+            }
+
+            Task.Run(() =>
+            {
+                while (!control.WorldRef.multiplayerStarted)
+                {
+                    if (!comm.sending)
+                    {
+                        comm.sending = true;
+                        StatusCheck();
+                        comm.sending = false;
+                    }
+                    Thread.Sleep(1000);
+                }
+            });
+        }
+
+        private async Task StatusCheck()
+        {
+            LobbyResponseMessage statusCheck = await comm.SendMessageAsync(new LobbyRequestMessage()) as LobbyResponseMessage;
+            
+            if (statusCheck.Start && !host)
+            {
+                control.WorldRef.multiplayerStarted = true;
+                NewMultiplayer(statusCheck, EventArgs.Empty);
+            }
+            else
+            {
+                List<string> playerNames = control.WorldRef.playerNames;
+                playerNames = statusCheck.PlayerNames;
+                for (int i = 0; i < playerNameBlocks.Length; i++)
+                {
+                    if (i < playerNames.Count)
+                    {
+                        Dispatcher.Invoke(() => playerNameBlocks[i].Text = playerNames[i]);
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() => playerNameBlocks[i].Text = "");
+                    }
+                }
+            }
         }
 
         private void Help_Screen(object sender, RoutedEventArgs e)
@@ -1478,6 +1718,30 @@ namespace JoustClient
                 mousePosition = position;
                 Canvas.SetLeft(currImg, Canvas.GetLeft(currImg) + offset.X);
                 Canvas.SetTop(currImg, Canvas.GetTop(currImg) + offset.Y);
+            }
+        }
+                
+        private void Esc_Screen(object sender, RoutedEventArgs e)
+        {
+            if (! inEscScreen)
+            {
+                inEscScreen = true;
+                control.updateTimer.Stop();
+                TextBlock paused = Make_TextBlock(300, 620, 50, 200);
+                paused.Text = "Game Paused";
+                Button unpause = Make_Button("Unpause", 360, ResumeGame);
+                Button mainMenu = Make_Button("MainMenu", 470, Title_Screen);
+                Button save = Make_Button("Save Game", 580, SaveGame);
+            }
+        }
+
+        private void ResumeGame(object sender, RoutedEventArgs e)
+        {
+            control.updateTimer.Start();
+            if (inEscScreen)
+            {
+                canvas.Children.RemoveRange(canvas.Children.Count - 3, 3);
+                inEscScreen = false;
             }
         }
     }

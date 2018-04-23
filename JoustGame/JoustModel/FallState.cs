@@ -4,21 +4,18 @@ using System.Text;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace JoustModel
 {
-    public class FallState : IState
+    public class FallState : State
     {
-        StateMachine stateMachine;
-        Ostrich ostrich;
+        public FallState() : base() { }
+        public FallState(string name) : base(name) { }
+        [JsonConstructor]
+        public FallState(string name, int o) : base(name, o) { }
 
-        public FallState(Ostrich ostrich)
-        {
-            this.ostrich = ostrich;
-            this.stateMachine = ostrich.stateMachine;
-        }
-
-        public void Update()
+        public override void Update()
         {
             ostrich.nSpeed = 200;
             ostrich.nAngle = 270;
@@ -26,7 +23,7 @@ namespace JoustModel
             ostrich.WrapAround();
         }
 
-        public void HandleInput(string command)
+        public override void HandleInput(string command)
         {
             switch (command)
             {
@@ -46,15 +43,15 @@ namespace JoustModel
             }
         }
 
-        public void Enter() { }
-        public void Exit() { }
+        public override void Enter() { }
+        public override void Exit() { }
 
         public override string ToString()
         {
             return "fall";
         }
 
-        public void CheckCollisions()
+        public override void CheckCollisions()
         {
             ostrich.CheckEnemyCollision(ostrich.CheckCollision());
         }
