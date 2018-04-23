@@ -158,6 +158,7 @@ namespace JoustClient
         {
             string woString = worldObject.ToString();
             WorldObjectControl i;
+            BaseControl baC = null;
             switch (woString)
             {
                 case "Ostrich":
@@ -213,12 +214,18 @@ namespace JoustClient
                 default:
                     Base ba = worldObject as Base;
                     i = new BaseControl(ba.imagePath);
-                    BaseControl baC = i as BaseControl;
+                    baC = i as BaseControl;
+                    canvas.Children.Add(i);
+                    Canvas.SetTop(i, worldObject.coords.y);
+                    Canvas.SetLeft(i, worldObject.coords.x);
+                    baC.CreateSpawn((int)worldObject.coords.x, (int)worldObject.coords.y);
                     break;
             }
-            canvas.Children.Add(i);
-            Canvas.SetTop(i, worldObject.coords.y);
-            Canvas.SetLeft(i, worldObject.coords.x);
+            if (baC == null) {
+                canvas.Children.Add(i);
+                Canvas.SetTop(i, worldObject.coords.y);
+                Canvas.SetLeft(i, worldObject.coords.x);
+            }
 
             //Title_Screen(null, EventArgs.Empty);
             //Finish_HighScores(null, EventArgs.Empty);
