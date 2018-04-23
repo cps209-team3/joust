@@ -1,1 +1,0 @@
-Ostrich,0,3,0,0,720,450:Platform,100,300:Platform,700,500:Platform,500,300:Platform,950,200:Respawn,700,100:Respawn,1100,600:Respawn,200,600:Base,375,775:Buzzard,3,0,1268,300:Buzzard,4,135,300.429417127327,92.5205828726734:Buzzard,3,0,1265,300:

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Threading;
+using System.Collections.Generic;
 
 namespace JoustModel
 {
     public class GameController
     {
+        public DispatcherTimer updateTimer;
         public World WorldRef { get; set; }
 
         public GameController()
@@ -14,27 +17,73 @@ namespace JoustModel
             WorldRef.SpawnPoints = new List<Point[]>();
         }
 
-        public void Update()
+            updateTimer = new DispatcherTimer(
+                TimeSpan.FromMilliseconds(5),
+                DispatcherPriority.Render,
+                Update,
+                Dispatcher.CurrentDispatcher);
+        }
+        
+        public void Update(object sender, EventArgs e)
         {
             try
             {
                 //Trace.WriteLine("WorldObject Count: " + WorldRef.objects.Count);
-                // Update everything 50 times per second (subject to change)
-                foreach (WorldObject worldObject in WorldRef.objects)
+                // Update everything 200 times per second (subject to change)
+                if (WorldRef.multiplayerStarted)
                 {
-                    Entity entity = worldObject as Entity;                  
-                    if (entity != null)
+                    foreach (Ostrich ostrich in WorldRef.players)
                     {
-                        entity.Update();
+                        ostrich.Update();
                         World.Instance.TrackTime();
                     }
-
+                }
+                else
+                {
+                    foreach (WorldObject worldObject in WorldRef.objects)
+                    {
+                        Entity entity = worldObject as Entity;
+                        if (entity != null)
+                        {
+                            entity.Update();
+                            World.Instance.TrackTime();
+                        }
+                    }
                 }
             }
             catch (InvalidOperationException)
             {
                 return;
             } 
+        }
+
+        public void SetPlatforms()
+        {
+            InitiateWorldObject("Platform", 100, 300);
+            InitiateWorldObject("Platform", 700, 500);
+            InitiateWorldObject("Platform", 500, 300);
+            InitiateWorldObject("Platform", 950, 200);
+            InitiateWorldObject("Respawn", 700, 100);
+            InitiateWorldObject("Respawn", 1100, 600);
+            InitiateWorldObject("Respawn", 200, 600);
+            InitiateWorldObject("Base", 375, 775);
+        }
+
+        public WorldObject InitiateWorldObject(string type, double x, double y)
+        {
+            WorldObject obj = CreateWorldObj(type);
+            obj.coords.x = x;
+            obj.coords.y = y;
+            return obj;
+        }
+
+        public void InitializePlayers()
+        {
+            for (int i = 0; i < WorldRef.playerNames.Count; i++)
+            {
+                Platform spawn = WorldRef.platforms[i];
+                Ostrich o = InitiateWorldObject("Ostrich", spawn.coords.x + spawn.width / 2, spawn.coords.y - 75) as Ostrich;
+            }
         }
 
         public void CalculateNumEnemies(ref int numBuzzards, ref int numPterodactyls)
@@ -114,7 +163,17 @@ namespace JoustModel
             switch (type)
             {
                 case "Ostrich":
-                    return new Ostrich();
+                    string name;
+                    if (WorldRef.hosted)
+                    {
+                        name = WorldRef.playerNames[WorldRef.players.Count];
+                    }
+                    else
+                    {
+                        name = "single";
+                    }
+                    Ostrich ostrich = new Ostrich(name);
+                    return ostrich;
                 case "Base":
                     return new Base();
                 case "Buzzard":

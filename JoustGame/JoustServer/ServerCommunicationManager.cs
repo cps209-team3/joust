@@ -23,7 +23,8 @@ namespace JoustServer
         public const int PORT = 5500;
         private MainWindow window;
         private TcpListener listener;
-        GameController ctrl = new GameController();
+        public GameController ctrl = new GameController();
+        List<TcpClient> clients = new List<TcpClient>();
 
         public ServerCommunicationManager(MainWindow window)
         {
@@ -35,6 +36,7 @@ namespace JoustServer
         public async Task<TcpClient> WaitForClientAsync()
         {
             TcpClient client = await listener.AcceptTcpClientAsync();
+            clients.Add(client);
             return client;
         }
 
@@ -67,19 +69,32 @@ namespace JoustServer
 
                 // Client closed connection
                 window.Log("Client closed connection.");
+                RemoveClient(tcpClient);
             }
-            catch (Exception ex)
+            catch (System.IO.IOException)
             {
-                window.Log(ex.Message);
+                RemoveClient(tcpClient);
             }
+        }
+
+        private void RemoveClient(TcpClient tcpClient)
+        {
+            int index = clients.FindIndex(t => t == tcpClient);
+            clients.RemoveAt(index);
+            if (clients.Count == 0)
+            {
+                ctrl.WorldRef.hosted = false;
+            }
+            ctrl.WorldRef.playerNames.RemoveAt(index);
         }
 
         private string ProcessMessage(String requestMsgStr)
         {
-            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
-
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
+            
             RequestMessage requestMsg = JsonConvert.DeserializeObject(requestMsgStr, settings) as RequestMessage;
             ResponseMessage responseMsg = requestMsg.Execute(ctrl);
+            ctrl.WorldRef.hosted = true;
             return JsonConvert.SerializeObject(responseMsg, settings);
         }
     }

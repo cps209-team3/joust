@@ -1,19 +1,16 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace JoustModel
 {
-    public class DeadState : IState
+    public class DeadState : State
     {
-        StateMachine stateMachine;
-        Ostrich ostrich;
+        public DeadState() : base() { }
+        public DeadState(string name) : base(name) { }
+        [JsonConstructor]
+        public DeadState(string name, int o) : base(name, o) { }
 
-        public DeadState(Ostrich ostrich)
-        {
-            this.ostrich = ostrich;
-            this.stateMachine = ostrich.stateMachine;
-        }
-
-        public void Update()
+        public override void Update()
         {
             ostrich.nSpeed = 600;
             ostrich.nAngle = 0;
@@ -23,15 +20,15 @@ namespace JoustModel
             }
         }
 
-        public void HandleInput(string command) { }
-        public void Enter() { }
-        public void Exit() { }
+        public override void HandleInput(string command) { }
+        public override void Enter() { }
+        public override void Exit() { }
 
         public override string ToString()
         {
             return "dead";
         }
 
-        public void CheckCollisions() { }
+        public override void CheckCollisions() { }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Dynamic;
 
 namespace JoustModel
 {
@@ -21,9 +22,12 @@ namespace JoustModel
         public bool cheatMode;
         public bool changing;
         public string spawnLock;
+        public string name;
 
-        public Ostrich()
+        public Ostrich(string name = "")
         {
+            World.Instance.players.Add(this);
+            this.name = name;
             spawnLock = "spawn";
             changing = false;
             height = 67;
@@ -38,12 +42,13 @@ namespace JoustModel
             nSpeed = 0;
             nAngle = 0;
             stateMachine = new StateMachine();
-            StandState stand = new StandState(this);
-            stateMachine.stateDict.Add("flap", new FlapState(this));
+            StandState stand = new StandState();
+            stand = new StandState(name);
+            stateMachine.stateDict.Add("flap", new FlapState(name));
+            stateMachine.stateDict.Add("fall", new FallState(name));
+            stateMachine.stateDict.Add("dead", new DeadState(name));
+            stateMachine.stateDict.Add("spawn", new SpawnState(name));
             stateMachine.stateDict.Add("stand", stand);
-            stateMachine.stateDict.Add("fall", new FallState(this));
-            stateMachine.stateDict.Add("dead", new DeadState(this));
-            stateMachine.stateDict.Add("spawn", new SpawnState(this));
             stateMachine.currentState = stand;
             imagePath = "Images/Player/player_stand.png";
             leftDown = false;
@@ -51,9 +56,18 @@ namespace JoustModel
             World.Instance.objects.Add(this);
         }
 
+        public void SetStates()
+        {
+            foreach (State s in this.stateMachine.stateDict.Values)
+            {
+                s.ostrich = this;
+                s.stateMachine = this.stateMachine;
+            }
+        }
+
         public override void Die()
         {
-            Console.WriteLine("Ostrich has died!");
+            //Console.WriteLine("Ostrich has died!");
             if (!cheatMode)
             {
                 lives -= 1;
@@ -68,7 +82,6 @@ namespace JoustModel
                 }
             }
         }
-
 
         public override void Update()
         {
