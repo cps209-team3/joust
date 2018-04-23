@@ -75,15 +75,15 @@ namespace JoustClient
             //NewGame();
             Title_Screen(null, EventArgs.Empty);
 
-            //Announce = new TextBlock();
-            //Canvas.SetTop(Announce, 425);
-            //Canvas.SetLeft(Announce, 550);
-            //Canvas.SetLeft(Announce, 790);
-            //Announce.HorizontalAlignment = HorizontalAlignment.Center;
-            //Announce.VerticalAlignment = VerticalAlignment.Center;
-            //Announce.FontSize = 32;
-            //Announce.Height = 50;
-            //Announce.Foreground = new SolidColorBrush(Colors.White);
+            Announce = new TextBlock();
+            Canvas.SetTop(Announce, 425);
+            Canvas.SetLeft(Announce, 550);
+            Canvas.SetLeft(Announce, 790);
+            Announce.HorizontalAlignment = HorizontalAlignment.Center;
+            Announce.VerticalAlignment = VerticalAlignment.Center;
+            Announce.FontSize = 32;
+            Announce.Height = 50;
+            Announce.Foreground = new SolidColorBrush(Colors.White);
 
             //Finish_HighScores(null, EventArgs.Empty);
             //Designer_Screen(null, EventArgs.Empty);
@@ -224,7 +224,7 @@ namespace JoustClient
             Canvas.SetTop(i, worldObject.coords.y);
             Canvas.SetLeft(i, worldObject.coords.x);
 
-            if (baC != null) baC.CreateSpawn((int)worldObject.coords.x, (int)worldObject.coords.y);
+            if (baC != null && !designer_on) baC.CreateSpawn((int)worldObject.coords.x, (int)worldObject.coords.y);
 
             //Title_Screen(null, EventArgs.Empty);
             //Finish_HighScores(null, EventArgs.Empty);
@@ -293,6 +293,7 @@ namespace JoustClient
         public void LoadGame(object sender, RoutedEventArgs e)
         {
             string fileName = "";
+            designer_on = false;
             foreach (UIElement element in canvas.Children)
             {
                 if ((element as FrameworkElement).Name == "LoadName")
@@ -326,6 +327,7 @@ namespace JoustClient
         {
             // switched bool to activate controls
             controls_on = true;
+            designer_on = false;
 
             control.WorldRef.Reset();
             
@@ -364,7 +366,7 @@ namespace JoustClient
             InitiateWorldObject("Respawn", 700, 100);
             InitiateWorldObject("Respawn", 1100, 600);
             InitiateWorldObject("Respawn", 200, 600);
-            InitiateWorldObject("Base", 375, 775);
+            InitiateWorldObject("Base", 375, 800);
 
             control.GetSpawnPoints();
 
@@ -402,6 +404,7 @@ namespace JoustClient
         public void LoadStage(object sender, EventArgs e) {
             canvas.Children.Clear();
             control.WorldRef.Reset();
+            designer_on = false;
             canvas.Background = Brushes.Black;
             Button b = sender as Button;
             control.StageLoad(b.Content + ".txt");
@@ -432,7 +435,7 @@ namespace JoustClient
             control.GetSpawnPoints();
 
             SpawnEnemies();
-            InitiateWorldObject("Base", 375, 775);
+            InitiateWorldObject("Base", 375, 800);
 
             updateTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(5),
@@ -1045,7 +1048,7 @@ namespace JoustClient
             instructions.FontSize = 10;
             instructions.Background = Brushes.Transparent;
 
-            InitiateWorldObject("Base", 375, 775);
+            InitiateWorldObject("Base", 375, 800);
 
         }
 
@@ -1114,7 +1117,7 @@ namespace JoustClient
             platctrl.SetValue(Canvas.LeftProperty, 0.0);
             canvas.Children.Add(platctrl);
             platctrl.MouseDown += plat_MouseDown;
-            ex2.IsEnabled = false;
+            ex2.IsEnabled = true;
         }
 
         private void spawn_button(object sender, EventArgs e)
