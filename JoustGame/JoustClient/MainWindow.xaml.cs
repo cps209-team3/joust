@@ -74,15 +74,17 @@ namespace JoustClient
             // If you need a different screen on window load, comment out the line below
             //NewGame();
             Title_Screen(null, EventArgs.Empty);
-            Announce = new TextBlock();
-            Canvas.SetTop(Announce, 425);
-            Canvas.SetLeft(Announce, 550);
-            Canvas.SetLeft(Announce, 790);
-            Announce.HorizontalAlignment = HorizontalAlignment.Center;
-            Announce.VerticalAlignment = VerticalAlignment.Center;
-            Announce.FontSize = 32;
-            Announce.Height = 50;
-            Announce.Foreground = new SolidColorBrush(Colors.White);
+
+            //Announce = new TextBlock();
+            //Canvas.SetTop(Announce, 425);
+            //Canvas.SetLeft(Announce, 550);
+            //Canvas.SetLeft(Announce, 790);
+            //Announce.HorizontalAlignment = HorizontalAlignment.Center;
+            //Announce.VerticalAlignment = VerticalAlignment.Center;
+            //Announce.FontSize = 32;
+            //Announce.Height = 50;
+            //Announce.Foreground = new SolidColorBrush(Colors.White);
+
             //Finish_HighScores(null, EventArgs.Empty);
             //Designer_Screen(null, EventArgs.Empty);
         }
@@ -999,7 +1001,7 @@ namespace JoustClient
             ex2.Width = 200;
             ex2.SetValue(Canvas.LeftProperty, 420.0);
             ex2.Background = Brushes.Orange;
-            ex2.IsEnabled = false;
+            ex2.IsEnabled = true;
 
             namebox.Height = 30;
             namebox.Width = 200;
@@ -1036,6 +1038,12 @@ namespace JoustClient
             editAreaPlayer.Background = Brushes.Black;
             editAreaPlayer.Text = "player\nspawn";
             editAreaPlayer.FontSize = 12;
+
+            TextBlock instructions = Make_TextBlock(30.0, 1190.0, 100, 214);
+            instructions.Background = Brushes.Black;
+            instructions.Text = "1. Set spawn points\n2. Set platforms\n3. Delete by clicking control then clicking\n\t'Delete' button on-screen; if there\n\tare no platforms after, spawn points\n\tbutton will re-activate\n4. Set a name in the [Name] box\n5. Save when done or Exit";
+            instructions.FontSize = 10;
+            instructions.Background = Brushes.Transparent;
 
             InitiateWorldObject("Base", 375, 775);
 
@@ -1106,7 +1114,7 @@ namespace JoustClient
             platctrl.SetValue(Canvas.LeftProperty, 0.0);
             canvas.Children.Add(platctrl);
             platctrl.MouseDown += plat_MouseDown;
-            ex2.IsEnabled = true;
+            ex2.IsEnabled = false;
         }
 
         private void spawn_button(object sender, EventArgs e)
@@ -1123,7 +1131,7 @@ namespace JoustClient
             spwnctrl.MouseDown += plat_MouseDown;
 
             Button sent = sender as Button;
-            sent.IsEnabled = false;
+            //sent.IsEnabled = false;
         }
 
         private void Plat_Delete(object sender, EventArgs e)
@@ -1132,6 +1140,26 @@ namespace JoustClient
             if (currPlat.Tag != null)
             {
                 ex2.IsEnabled = false;
+            }
+
+            bool isTherePlat = false;
+
+            foreach (object o in canvas.Children)
+            {
+                PlatformControl pc = o as PlatformControl;
+                if (pc != null)
+                {
+                    isTherePlat = true;
+                    break;
+                }
+            }
+            foreach (object o in canvas.Children)
+            {
+                RespawnControl rc = o as RespawnControl;
+                if (!isTherePlat && rc != null)
+                {
+                    ex2.IsEnabled = true;
+                }
             }
         }
 
