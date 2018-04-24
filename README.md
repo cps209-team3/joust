@@ -33,6 +33,7 @@ Sandeep
 * Sounds designed and implemented
 * Title Screens designed and implemented
 * Level designer and saving
+* HUD
 
 ## Known Issues
 Clayton
