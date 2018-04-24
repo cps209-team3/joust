@@ -63,6 +63,11 @@ namespace JoustClient
         // game run better
         private OstrichControl ostrichCtrl;
 
+        // for HUD
+        private DispatcherTimer hudTimer;
+        private TextBlock livesLeft;
+        private TextBlock currScore;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -369,6 +374,33 @@ namespace JoustClient
 
 
             updateTimer.Start();
+
+            livesLeft = Make_TextBlock(800.0, 500.0, 20, 60);
+            Canvas.SetZIndex(livesLeft, 3);
+            livesLeft.FontSize = 15;
+
+            currScore = Make_TextBlock(800.0, 800.0, 20, 160);
+            Canvas.SetZIndex(currScore, 3);
+            currScore.FontSize = 15;
+
+            hudTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(5),
+            DispatcherPriority.Render,
+            HUDtick,
+            Dispatcher.CurrentDispatcher);
+        }
+
+        private void HUDtick(object sender, EventArgs e)
+        {
+            try
+            {
+                livesLeft.Text = " Lives: " + control.WorldRef.player.lives.ToString();
+
+                currScore.Text = " Score:  " + control.WorldRef.player.score.ToString();
+            }
+            catch
+            {
+
+            }
         }
 
         public void CustomStage_Screen(object sender, EventArgs e) {
