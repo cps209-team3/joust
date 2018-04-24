@@ -111,11 +111,14 @@ namespace JoustClient
             Canvas.SetTop(floating, b.coords.y);
             Canvas.SetLeft(floating, b.coords.x);
             canvas.Children.Add(floating);
-            for (int i = 0; i < 1000; i++)
+            Task.Run(() => 
             {
-                Thread.Sleep(1);
-                Canvas.SetTop(floating, b.coords.y - i);
-            }
+                for (int i = 0; i < 1000; i++)
+                {
+                    Thread.Sleep(1);
+                    Dispatcher.Invoke(() => Canvas.SetTop(floating, b.coords.y - i));
+                }
+            });
             canvas.Children.Remove(floating);
         }
     }
