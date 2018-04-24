@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace JoustModel
 {
     public class GameController
     {
+        public DispatcherTimer updateTimer;
         public World WorldRef { get; set; }
 
         public GameController()
@@ -14,7 +16,8 @@ namespace JoustModel
             WorldRef.SpawnPoints = new List<Point[]>();
         }
 
-        public void Update()
+
+        public void Update(object sender, EventArgs e)
         {
             try
             {

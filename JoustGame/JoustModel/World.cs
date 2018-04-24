@@ -31,6 +31,8 @@ namespace JoustModel
         {
             objects = new List<WorldObject>();
             enemies = new List<Enemy>();
+            players = new List<Ostrich>();
+            playerNames = new List<string>();
         }
 
         public void Reset() {

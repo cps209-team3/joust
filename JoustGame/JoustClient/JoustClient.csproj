@@ -86,7 +86,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BaseControl.cs" />
-    <Compile Include="ClientCommunicationManager.cs" />
     <Compile Include="PlatformControl.cs" />
     <Compile Include="WorldObjectControl.cs" />
     <Compile Include="EggControl.cs" />
