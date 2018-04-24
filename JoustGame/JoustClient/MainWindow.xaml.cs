@@ -417,9 +417,10 @@ namespace JoustClient
             control.WorldRef.win += this.NotifyWon;
 
             Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
+            o.ostrichDied += this.NotifyLost;
+            playerStateMachine = o.stateMachine;
+            localPlayer = o;
             control.WorldRef.player = o;
-            playerStateMachine = control.WorldRef.player.stateMachine;
-            control.WorldRef.player.ostrichDied += this.NotifyLost;
             if (cheatMode) {
                 o.cheatMode = true;
             }
@@ -573,7 +574,7 @@ namespace JoustClient
             Button designer = Make_Button("Level Designer", 700.0, Designer_Screen);
             
             inEscScreen = false;
-            ResetGame();
+            //ResetGame();
 
             Image image = Make_Image("\\Images\\joust2.png", 25.0, 510.0, 150, 400);
 
