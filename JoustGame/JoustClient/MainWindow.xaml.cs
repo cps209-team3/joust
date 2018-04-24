@@ -180,6 +180,7 @@ namespace JoustClient
                     b.BuzzardStateChange += bC.NotifyState;
                     b.BuzzardDropEgg += bC.NotifyDrop;
                     b.BuzzardDestroyed += bC.NotifyDestroy;
+                    b.buzzDied += bC.NotifyDied;
 
                     /*  Comment:    Clayton Cockrell
                      *  The Random object in Buzzard would give the same random number to all the 

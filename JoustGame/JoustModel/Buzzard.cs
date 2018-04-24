@@ -12,6 +12,7 @@ namespace JoustModel
         public event EventHandler BuzzardStateChange;
         public event EventHandler BuzzardDropEgg;
         public event EventHandler BuzzardDestroyed;
+        public event EventHandler<int> buzzDied;
 
         // Public property Value (used to determine points awarded upon destroying)
         public override int Value { get; set; }
@@ -207,6 +208,10 @@ namespace JoustModel
                     {
                         if (this.coords.y > objHit.coords.y)
                         {
+                            if (buzzDied != null)
+                            {
+                                buzzDied(this, 0);
+                            }
                             this.stateMachine.Change("flee");
                             stateMachine.currentState.Update();
                         }
@@ -236,7 +241,7 @@ namespace JoustModel
                         this.stateMachine.Change("flap_right"); // if hit right
                     }
                 }
-            }
+            } 
         }
 
         public override string Serialize()

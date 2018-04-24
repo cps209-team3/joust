@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -21,7 +22,8 @@ namespace JoustClient
         /// Runs when the BuzzardMoveEvent fires. It updates the position
         /// of the Control to that of the model.
         /// </summary>
-        public void NotifyMoved(object sender, EventArgs e) {
+        public void NotifyMoved(object sender, EventArgs e)
+        {
             Buzzard buzzard = sender as Buzzard;
 
             // Determine the endpoint of the move vector
@@ -46,7 +48,8 @@ namespace JoustClient
         /// Runs when the BuzzardStateChange fires. It updates the graphic
         /// of the Control to that of the model's state.
         /// </summary>
-        public void NotifyState(object sender, EventArgs e) {
+        public void NotifyState(object sender, EventArgs e)
+        {
             Buzzard buzzard = sender as Buzzard;
             if (buzzard.stateMachine.currentState is EnemySpawningState) Clip = new RectangleGeometry(new System.Windows.Rect(0, 0, ActualWidth, buzzard.respawning / 2));
             else Clip = new RectangleGeometry(new System.Windows.Rect(0, 0, ActualWidth, ActualHeight));
@@ -60,7 +63,8 @@ namespace JoustClient
         /// is changed to just the Buzzard as it flies to the left of the screen
         /// and disappears.
         /// </summary>
-        public void NotifyDrop(object sender, EventArgs e) {
+        public void NotifyDrop(object sender, EventArgs e)
+        {
             Buzzard buzzard = sender as Buzzard;
             // Create a new Egg
             Egg egg = new Egg();
@@ -91,9 +95,28 @@ namespace JoustClient
         /// <summary>
         /// Runs when the BuzzardDestroyed fires. It removes this Control.
         /// </summary>
-        public void NotifyDestroy(object sender, EventArgs e) {
+        public void NotifyDestroy(object sender, EventArgs e)
+        {
             Canvas canvas = Parent as Canvas;
             canvas.Children.Remove(this);
+        }
+
+        public void NotifyDied(object sender, int e)
+        {
+            Buzzard b = sender as Buzzard;
+            Canvas canvas = Parent as Canvas;
+            TextBlock floating = new TextBlock();
+            floating.Text = Convert.ToString(b.Value);
+            floating.Foreground = new SolidColorBrush(Colors.Red);
+            Canvas.SetTop(floating, b.coords.y);
+            Canvas.SetLeft(floating, b.coords.x);
+            canvas.Children.Add(floating);
+            for (int i = 0; i < 1000; i++)
+            {
+                Thread.Sleep(1);
+                Canvas.SetTop(floating, b.coords.y - i);
+            }
+            canvas.Children.Remove(floating);
         }
     }
 }
