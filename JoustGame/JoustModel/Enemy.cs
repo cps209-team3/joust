@@ -102,6 +102,7 @@ namespace JoustModel
                 else if (b.stateMachine.currentState is BuzzardPickupState)
                 {
                     BuzzardPickupState set_state = b.stateMachine.currentState as BuzzardPickupState;
+
                     // Determine if the Buzzard is close enough to the Mik being picked up
                     if ((set_state.TargetEgg.coords.x - b.coords.x) > -5 && (set_state.TargetEgg.coords.x - b.coords.x) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) > -5) {
                         // Picked up Mik
@@ -152,9 +153,6 @@ namespace JoustModel
 
                 // *** Add charging state to attack nearby player ***
                 if (p.coords.y > 300 && p.coords.y < 450 && p.coords.x > 600 && p.coords.x < 700) p.stateMachine.Change("charge");
-
-                // *** Add hitbox check to destroy pterodactyl ***
-                if (p.coords.y > 450 && p.coords.y < 525 && p.coords.x > 650 && p.coords.x < 800) p.stateMachine.Change("destroyed");
 
                 if (p.stateMachine.currentState is EnemyFallingState)
                 {
@@ -411,6 +409,29 @@ namespace JoustModel
         public override void Exit() { }
     }
 
+    public class EnemySpawningState : EnemyState {
+        StateMachine stateMachine;
+
+        public EnemySpawningState(Enemy enemy) {
+            StateEnemy = enemy;
+            stateMachine = StateEnemy.stateMachine;
+        }
+
+        public override void Update() {
+            if (StateEnemy is Buzzard) {
+                Buzzard b = StateEnemy as Buzzard;
+                b.speed = 0.5;
+                b.angle = 90;
+
+                b.imagePath = "Images/Enemy/mik_respawn.png";
+            }
+        }
+
+        public override void HandleInput(string command) { }
+        public override void Enter() { }
+        public override void Exit() { }
+    }
+
     public class BuzzardFleeingState : EnemyState
     {
         StateMachine stateMachine;
@@ -469,8 +490,11 @@ namespace JoustModel
             {
                 Buzzard b = StateEnemy as Buzzard;
                 TargetEgg = b.pickupEgg;
+                b.speed = 5;
 
-                if (TargetEgg != null)
+
+
+                if (TargetEgg != null && !TargetEgg.collected)
                 {
                     if (b.coords.x < TargetEgg.coords.x)
                     {

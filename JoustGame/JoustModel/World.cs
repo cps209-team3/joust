@@ -13,12 +13,10 @@ namespace JoustModel
         // Public instance variables
         public List<WorldObject> objects;
         public List<Enemy> enemies;
-        public List<string> playerNames;
-        public List<Ostrich> players;
         public Ostrich player;
         public Base basePlatform;
         public int stage;
-        public bool hosted;
+        public List<Point[]> SpawnPoints { get; set; }
 
         // Handle stage time to spawn pterodactyls
         private int stageTimeMinutes;
@@ -35,6 +33,11 @@ namespace JoustModel
             enemies = new List<Enemy>();
             players = new List<Ostrich>();
             playerNames = new List<string>();
+        }
+
+        public void Reset() {
+            objects = new List<WorldObject>();
+            enemies = new List<Enemy>();
         }
 
         private static World instance = new World();

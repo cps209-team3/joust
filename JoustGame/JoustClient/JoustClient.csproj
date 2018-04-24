@@ -215,5 +215,14 @@
     <Resource Include="Sprites\player_stand.png" />
     <Resource Include="Sprites\player_stop.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\player_respawn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Sprites\player_respawn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Enemy\mik_respawn.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
