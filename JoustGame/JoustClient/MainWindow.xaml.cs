@@ -216,7 +216,7 @@ namespace JoustClient
                     break;
                 default:
                     Base ba = worldObject as Base;
-                    i = new BaseControl(ba.imagePath);
+                    i = new BaseControl(ba.imagePath);  
                     baC = i as BaseControl;
                     break;
             }
@@ -225,7 +225,7 @@ namespace JoustClient
             Canvas.SetTop(i, worldObject.coords.y);
             Canvas.SetLeft(i, worldObject.coords.x);
 
-            if (baC != null && !designer_on) baC.CreateSpawn((int)worldObject.coords.x, (int)worldObject.coords.y);
+            //if (baC != null && !designer_on) baC.CreateSpawn((int)worldObject.coords.x, (int)worldObject.coords.y); // this line breaks my LoadGame function
 
             //Title_Screen(null, EventArgs.Empty);
             //Finish_HighScores(null, EventArgs.Empty);
@@ -289,29 +289,22 @@ namespace JoustClient
 
         public void LoadGame(object sender, RoutedEventArgs e)
         {
-            string fileName = "";
             designer_on = false;
-            foreach (UIElement element in canvas.Children)
-            {
-                if ((element as FrameworkElement).Name == "LoadName")
-                {
-                    fileName = (element as TextBox).Text;
-                }
-            }
-            Console.WriteLine("sender.content = " + (sender as Button).Content.ToString());
-            //string fileName = (sender as Button).Content.ToString();
+
+            string fileName = (sender as Button).Content.ToString();
             
             control.WorldRef.objects.Clear();
             
             control.Load(fileName);
 
             // refresh method
-
+            
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
 
             foreach (WorldObject obj in control.WorldRef.objects)
             {
+
                 // set player
                 if (obj.ToString() == "Ostrich")
                 {
@@ -322,6 +315,8 @@ namespace JoustClient
                 WorldObjectControlFactory(obj);
             }
             controls_on = true;
+            updateTimer.Start();
+            
             // end refresh method
         }
 
@@ -373,11 +368,7 @@ namespace JoustClient
 
             SpawnEnemies();
 
-            updateTimer = new DispatcherTimer(
-                TimeSpan.FromMilliseconds(5), 
-                DispatcherPriority.Render,
-                UpdateTick,
-                Dispatcher.CurrentDispatcher);
+
             updateTimer.Start();
         }
 
@@ -418,10 +409,9 @@ namespace JoustClient
             control.WorldRef.win += this.NotifyWon;
 
             Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
-            o.ostrichDied += this.NotifyLost;
-            playerStateMachine = o.stateMachine;
-            localPlayer = o;
             control.WorldRef.player = o;
+            playerStateMachine = control.WorldRef.player.stateMachine;
+            control.WorldRef.player.ostrichDied += this.NotifyLost;
             if (cheatMode) {
                 o.cheatMode = true;
             }
@@ -575,7 +565,7 @@ namespace JoustClient
             Button designer = Make_Button("Level Designer", 700.0, Designer_Screen);
             
             inEscScreen = false;
-            //ResetGame();
+           
 
             Image image = Make_Image("\\Images\\joust2.png", 25.0, 510.0, 150, 400);
 
@@ -583,6 +573,12 @@ namespace JoustClient
             {
                 PlaySounds.Instance.Play_Spawn();
             });
+
+            updateTimer = new DispatcherTimer( //change location later
+                TimeSpan.FromMilliseconds(5),
+                DispatcherPriority.Render,
+                UpdateTick,
+                Dispatcher.CurrentDispatcher);
         }
 
         private void Single_Screen(object sender, RoutedEventArgs e)
