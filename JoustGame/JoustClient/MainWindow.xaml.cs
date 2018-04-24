@@ -18,7 +18,6 @@ using System.Windows.Threading;
 using System.IO;
 using JoustModel;
 using System.Diagnostics;
-using System.IO;
 
 namespace JoustClient
 {
@@ -34,6 +33,7 @@ namespace JoustClient
     /// </summary>
     public partial class MainWindow : Window
     {
+        DispatcherTimer updateTimer;
         public GameController control = new GameController();
         public TextBox namebox = new TextBox();
         public StateMachine playerStateMachine;
@@ -298,7 +298,7 @@ namespace JoustClient
                 }
             }
             Console.WriteLine("sender.content = " + (sender as Button).Content.ToString());
-            string fileName = (sender as Button).Content.ToString();
+            //string fileName = (sender as Button).Content.ToString();
             
             control.WorldRef.objects.Clear();
             
@@ -307,7 +307,8 @@ namespace JoustClient
             // refresh method
 
             canvas.Children.Clear();
-            StartGameScreen(sender, e);
+            canvas.Background = Brushes.Black;
+
             foreach (WorldObject obj in control.WorldRef.objects)
             {
                 // set player
@@ -335,8 +336,6 @@ namespace JoustClient
             flapLock = false;
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
-            
-            StartGameScreen(sender, e);
 
             // Load Map here
 
@@ -446,6 +445,11 @@ namespace JoustClient
             updateTimer.Start();
         }
 
+        private void UpdateTick(object sender, EventArgs e)
+        {
+            control.Update(this, EventArgs.Empty);
+        }
+
         public void SpawnEnemies()
         {
             int numBuzzards = 0;
@@ -479,15 +483,6 @@ namespace JoustClient
             obj.coords.y = y;
             WorldObjectControlFactory(obj);
             return obj;
-        }
-
-
-        // Title screens
-        private void StartGameScreen(object sender, EventArgs e)
-        {
-            control.updateTimer.Start();
-            canvas.Children.Clear();
-            canvas.Background = Brushes.Black;
         }
 
         private Button Make_Button(object content, double top, RoutedEventHandler eventx)
@@ -656,7 +651,7 @@ namespace JoustClient
         private void ResetGame()
         {
             controls_on = false;
-            control.updateTimer.Stop();
+            updateTimer.Stop();
             control.WorldRef.objects.Clear();
             control.WorldRef.basePlatform = null;
             control.WorldRef.stage = 0;
@@ -1491,7 +1486,7 @@ namespace JoustClient
             if (! inEscScreen)
             {
                 inEscScreen = true;
-                control.updateTimer.Stop();
+                updateTimer.Stop();
                 TextBlock paused = Make_TextBlock(300, 620, 50, 200);
                 paused.Text = "Game Paused";
                 Button unpause = Make_Button("Unpause", 360, ResumeGame);
@@ -1502,7 +1497,7 @@ namespace JoustClient
 
         private void ResumeGame(object sender, RoutedEventArgs e)
         {
-            control.updateTimer.Start();
+            updateTimer.Start();
             if (inEscScreen)
             {
                 canvas.Children.RemoveRange(canvas.Children.Count - 3, 3);

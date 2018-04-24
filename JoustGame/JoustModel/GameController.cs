@@ -7,7 +7,6 @@ namespace JoustModel
 {
     public class GameController
     {
-        public DispatcherTimer updateTimer;
         public World WorldRef { get; set; }
 
         public GameController()
