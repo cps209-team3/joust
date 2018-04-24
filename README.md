@@ -30,8 +30,9 @@ JD
 
 Sandeep
 * High scores designed and implemented
-* Sounds designed and partially implemented
+* Sounds designed and implemented
 * Title Screens designed and implemented
+* Level designer and saving
 
 ## Known Issues
 Clayton
@@ -44,7 +45,7 @@ JD
 * No Known Issues
 
 Sandeep
-* No Known Issues
+* Scores don't update for the player in the model so the HUD doesn't change
 
 ## Recording
 https://drive.google.com/open?id=1wMISDXY1meDh-nFtzabpC5Wvs0jHUOD6
@@ -55,4 +56,4 @@ https://drive.google.com/open?id=1wMISDXY1meDh-nFtzabpC5Wvs0jHUOD6
 | Clayton | 49:15 |
 | Jacob | 36:48 |
 | JD | 39:10 |
-| Sandeep | 28:33 |
+| Sandeep | 42 hrs, 19 min |
