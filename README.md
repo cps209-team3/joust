@@ -40,7 +40,7 @@ Clayton
 * No Known Issues
 
 Jacob
-* No Known Issues
+* Floating scores block main thread
 
 JD
 * No Known Issues
@@ -55,6 +55,6 @@ https://drive.google.com/open?id=1wMISDXY1meDh-nFtzabpC5Wvs0jHUOD6
 | Developer | Total Time Spent |
 |-----------|------------------|
 | Clayton | 49:15 |
-| Jacob | 36:48 |
+| Jacob | 49:52 |
 | JD | 39:10 |
 | Sandeep | 42 hrs, 19 min |
