@@ -19,7 +19,7 @@ namespace JoustModel
             World.Instance.objects.Add(this);
         }
 
-        public void SetType(string type, int number) {
+        public void SetType(string type, int number) { 
             PlatformType = type;
             PlatformNumber = number;
             switch (type) {
@@ -29,7 +29,7 @@ namespace JoustModel
                     type = "Platform";
                     if (number < 4) imagePath = "Images/Platform/platform_long" + number + ".png";
                     else imagePath = "Images/Platform/platform_long1.png";
-                    World.Instance.objects.Add(this);
+                    World.Instance.objects.Add(this); 
                     break;
                 case "short":
                 default:
@@ -38,7 +38,7 @@ namespace JoustModel
                     type = "Platform";
                     if (number < 5) imagePath = "Images/Platform/platform_short" + number + ".png";
                     else imagePath = "Images/Platform/platform_short1.png";
-                    World.Instance.objects.Add(this);
+                    World.Instance.objects.Add(this); 
                     break;
             }
         }
