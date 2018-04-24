@@ -14,6 +14,8 @@ Clayton
 * Artwork
 * Animations
 * Enemy Behavior
+* Load Custom Stages
+* Respawn Behavior
 
 Jacob
 * Object Model
@@ -50,7 +52,7 @@ https://drive.google.com/open?id=1wMISDXY1meDh-nFtzabpC5Wvs0jHUOD6
 ## Expenses
 | Developer | Total Time Spent |
 |-----------|------------------|
-| Clayton | 43:15 |
+| Clayton | 49:15 |
 | Jacob | 36:48 |
 | JD | 39:10 |
 | Sandeep | 28:33 |
