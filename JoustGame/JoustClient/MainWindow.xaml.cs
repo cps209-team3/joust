@@ -239,7 +239,8 @@ namespace JoustClient
 
         public void NotifyWon(object sender, int e)
         {
-            int stage = control.WorldRef.stage;
+            Console.WriteLine("NOTIFY WON TRIGGERERD");
+            int stage = control.WorldRef.player.stage;
             if (stage == 99)
             {
                 stage = 0;
@@ -248,10 +249,10 @@ namespace JoustClient
             {
                 stage += 1;
             }
-            control.WorldRef.stage = stage;
+            control.WorldRef.player.stage = stage;
             control.GetSpawnPoints();
             Announce.Text = "WAVE CLEARED!";
-            canvas.Children.Add(Announce);
+            canvas.Children.Add(Announce); //specified visual is already a child of another Visual - Occurs after a previous game occured
 
             Task.Run(() =>
             {
@@ -358,15 +359,15 @@ namespace JoustClient
             {
                 difficulty = 0;
             }
-            control.WorldRef.stage = difficulty;
+            control.WorldRef.player.stage = difficulty;
 
             InitiateWorldObject("Platform", 100, 300);
             InitiateWorldObject("Platform", 700, 500);
             InitiateWorldObject("Platform", 500, 300);
             InitiateWorldObject("Platform", 950, 200);
-            InitiateWorldObject("Respawn", 700, 100);
-            InitiateWorldObject("Respawn", 1100, 600);
-            InitiateWorldObject("Respawn", 200, 600);
+            InitiateWorldObject("Respawn", 100, 300);
+            InitiateWorldObject("Respawn", 500, 300);
+            InitiateWorldObject("Respawn", 700, 500);
             InitiateWorldObject("Base", 375, 800);
 
             control.GetSpawnPoints();
@@ -454,7 +455,7 @@ namespace JoustClient
             if (difficulty < 0) {
                 difficulty = 0;
             }
-            control.WorldRef.stage = difficulty;
+            control.WorldRef.player.stage = difficulty;
 
             control.GetSpawnPoints();
 
@@ -684,7 +685,7 @@ namespace JoustClient
             updateTimer.Stop();
             control.WorldRef.objects.Clear();
             control.WorldRef.basePlatform = null;
-            control.WorldRef.stage = 0;
+            control.WorldRef.player.stage = 0;
         }
 
         private void Cheat_Toggle(object sender, RoutedEventArgs e)
@@ -1530,7 +1531,7 @@ namespace JoustClient
             updateTimer.Start();
             if (inEscScreen)
             {
-                canvas.Children.RemoveRange(canvas.Children.Count - 3, 3);
+                canvas.Children.RemoveRange(canvas.Children.Count - 4, 4);
                 inEscScreen = false;
             }
         }
