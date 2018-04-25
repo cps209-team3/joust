@@ -43,7 +43,6 @@ namespace JoustClient
         public bool inEscScreen = false;
         public TextBox diff = new TextBox();
         TextBlock Announce;
-        public Ostrich localPlayer;
 
         public string tester;
 
@@ -124,11 +123,11 @@ namespace JoustClient
                         break;
                     case Key.A:
                     case Key.Left:
-                        localPlayer.leftDown = false;
+                        control.WorldRef.player.leftDown = false;
                         break;
                     case Key.D:
                     case Key.Right:
-                        localPlayer.rightDown = false;
+                        control.WorldRef.player.rightDown = false;
                         break;
                     default:
                         break;
@@ -149,11 +148,11 @@ namespace JoustClient
                         break;
                     case Key.A:
                     case Key.Left:
-                        localPlayer.leftDown = true;
+                        control.WorldRef.player.leftDown = true;
                         break;
                     case Key.D:
                     case Key.Right:
-                        localPlayer.rightDown = true;
+                        control.WorldRef.player.rightDown = true;
                         break;
                     default:
                         break;
@@ -240,6 +239,7 @@ namespace JoustClient
         public void NotifyWon(object sender, int e)
         {
             Console.WriteLine("NOTIFY WON TRIGGERERD");
+            Console.WriteLine("stage = " + control.WorldRef.player);
             int stage = control.WorldRef.player.stage;
             if (stage == 99)
             {
@@ -279,8 +279,8 @@ namespace JoustClient
             ResetGame();
             Announce.Text = "GAME OVER";
             canvas.Children.Add(Announce);
-            localPlayer.ostrichDied -= this.NotifyLost;
-            localPlayer = null;
+            control.WorldRef.player.ostrichDied -= this.NotifyLost;
+            control.WorldRef.player = null;
             Task.Run(() =>
             {
                 Thread.Sleep(3000);
@@ -296,17 +296,12 @@ namespace JoustClient
         public void LoadGame(object sender, RoutedEventArgs e)
         {
             designer_on = false;
-
-            string fileName = (sender as Button).Content.ToString();
-            
-            control.WorldRef.objects.Clear();
-            
-            control.Load(fileName);
-
-            // refresh method
-            
+            string fileName = (sender as Button).Content.ToString();          
+            control.WorldRef.objects.Clear();          
+            control.Load(fileName);         
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
+            control.WorldRef.win += this.NotifyWon;
 
             foreach (WorldObject obj in control.WorldRef.objects)
             {
@@ -314,12 +309,13 @@ namespace JoustClient
                 // set player
                 if (obj.ToString() == "Ostrich")
                 {
-                    localPlayer = (obj as Ostrich);
-                    playerStateMachine = localPlayer.stateMachine;
+                    control.WorldRef.player = (obj as Ostrich);
+                    playerStateMachine = control.WorldRef.player.stateMachine;
                     Console.WriteLine("player has been set");
                 }
                 WorldObjectControlFactory(obj);
             }
+            control.GetSpawnPoints();
             controls_on = true;
             updateTimer.Start();
             
@@ -345,7 +341,7 @@ namespace JoustClient
             Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
             o.ostrichDied += this.NotifyLost;
             playerStateMachine = o.stateMachine;
-            localPlayer = o;
+            control.WorldRef.player = o;
             control.WorldRef.player = o;
             if (cheatMode)
             {
@@ -751,14 +747,14 @@ namespace JoustClient
             Score thisScore;
             try
             {
-                thisScore = new Score(localPlayer.score, namebox.Text);
+                thisScore = new Score(control.WorldRef.player.score, namebox.Text);
             }
             catch
             {
                 // for test
-                localPlayer = new Ostrich();
-                localPlayer.score = 100;
-                thisScore = new Score(localPlayer.score, namebox.Text);
+                control.WorldRef.player = new Ostrich();
+                control.WorldRef.player.score = 100;
+                thisScore = new Score(control.WorldRef.player.score, namebox.Text);
             }
             HighScoreManager.Instance.AddScore(thisScore);
 
