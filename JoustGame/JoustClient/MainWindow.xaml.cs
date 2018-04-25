@@ -440,9 +440,11 @@ namespace JoustClient
 
             controls_on = true;
             control.WorldRef.win += this.NotifyWon;
+            
 
             Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
             control.WorldRef.player = o;
+            localPlayer = o;
             playerStateMachine = control.WorldRef.player.stateMachine;
             control.WorldRef.player.ostrichDied += this.NotifyLost;
             if (cheatMode) {
