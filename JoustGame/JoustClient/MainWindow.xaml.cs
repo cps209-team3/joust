@@ -365,10 +365,11 @@ namespace JoustClient
             InitiateWorldObject("Platform", 700, 500);
             InitiateWorldObject("Platform", 500, 300);
             InitiateWorldObject("Platform", 950, 200);
-            InitiateWorldObject("Respawn", 100, 300);
-            InitiateWorldObject("Respawn", 500, 300);
-            InitiateWorldObject("Respawn", 700, 500);
+            InitiateWorldObject("Respawn", 150, 300);
+            InitiateWorldObject("Respawn", 550, 300);
+            InitiateWorldObject("Respawn", 750, 500);
             InitiateWorldObject("Base", 375, 800);
+            InitiateWorldObject("Respawn", 700, 800);
 
             control.GetSpawnPoints();
 

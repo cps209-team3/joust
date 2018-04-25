@@ -56,7 +56,7 @@ namespace JoustClient
                 Source = new BitmapImage(new Uri("Sprites/player_fly1.png", UriKind.Relative));
             }
             else if (o.stateMachine.Current is SpawnState) {
-                if (o.coords.y > World.Instance.basePlatform.coords.y - 70) o.coords.y -= 1;
+                if (o.coords.y > World.Instance.basePlatform.coords.y - 70) o.coords.y -= 2;
                 Source = new BitmapImage(new Uri("Sprites/player_respawn.png", UriKind.Relative));
             }
             else if (o.stateMachine.Current is DeadState) {
