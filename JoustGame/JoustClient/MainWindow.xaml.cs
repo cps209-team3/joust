@@ -284,7 +284,7 @@ namespace JoustClient
             Task.Run(() =>
             {
                 Thread.Sleep(3000);
-                Dispatcher.Invoke(() => HighScores_Screen(sender, new RoutedEventArgs()));
+                Dispatcher.Invoke(() => Finish_HighScores(sender, new RoutedEventArgs()));
             });
         }
 
