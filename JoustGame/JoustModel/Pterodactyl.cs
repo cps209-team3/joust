@@ -193,6 +193,7 @@ namespace JoustModel
             }
         }
 
+        // returns the properties of this Pterodactyl object in string form
         public override string Serialize()
         {
             return string.Format("Pterodactyl,{0},{1},{2},{3}", speed, angle, coords.x, coords.y);

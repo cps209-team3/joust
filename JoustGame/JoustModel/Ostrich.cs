@@ -157,7 +157,7 @@ namespace JoustModel
             }
         }
 
-        // Serialization
+        // returns the properties of this Ostrich object in string form
         public override string Serialize()
         {
             return string.Format("Ostrich,{0},{1},{2},{3},{4},{5},{6},{7}", score, lives, speed, angle, coords.x, coords.y, stateMachine.currentState.ToString(), stage);

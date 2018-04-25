@@ -58,6 +58,7 @@ namespace JoustModel
             }
         }
 
+        // Loads and starts a game based on the contents of the specified GameSave file "filename".
         public void Load(string filename)
         {
             string loadedLine = System.IO.File.ReadAllText(string.Format(@"../../Saves/GameSaves/{0}.txt", filename));
@@ -84,7 +85,7 @@ namespace JoustModel
                 }
             }
         }
-
+        // Saves the current game state to a file whose name is based off the current time
         public string Save()
         {
             string filename = DateTime.Now.ToString("yyyy-MM-dd-H-mm-ss");

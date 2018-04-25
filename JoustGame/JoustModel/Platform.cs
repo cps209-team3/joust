@@ -43,6 +43,7 @@ namespace JoustModel
             }
         }
 
+        // returns the properties of this Platform object in string form
         public override string Serialize()
         {
             return string.Format("Platform,{0},{1},{2},{3}", PlatformType, PlatformNumber, coords.x, coords.y);
