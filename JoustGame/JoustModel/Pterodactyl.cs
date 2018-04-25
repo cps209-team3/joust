@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 
 namespace JoustModel
 {
@@ -159,18 +160,22 @@ namespace JoustModel
             {
                 if (objHit.ToString() == "Ostrich")
                 {
-                    if (this.coords.y > objHit.coords.y)
+                    if (this.coords.y < objHit.coords.y)
                     {
                         this.stateMachine.Change("destroyed");
                         stateMachine.currentState.Update();
                         (objHit as Ostrich).score += Value;
+                        Task.Run(() =>
+                        {
+                            PlaySounds.Instance.Play_Collide();
+                        });
                     }
                     else
                     {
                         (objHit as Ostrich).Die();
                     }
                 }
-                else
+                else if(objHit.ToString() == "Platform")
                 {
                     Point minTV = FindMinTV(objHit);
                     if (minTV.y > 0)

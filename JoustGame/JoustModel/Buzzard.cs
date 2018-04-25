@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 
 namespace JoustModel
 {
@@ -213,6 +214,10 @@ namespace JoustModel
                             {
                                 buzzDied(this, 0);
                             }
+                            Task.Run(() =>
+                            {
+                                PlaySounds.Instance.Play_Collide();
+                            });
                             this.stateMachine.Change("flee");
                             stateMachine.currentState.Update();
                             (objHit as Ostrich).score += Value;
@@ -223,7 +228,7 @@ namespace JoustModel
                         }
                     }
                 }
-                else
+                else if (objHit.ToString() == "Platform")
                 {
                     Point minTV = FindMinTV(objHit);
                     if (minTV.y > 0)
