@@ -1,4 +1,10 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////
+// filename: EggControl.cs
+// contents: GUI element for Eggs created in-game
+//
+////////////////////////////////////////////////////////
+
+using System;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;

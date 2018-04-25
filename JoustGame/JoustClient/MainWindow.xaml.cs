@@ -1,4 +1,10 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////
+// filename: MainWindow.xaml.cs
+// contents: GUI for game to use JoustModel
+//
+////////////////////////////////////////////////////////
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,33 +27,47 @@ using System.Diagnostics;
 
 namespace JoustClient
 {
-    public enum SpaceType
-    {
-        Spawn,
-        Plat,
-        Blank,
-    }
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        // a timer for updating the GameController
         DispatcherTimer updateTimer;
+
+        // sets up the GameController
         public GameController control = new GameController();
+
+        // a TextBox for when a player needs to enter a name
         public TextBox namebox = new TextBox();
+
+        // sets up the state machine for the player
         public StateMachine playerStateMachine;
-        public bool flapLock;
-        public bool cheatMode = false;
-        public bool controls_on = false;
-        public bool inEscScreen = false;
+
+        // a TextBox for difficulty selection
         public TextBox diff = new TextBox();
+
+        // a TextBox for in-game announcements
         TextBlock Announce;
 
-        public string tester;
+        // controls animations and movements when the player presses `up`
+        public bool flapLock;
 
+        // tells if the player is in cheat mode; invincibility is based off this
+        public bool cheatMode = false;
+
+        // activates and deactivates keyboard controls
+        public bool controls_on = false;
+
+        // tests if the player is in the pause menu
+        public bool inEscScreen = false;
+
+        // drag and drop for level designer
         private System.Windows.Point mousePosition;
         private bool dragging = false;
+
+        // for level designer
         private Image currImg;
         private WorldObjectControl currPlat;
         private Button ex2;
@@ -55,8 +75,7 @@ namespace JoustClient
         private int ids = 0;
         private bool designer_on = false;
         private bool isLastCheck = false;
-
-
+        
         // This makes flying create fewer threads
         // to change the animation which makes the
         // game run better
@@ -72,11 +91,13 @@ namespace JoustClient
             InitializeComponent();
         }
 
+        /// <summary>
+        /// sets up the title screen on the window and sets up the Announce TextBlock for use when the user starts a game
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // This is only here for faster testing
-            // If you need a different screen on window load, comment out the line below
-            //NewGame();
             Title_Screen(null, EventArgs.Empty);
 
             Announce = new TextBlock();
@@ -88,11 +109,13 @@ namespace JoustClient
             Announce.FontSize = 32;
             Announce.Height = 50;
             Announce.Foreground = new SolidColorBrush(Colors.White);
-
-            //Finish_HighScores(null, EventArgs.Empty);
-            //Designer_Screen(null, EventArgs.Empty);
         }
-        
+
+        /// <summary>
+        /// what happens when the user presses releases a key on the keyboard during a game (controls)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Canvas_KeyUp(object sender, KeyEventArgs e)
         {
             // wrapped key event in check to prevent crashes on menus
@@ -107,8 +130,10 @@ namespace JoustClient
                     case Key.W:
                     case Key.Up:
                         if (playerStateMachine.Current is DeadState || playerStateMachine.Current is SpawnState) { }
-                        else {
-                            if (!flapLock) {
+                        else
+                        {
+                            if (!flapLock)
+                            {
                                 Task.Run(() => playerStateMachine.HandleInput("flap"));
                             }
                             flapLock = true;
@@ -135,6 +160,11 @@ namespace JoustClient
             }
         }
 
+        /// <summary>
+        /// what happens when the user presses presses down a key on the keyboard during a game (controls)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Canvas_KeyDown(object sender, KeyEventArgs e)
         {
             // wrapped key event in check to prevent crashes on menus
@@ -160,6 +190,10 @@ namespace JoustClient
             }
         }
 
+        /// <summary>
+        /// based on the WorldObject provided, creates the GUI components for the various kinds of entities on the screen including platforms
+        /// </summary>
+        /// <param name="worldObject"></param>
         public void WorldObjectControlFactory(WorldObject worldObject)
         {
             string woString = worldObject.ToString();
@@ -220,7 +254,7 @@ namespace JoustClient
                     break;
                 default:
                     Base ba = worldObject as Base;
-                    i = new BaseControl(ba.imagePath);  
+                    i = new BaseControl(ba.imagePath);
                     baC = i as BaseControl;
                     break;
             }
@@ -228,14 +262,13 @@ namespace JoustClient
             canvas.Children.Add(i);
             Canvas.SetTop(i, worldObject.coords.y);
             Canvas.SetLeft(i, worldObject.coords.x);
-
-            //if (baC != null && !designer_on) baC.CreateSpawn((int)worldObject.coords.x, (int)worldObject.coords.y); // this line breaks my LoadGame function
-
-            //Title_Screen(null, EventArgs.Empty);
-            //Finish_HighScores(null, EventArgs.Empty);
-            // called when game end conditions have been met
         }
 
+        /// <summary>
+        /// sets up the text that show when a game starts and between waves
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void NotifyWon(object sender, int e)
         {
             Console.WriteLine("NOTIFY WON TRIGGERERD");
@@ -274,8 +307,13 @@ namespace JoustClient
             });
         }
 
+        /// <summary>
+        /// provides text for when the user loses a game and routes to the score enter screen
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void NotifyLost(object sender, int e)
-        {  
+        {
             ResetGame();
             Announce.Text = "GAME OVER";
             canvas.Children.Add(Announce);
@@ -284,21 +322,31 @@ namespace JoustClient
             Task.Run(() =>
             {
                 Thread.Sleep(3000);
-                Dispatcher.Invoke(() => HighScores_Screen(sender, new RoutedEventArgs()));
+                Dispatcher.Invoke(() => Finish_HighScores(sender, new RoutedEventArgs()));
             });
         }
 
+        /// <summary>
+        /// saves the game using the JoustModel for later play
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void SaveGame(object sender, RoutedEventArgs e)
         {
             control.Save();
         }
 
+        /// <summary>
+        /// loads the game using the JoustModel based on previous saves
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void LoadGame(object sender, RoutedEventArgs e)
         {
             designer_on = false;
-            string fileName = (sender as Button).Content.ToString();          
-            control.WorldRef.objects.Clear();          
-            control.Load(fileName);         
+            string fileName = (sender as Button).Content.ToString();
+            control.WorldRef.objects.Clear();
+            control.Load(fileName);
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
             control.WorldRef.win += this.NotifyWon;
@@ -320,10 +368,15 @@ namespace JoustClient
             control.GetSpawnPoints();
             controls_on = true;
             updateTimer.Start();
-            
+
             // end refresh method
         }
 
+        /// <summary>
+        /// makes controls available and sets up the game screen when a user starts a game
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void NewGame(object sender, EventArgs e)
         {
             // switched bool to activate controls
@@ -331,7 +384,7 @@ namespace JoustClient
             designer_on = false;
 
             control.WorldRef.Reset();
-            
+
             control.WorldRef.win += this.NotifyWon;
             flapLock = false;
             canvas.Children.Clear();
@@ -388,6 +441,11 @@ namespace JoustClient
 
         }
 
+        /// <summary>
+        /// updates the HUD based on JoustModel info
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HUDtick(object sender, EventArgs e)
         {
             try
@@ -402,7 +460,14 @@ namespace JoustClient
             }
         }
 
-        public void CustomStage_Screen(object sender, EventArgs e) {
+        /// <summary>
+        /// provides a list of the available custom stages should the player decide to play one of them
+        /// button clicks start a game on the appopriate saved stage
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void CustomStage_Screen(object sender, EventArgs e)
+        {
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
             // Get the save files in the Custom Stages directory
@@ -423,7 +488,13 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Single_Screen);
         }
 
-        public void LoadStage(object sender, EventArgs e) {
+        /// <summary>
+        /// loads the canvas in the window with the various platforms needed and the player's ostrich
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void LoadStage(object sender, EventArgs e)
+        {
             controls_on = true;
             canvas.Children.Clear();
             control.WorldRef.Reset();
@@ -433,27 +504,29 @@ namespace JoustClient
             control.StageLoad(b.Content + ".txt");
             ShowHud();
             // Make the controls for each world object
-            foreach (WorldObject obj in control.WorldRef.objects) {
+            foreach (WorldObject obj in control.WorldRef.objects)
+            {
                 WorldObjectControlFactory(obj);
             }
 
             controls_on = true;
             control.WorldRef.win += this.NotifyWon;
-            
+
 
             Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
             control.WorldRef.player = o;
-            localPlayer = o;
             playerStateMachine = control.WorldRef.player.stateMachine;
             control.WorldRef.player.ostrichDied += this.NotifyLost;
-            if (cheatMode) {
+            if (cheatMode)
+            {
                 o.cheatMode = true;
             }
 
             // difficulty setting
             int difficulty = 0;
             bool result = Int32.TryParse(diff.Text, out difficulty);
-            if (difficulty < 0) {
+            if (difficulty < 0)
+            {
                 difficulty = 0;
             }
             control.WorldRef.player.stage = difficulty;
@@ -464,11 +537,19 @@ namespace JoustClient
             InitiateWorldObject("Base", 375, 800);
         }
 
+        /// <summary>
+        /// updates the GameController, positioning and setting the right states for the various GUI elements that change in the GameController
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UpdateTick(object sender, EventArgs e)
         {
             control.Update(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// enemies are positioned on the screen ready to be updated with new positions and states
+        /// </summary>
         public void SpawnEnemies()
         {
             int numBuzzards = 0;
@@ -495,6 +576,14 @@ namespace JoustClient
             }
         }
 
+        /// <summary>
+        /// creates WorldObjects inside the GameController to be added to the screen and updated
+        /// returns the same WorldObject to be edited as needed
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public WorldObject InitiateWorldObject(string type, double x, double y)
         {
             WorldObject obj = control.CreateWorldObj(type);
@@ -518,6 +607,15 @@ namespace JoustClient
             currScore.FontSize = 15;
         }
 
+        /// <summary>
+        /// creates a button with consistent styling to be edited with various parameters to be set on method call
+        /// returns the button for easy editing
+        /// adds the button to the canvas
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="top"></param>
+        /// <param name="eventx"></param>
+        /// <returns></returns>
         private Button Make_Button(object content, double top, RoutedEventHandler eventx)
         {
             Button btnReturn = new Button();
@@ -546,6 +644,14 @@ namespace JoustClient
             return btnReturn;
         }
 
+        /// <summary>
+        /// creates a specific kind of button that is on basically every menu screen
+        /// returns the button for easy editing
+        /// adds the button to the canvas
+        /// </summary>
+        /// <param name="top"></param>
+        /// <param name="eventx"></param>
+        /// <returns></returns>
         private Button Make_BackButton(double top, RoutedEventHandler eventx)
         {
             Button back = Make_Button("Back", top, eventx);
@@ -555,6 +661,16 @@ namespace JoustClient
             return back;
         }
 
+        /// <summary>
+        /// creates a TextBlock with consistent styling to be edited with various parameters to be set on method call
+        /// returns the TextBlock for easy editing
+        /// adds the TextBlock to the canvas
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="top"></param>
+        /// <param name="height"></param>
+        /// <param name="width"></param>
+        /// <returns></returns>
         private TextBlock Make_TextBlock(double top, double left, int height, int width)
         {
             TextBlock newBlock = new TextBlock();
@@ -572,6 +688,16 @@ namespace JoustClient
             return newBlock;
         }
 
+        /// <summary>
+        /// creates a Image with to be edited with various parameters to be set on method call
+        /// returns the Image for easy editing
+        /// adds the Image to the canvas
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="top"></param>
+        /// <param name="left"></param>
+        /// <param name="height"></param>
+        /// <param name="width"></param>
         private Image Make_Image(string path, double top, double left, int height, int width)
         {
             string newpath = HighScoreManager.Instance.path;
@@ -592,21 +718,25 @@ namespace JoustClient
             return image;
         }
 
+        /// <summary>
+        /// creates the "Title" menu screen
+        /// </summary>
         private void Title_Screen(object sender, EventArgs e)
         {
             controls_on = false;
             designer_on = true;
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
+            control.WorldRef.win -= this.NotifyWon;
 
             Button startSingle = Make_Button("Single Player", 250.0, Single_Screen);
             Button help = Make_Button("Help", 350.0, Help_Screen);
             Button about = Make_Button("About", 450.0, About_Screen);
             Button scores = Make_Button("High Scores", 550.0, HighScores_Screen);
             Button designer = Make_Button("Level Designer", 700.0, Designer_Screen);
-            
+
             inEscScreen = false;
-           
+
 
             Image image = Make_Image("\\Images\\joust2.png", 25.0, 510.0, 150, 400);
 
@@ -627,6 +757,9 @@ namespace JoustClient
                 Dispatcher.CurrentDispatcher);
         }
 
+        /// <summary>
+        /// creates the menu screen for when the user accesses the single player game options/start menu
+        /// </summary>
         private void Single_Screen(object sender, RoutedEventArgs e)
         {
             Task.Run(() =>
@@ -682,16 +815,19 @@ namespace JoustClient
             {
                 Button btn = new Button();
                 btn.Width = 183;
-                btn.Content = saveFiles[i].Substring(saveFiles[i].Length-23, 19);
+                btn.Content = saveFiles[i].Substring(saveFiles[i].Length - 23, 19);
                 btn.Click += (object s, RoutedEventArgs ee) =>
                 {
                     LoadGame(s, ee);
                     // btn.Content.ToString()
                 };
                 listOfSaves.Children.Add(btn);
-            }        
+            }
         }
 
+        /// <summary>
+        /// resets various instance variables after a game is over so a game can be started anew immediately
+        /// </summary>
         private void ResetGame()
         {
             controls_on = false;
@@ -701,6 +837,13 @@ namespace JoustClient
             control.WorldRef.player.stage = 0;
         }
 
+        /// <summary>
+        /// controls whether the cheat button is off or on on the single player options/start screen
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="top"></param>
+        /// <param name="eventx"></param>
+        /// <returns></returns>
         private void Cheat_Toggle(object sender, RoutedEventArgs e)
         {
             Button sent = sender as Button;
@@ -720,6 +863,11 @@ namespace JoustClient
 
         }
 
+        /// <summary>
+        /// called when 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Finish_HighScores(object sender, EventArgs e)
         {
             controls_on = false;
@@ -750,6 +898,11 @@ namespace JoustClient
             no.SetValue(Canvas.LeftProperty, 720.0);
         }
 
+        /// <summary>
+        /// if the user chooses to save his score, this screen brings up the ten high scores based on a name supplied on-screen
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Accept_SaveScore(object sender, RoutedEventArgs e)
         {
             Task.Run(() =>
@@ -801,6 +954,11 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Title_Screen);
         }
 
+        /// <summary>
+        /// lists out several areas of information abstracted away by buttons
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Help_Screen(object sender, RoutedEventArgs e)
         {
             Task.Run(() =>
@@ -818,6 +976,13 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Title_Screen);
         }
 
+        /// <summary>
+        /// provides access to the about screen
+        /// contains programmer names and jobs
+        /// contains the game story
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void About_Screen(object sender, RoutedEventArgs e)
         {
             Task.Run(() =>
@@ -844,6 +1009,11 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Title_Screen);
         }
 
+        /// <summary>
+        /// shows the ten high scores on file from
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HighScores_Screen(object sender, RoutedEventArgs e)
         {
             Task.Run(() =>
@@ -881,6 +1051,11 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Title_Screen);
         }
 
+        /// <summary>
+        /// provides information about the player and how to play
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Player_Screen(object sender, RoutedEventArgs e)
         {
             Task.Run(() =>
@@ -905,6 +1080,11 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Help_Screen);
         }
 
+        /// <summary>
+        /// provides game progression iformation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Progression_Screen(object sender, RoutedEventArgs e)
         {
             Task.Run(() =>
@@ -930,6 +1110,12 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Help_Screen);
         }
 
+        /// <summary>
+        /// provides information based on the three enemy types abstracted onto their own screens by buttons
+        /// includes info about scoring
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Enemies_Screen(object sender, RoutedEventArgs e)
         {
             Task.Run(() =>
@@ -946,6 +1132,11 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Help_Screen);
         }
 
+        /// <summary>
+        /// provides game info about buzzards
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Buzzard_Screen(object sender, RoutedEventArgs e)
         {
             Task.Run(() =>
@@ -964,6 +1155,11 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Enemies_Screen);
         }
 
+        /// <summary>
+        /// provides game info about eggs
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Egg_Screen(object sender, RoutedEventArgs e)
         {
             Task.Run(() =>
@@ -987,6 +1183,11 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Enemies_Screen);
         }
 
+        /// <summary>
+        /// provides game info about pterodactyls
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Pterodactyl_Screen(object sender, RoutedEventArgs e)
         {
             Task.Run(() =>
@@ -1005,6 +1206,11 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Enemies_Screen);
         }
 
+        /// <summary>
+        /// provides score information about the various enemies
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Scoring_Screen(object sender, RoutedEventArgs e)
         {
             Task.Run(() =>
@@ -1025,6 +1231,11 @@ namespace JoustClient
             Button back = Make_BackButton(625.0, Help_Screen);
         }
 
+        /// <summary>
+        /// starts up and provides the GUI elements for the stage creator
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Designer_Screen(object sender, EventArgs e)
         {
             canvas.Children.Clear();
@@ -1096,6 +1307,12 @@ namespace JoustClient
 
         }
 
+        /// <summary>
+        /// saves the stage created into the right folder to be accessed later
+        /// prompts the player to return to the title screen with a message
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Level_Save(object sender, EventArgs e)
         {
 
@@ -1110,7 +1327,7 @@ namespace JoustClient
             {
                 using (StreamWriter writer = new StreamWriter(fs))
                 {
-                    foreach(object o in canvas.Children)
+                    foreach (object o in canvas.Children)
                     {
                         indextracker++;
 
@@ -1130,7 +1347,8 @@ namespace JoustClient
                         }
 
                         RespawnControl rc = o as RespawnControl;
-                        if (rc != null) {
+                        if (rc != null)
+                        {
                             Respawn platty = new Respawn();
                             System.Windows.Point point = rc.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
                             platty.coords.x = point.X;
@@ -1154,6 +1372,11 @@ namespace JoustClient
 
         }
 
+        /// <summary>
+        /// creates a PlatformControl to be positioned by the user for the level designer
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void plat_button(object sender, EventArgs e)
         {
             PlatformControl platctrl = new PlatformControl("Images/Platform/platform_short1.png");
@@ -1164,6 +1387,11 @@ namespace JoustClient
             ex2.IsEnabled = true;
         }
 
+        /// <summary>
+        /// creates a RespawnControl to be positioned by the user for the level designer
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void spawn_button(object sender, EventArgs e)
         {
             RespawnControl spwnctrl = new RespawnControl("Images/Platform/platform_respawn1.png");
@@ -1181,6 +1409,11 @@ namespace JoustClient
             //sent.IsEnabled = false;
         }
 
+        /// <summary>
+        /// deletes a PlatformControl or RespawnControl when using the level designer
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Plat_Delete(object sender, EventArgs e)
         {
             canvas.Children.Remove(currPlat);
@@ -1210,20 +1443,32 @@ namespace JoustClient
             }
         }
 
+        /// <summary>
+        /// allows for drag-and-drop for controls in the level designer along with the canvas_MouseMove and canvas_MouseUp events
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void plat_MouseDown(object sender, MouseButtonEventArgs e)
         {
             mousePosition = e.GetPosition(canvas);
             dragging = true;
 
-            if (sender is PlatformControl) {
+            if (sender is PlatformControl)
+            {
                 currPlat = sender as PlatformControl;
             }
-            else if (sender is RespawnControl) {
+            else if (sender is RespawnControl)
+            {
                 currPlat = sender as RespawnControl;
             }
             currImg = null;
         }
 
+        /// <summary>
+        /// allows for drag-and-drop for controls in the level designer along with the plat_MouseDown and canvas_MouseMove events
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (!designer_on) return;
@@ -1232,35 +1477,46 @@ namespace JoustClient
             Positioning();
         }
 
+        /// <summary>
+        /// used by the canvas_MouseUp event to check if the most recently moved control was placed in invalid place
+        /// </summary>
         private void Positioning()
         {
             foreach (object x in canvas.Children)
             {
                 if (currPlat != null)
                 {
-                    if (x is PlatformControl) {
+                    if (x is PlatformControl)
+                    {
                         PlatformControl z = x as PlatformControl;
 
-                        if (currPlat is RespawnControl) {
+                        if (currPlat is RespawnControl)
+                        {
                             int objects = 0;
-                            foreach (object test in canvas.Children) {
+                            foreach (object test in canvas.Children)
+                            {
                                 PlatformControl testCtrl = test as PlatformControl;
                                 objects++;
-                                if (objects >= canvas.Children.Count - 1) {
+                                if (objects >= canvas.Children.Count - 1)
+                                {
                                     isLastCheck = true;
                                     objects = 0;
                                 }
-                                else {
+                                else
+                                {
                                     isLastCheck = false;
                                 }
 
-                                if (testCtrl != null) {
+                                if (testCtrl != null)
+                                {
                                     CheckBadPlacementRespawn(testCtrl);
                                 }
                             }
                         }
-                        else {
-                            if (z != null) {
+                        else
+                        {
+                            if (z != null)
+                            {
                                 CheckBadPlacement(z);
                             }
                         }
@@ -1269,11 +1525,18 @@ namespace JoustClient
             }
         }
 
-        private void CheckBadPlacement(PlatformControl z) {
+        /// <summary>
+        /// used by the Positioning method to do its work in checking bad placements
+        /// for PlatformControls
+        /// </summary>
+        /// <param name="z"></param>
+        private void CheckBadPlacement(PlatformControl z)
+        {
             System.Windows.Point relativePoint = z.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
             System.Windows.Point relativePoint2 = currPlat.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
 
-            if ((relativePoint2.Y <= 30.0) || (relativePoint2.Y > 730)) {
+            if ((relativePoint2.Y <= 30.0) || (relativePoint2.Y > 730))
+            {
                 //canvas.Children.Remove(currPlat);
                 currPlat.SetValue(Canvas.TopProperty, 0.0);
                 currPlat.SetValue(Canvas.LeftProperty, 0.0);
@@ -1291,7 +1554,8 @@ namespace JoustClient
                 });
             }
 
-            if ((relativePoint2.X < 0.0) || (relativePoint2.X > 1240)) {
+            if ((relativePoint2.X < 0.0) || (relativePoint2.X > 1240))
+            {
                 //canvas.Children.Remove(currPlat);
                 currPlat.SetValue(Canvas.TopProperty, 0.0);
                 currPlat.SetValue(Canvas.LeftProperty, 0.0);
@@ -1309,7 +1573,8 @@ namespace JoustClient
                 });
             }
 
-            if (((relativePoint2.Y >= 350) && (relativePoint.Y <= 425)) && ((relativePoint.X >= 720.0) && (relativePoint.X <= 770.0))) {
+            if (((relativePoint2.Y >= 350) && (relativePoint.Y <= 425)) && ((relativePoint.X >= 720.0) && (relativePoint.X <= 770.0)))
+            {
                 //canvas.Children.Remove(currPlat);
                 currPlat.SetValue(Canvas.TopProperty, 0.0);
                 currPlat.SetValue(Canvas.LeftProperty, 0.0);
@@ -1327,7 +1592,8 @@ namespace JoustClient
                 });
             }
 
-            if (((relativePoint2.X >= 520) && (relativePoint2.X <= 770)) && ((relativePoint2.Y >= 320) && (relativePoint2.Y <= 425))) {
+            if (((relativePoint2.X >= 520) && (relativePoint2.X <= 770)) && ((relativePoint2.Y >= 320) && (relativePoint2.Y <= 425)))
+            {
                 //TextBlock editAreaPlayer = Make_TextBlock(350.0, 720.0, 75, 50);
 
                 //canvas.Children.Remove(currPlat);
@@ -1348,8 +1614,10 @@ namespace JoustClient
                 });
             }
 
-            if (!Object.ReferenceEquals(z, currPlat)) {
-                if (System.Math.Abs((relativePoint.Y - relativePoint2.Y)) <= 75.0 && System.Math.Abs((relativePoint.X - relativePoint2.X)) <= z.Width) {
+            if (!Object.ReferenceEquals(z, currPlat))
+            {
+                if (System.Math.Abs((relativePoint.Y - relativePoint2.Y)) <= 75.0 && System.Math.Abs((relativePoint.X - relativePoint2.X)) <= z.Width)
+                {
                     //canvas.Children.Remove(currPlat);
                     currPlat.SetValue(Canvas.TopProperty, 0.0);
                     currPlat.SetValue(Canvas.LeftProperty, 0.0);
@@ -1359,7 +1627,8 @@ namespace JoustClient
                             errorBlock.Background = Brushes.Red;
                             errorBlock.Text = "bad collision";
                             ///
-                            if (currPlat.Tag != null) {
+                            if (currPlat.Tag != null)
+                            {
                                 Task.Run(() => {
                                     Dispatcher.Invoke(() => {
                                         errorBlock.Text = "invalid spawn";
@@ -1382,11 +1651,18 @@ namespace JoustClient
             }
         }
 
-        private void CheckBadPlacementRespawn(PlatformControl z) {
+        /// <summary>
+        /// used by the Positioning method to do its work in checking bad placements
+        /// for RespawnControls
+        /// </summary>
+        /// <param name="z"></param>
+        private void CheckBadPlacementRespawn(PlatformControl z)
+        {
             System.Windows.Point relativePoint = z.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
             System.Windows.Point relativePoint2 = currPlat.TransformToAncestor(canvas).Transform(new System.Windows.Point(0, 0));
 
-            if ((relativePoint2.Y <= 30.0) || (relativePoint2.Y > 730)) {
+            if ((relativePoint2.Y <= 30.0) || (relativePoint2.Y > 730))
+            {
                 //canvas.Children.Remove(currPlat);
                 currPlat.SetValue(Canvas.TopProperty, 0.0);
                 currPlat.SetValue(Canvas.LeftProperty, 0.0);
@@ -1404,7 +1680,8 @@ namespace JoustClient
                 });
             }
 
-            if ((relativePoint2.X < 0.0) || (relativePoint2.X > 1240)) {
+            if ((relativePoint2.X < 0.0) || (relativePoint2.X > 1240))
+            {
                 //canvas.Children.Remove(currPlat);
                 currPlat.SetValue(Canvas.TopProperty, 0.0);
                 currPlat.SetValue(Canvas.LeftProperty, 0.0);
@@ -1422,7 +1699,8 @@ namespace JoustClient
                 });
             }
 
-            if (((relativePoint2.Y >= 350) && (relativePoint.Y <= 425)) && ((relativePoint.X >= 720.0) && (relativePoint.X <= 770.0))) {
+            if (((relativePoint2.Y >= 350) && (relativePoint.Y <= 425)) && ((relativePoint.X >= 720.0) && (relativePoint.X <= 770.0)))
+            {
                 //canvas.Children.Remove(currPlat);
                 currPlat.SetValue(Canvas.TopProperty, 0.0);
                 currPlat.SetValue(Canvas.LeftProperty, 0.0);
@@ -1441,7 +1719,8 @@ namespace JoustClient
                 });
             }
 
-            if (((relativePoint2.X >= 520) && (relativePoint2.X <= 770)) && ((relativePoint2.Y >= 320) && (relativePoint2.Y <= 425))) {
+            if (((relativePoint2.X >= 520) && (relativePoint2.X <= 770)) && ((relativePoint2.Y >= 320) && (relativePoint2.Y <= 425)))
+            {
                 //TextBlock editAreaPlayer = Make_TextBlock(350.0, 720.0, 75, 50);
 
                 //canvas.Children.Remove(currPlat);
@@ -1462,18 +1741,22 @@ namespace JoustClient
                 });
             }
 
-            if (!Object.ReferenceEquals(z, currPlat)) {
-                if (System.Math.Abs((relativePoint.Y - relativePoint2.Y)) > 20 || System.Math.Abs((relativePoint.X - relativePoint2.X)) > z.Width) {
+            if (!Object.ReferenceEquals(z, currPlat))
+            {
+                if (System.Math.Abs((relativePoint.Y - relativePoint2.Y)) > 20 || System.Math.Abs((relativePoint.X - relativePoint2.X)) > z.Width)
+                {
                     //canvas.Children.Remove(currPlat);
                     currPlat.SetValue(Canvas.TopProperty, 0.0);
                     currPlat.SetValue(Canvas.LeftProperty, 0.0);
-                    if (isLastCheck) {
+                    if (isLastCheck)
+                    {
                         Task.Run(() => {
                             Dispatcher.Invoke(() => {
                                 errorBlock.Background = Brushes.Red;
                                 errorBlock.Text = "bad collision";
                                 ///
-                                if (currPlat.Tag != null) {
+                                if (currPlat.Tag != null)
+                                {
                                     Task.Run(() => {
                                         Dispatcher.Invoke(() => {
                                             errorBlock.Text = "invalid spawn";
@@ -1494,13 +1777,19 @@ namespace JoustClient
                         });
                     }
                 }
-                else {
+                else
+                {
                     Canvas.SetLeft(currPlat, Canvas.GetLeft(z) + 50);
                     Canvas.SetTop(currPlat, Canvas.GetTop(z));
                 }
             }
         }
 
+        /// <summary>
+        /// allows for drag-and-drop for controls in the level designer along with the plat_MouseDown and canvas_MouseUp events
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (!designer_on) return;
@@ -1524,10 +1813,15 @@ namespace JoustClient
                 Canvas.SetTop(currImg, Canvas.GetTop(currImg) + offset.Y);
             }
         }
-        
+
+        /// <summary>
+        /// provides a pause menu during the game
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Esc_Screen(object sender, RoutedEventArgs e)
         {
-            if (! inEscScreen)
+            if (!inEscScreen)
             {
                 inEscScreen = true;
                 updateTimer.Stop();
@@ -1539,6 +1833,11 @@ namespace JoustClient
             }
         }
 
+        /// <summary>
+        /// gets the player out of the Esc_Screen
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ResumeGame(object sender, RoutedEventArgs e)
         {
             updateTimer.Start();
@@ -1549,5 +1848,5 @@ namespace JoustClient
             }
         }
     }
-    
+
 }

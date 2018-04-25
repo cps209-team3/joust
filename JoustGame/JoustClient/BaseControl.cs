@@ -1,4 +1,10 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////
+// filename: BaseControl.cs
+// contents: for the lower platform in the game
+//
+////////////////////////////////////////////////////////
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

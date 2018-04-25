@@ -1,4 +1,10 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////
+// filename: WorldObjectControl.cs
+// contents: Base class for GUI elements created in-game
+//
+////////////////////////////////////////////////////////
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,11 +26,21 @@ namespace JoustClient
 {
     public class WorldObjectControl : Image
     {
+        /// <summary>
+        /// takes the image path parameter and provides a GUI representation of a world object
+        /// not positioned in this base class yet, so not yet visible
+        /// </summary>
+        /// <param name="imagePath"></param>
         public WorldObjectControl(string imagePath)
         {
             Source = new BitmapImage(new Uri(imagePath, UriKind.Relative));
         }
 
+        /// <summary>
+        /// provides the floating numbers for points when enemies are killed
+        /// </summary>
+        /// <param name="b"></param>
+        /// <param name="color"></param>
         public void DisplayFloatingNumbers(Entity b, SolidColorBrush color)
         {
             Canvas canvas = Parent as Canvas;

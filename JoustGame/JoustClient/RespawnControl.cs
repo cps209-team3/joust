@@ -1,4 +1,10 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////
+// filename: RespawnControl.cs
+// contents: GUI element for respawn platforms created in-game
+//
+////////////////////////////////////////////////////////
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +24,10 @@ namespace JoustClient
 {
     public class RespawnControl : WorldObjectControl
     {
+        /// <summary>
+        /// takes the imaagePath to provide a positioned GUI representation for a respawn control
+        /// </summary>
+        /// <param name="imagePath"></param>
         public RespawnControl(string imagePath) : base(imagePath)
         {
             Height = 15;

@@ -1,4 +1,10 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////
+// filename: OstrichControl.cs
+// contents: GUI element for Ostriches created in-game
+//
+////////////////////////////////////////////////////////
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -20,7 +26,13 @@ namespace JoustClient
 {
     public class OstrichControl : WorldObjectControl
     {
+        // provides the essential part of the image file path for the various states of an ostrich control
         private string currentMove;
+
+        /// <summary>
+        /// positions and gives an image to a OstrichControl
+        /// </summary>
+        /// <param name="imagePath"></param>
         public OstrichControl(string imagePath) : base(imagePath)
         {
             Height = 75;
@@ -28,6 +40,11 @@ namespace JoustClient
             currentMove = "Sprites/player_stand.png";
         }
 
+        /// <summary>
+        /// handles the various images needed for an ostrich in a game and when they should be shown
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void NotifyMoved(object sender, int e)
         {
             Ostrich o = sender as Ostrich;
