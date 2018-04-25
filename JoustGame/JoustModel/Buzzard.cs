@@ -154,7 +154,7 @@ namespace JoustModel
             }
             else if (stateMachine.currentState is EnemySpawningState) {
                 respawning++;
-                Trace.WriteLine("Spawning...");
+                //Trace.WriteLine("Spawning...");
                 isSpawning = true;
                 prevAngle = 90;
                 angle = 90;

@@ -59,6 +59,7 @@ namespace JoustClient
 
             int spawnX = 0;
             int spawnY = 0;
+            Console.WriteLine("SpawnPoints = " + World.Instance.SpawnPoints.Count); //egg crash???
             int randNum = new Random().Next(World.Instance.SpawnPoints.Count - 1);
 
             Point[] pArray = World.Instance.SpawnPoints[randNum];

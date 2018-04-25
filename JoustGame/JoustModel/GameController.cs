@@ -15,7 +15,7 @@ namespace JoustModel
             WorldRef.SpawnPoints = new List<Point[]>();
         }
 
-
+        // Parses all entities in World and activates their Update() method.
         public void Update(object sender, EventArgs e)
         {
             try
@@ -67,7 +67,7 @@ namespace JoustModel
             {
                 if (savedObj != "\r\n" && savedObj.Length > 0)
                 {
-                    string type = savedObj.Substring(0, savedObj.IndexOf(","));
+                    string type = savedObj.Substring(0, savedObj.IndexOf(",")); // FIX
                     WorldObject obj = CreateWorldObj(type);
                     obj.Deserialize(savedObj);
                 }
