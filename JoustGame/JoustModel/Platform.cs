@@ -22,6 +22,7 @@ namespace JoustModel
         public void SetType(string type, int number) { 
             PlatformType = type;
             PlatformNumber = number;
+            Console.WriteLine("platform type = " + type);
             switch (type) {
                 case "long":
                     width = 400;
@@ -33,6 +34,8 @@ namespace JoustModel
                     break;
                 case "short":
                 default:
+                    Console.WriteLine("Entered into default");
+                    Console.WriteLine("number = " + number);
                     width = 200;
                     height = 30;
                     type = "Platform";
@@ -43,8 +46,10 @@ namespace JoustModel
             }
         }
 
+        // returns the properties of this Platform object in string form
         public override string Serialize()
         {
+            Console.WriteLine("platformType = " + PlatformType);
             return string.Format("Platform,{0},{1},{2},{3}", PlatformType, PlatformNumber, coords.x, coords.y);
         }
 
@@ -52,7 +57,6 @@ namespace JoustModel
         public override void Deserialize(string data)
         {
             string[] properties = data.Split(',');
-            SetType(properties[1], Int32.Parse(properties[2]));
             coords.x = Convert.ToDouble(properties[3]); // set x coord
             coords.y = Convert.ToDouble(properties[4]); // set y coord
         }

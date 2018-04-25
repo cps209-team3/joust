@@ -15,6 +15,7 @@ namespace JoustModel
             imagePath = "Images/Platform/platform_respawn1.png";
         }
 
+        // returns the properties of this Respawn object in string form
         public override string Serialize()
         {
             return string.Format("Respawn,{0},{1}", coords.x, coords.y);

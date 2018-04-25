@@ -133,12 +133,13 @@ namespace JoustModel
                 if (objHit.ToString() == "Ostrich")
                 {
                     collected = true;
+                    (objHit as Ostrich).score += Value;
                 }
 
             }
         }
 
-        //Serialization
+        // returns the properties of this Egg object in string form
         public override string Serialize()
         {
             return string.Format("Egg,{0},{1},{2},{3}",speed, angle, coords.x, coords.y);

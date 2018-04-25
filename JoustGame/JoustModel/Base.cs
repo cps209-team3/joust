@@ -16,6 +16,7 @@ namespace JoustModel
             World.Instance.basePlatform = this;
         }
 
+        // returns the properties of this Base object in string form
         public override string Serialize()
         {
             return string.Format("Base,{0},{1}", coords.x, coords.y);

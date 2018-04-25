@@ -58,7 +58,9 @@ namespace JoustClient
         /// <summary>
         /// Runs when the PterodactylDestroyed fires. It removes this Control.
         /// </summary>
-        public void NotifyDestroy(object sender, EventArgs e) {
+        public void NotifyDestroy(object sender, EventArgs e)
+        {
+            DisplayFloatingNumbers(sender as Entity, new SolidColorBrush(Colors.Red));
             Canvas canvas = Parent as Canvas;
             canvas.Children.Remove(this);
 

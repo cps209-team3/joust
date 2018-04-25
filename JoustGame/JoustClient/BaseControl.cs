@@ -25,6 +25,7 @@ namespace JoustClient
             Width = 700;
         }
 
+        // Set up spawn for 
         public void CreateSpawn(int x, int y) {
             Respawn respawn = new Respawn();
             RespawnControl rCtrl = new RespawnControl(respawn.imagePath);

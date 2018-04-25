@@ -103,21 +103,9 @@ namespace JoustClient
 
         public void NotifyDied(object sender, int e)
         {
-            Buzzard b = sender as Buzzard;
-            Canvas canvas = Parent as Canvas;
-            TextBlock floating = new TextBlock();
-            floating.Text = Convert.ToString(b.Value);
-            floating.Foreground = new SolidColorBrush(Colors.Red);
-            Canvas.SetTop(floating, b.coords.y);
-            Canvas.SetLeft(floating, b.coords.x);
-            canvas.Children.Add(floating);
-            Task.Run(() => 
-            {   // add animation later
-                Dispatcher.Invoke(() => Canvas.SetTop(floating, b.coords.y - 1));
-                Thread.Sleep(1000);
-                Dispatcher.Invoke(() => canvas.Children.Remove(floating));
-            });
-            
+            DisplayFloatingNumbers(sender as Entity, new SolidColorBrush(Colors.Red));
+
+
         }
     }
 }

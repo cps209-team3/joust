@@ -154,7 +154,7 @@ namespace JoustModel
             }
             else if (stateMachine.currentState is EnemySpawningState) {
                 respawning++;
-                Trace.WriteLine("Spawning...");
+                //Trace.WriteLine("Spawning...");
                 isSpawning = true;
                 prevAngle = 90;
                 angle = 90;
@@ -214,6 +214,7 @@ namespace JoustModel
                             }
                             this.stateMachine.Change("flee");
                             stateMachine.currentState.Update();
+                            (objHit as Ostrich).score += Value;
                         }
                         else
                         {
@@ -241,9 +242,10 @@ namespace JoustModel
                         this.stateMachine.Change("flap_right"); // if hit right
                     }
                 }
-            } 
+            }
         }
 
+        // returns the properties of this Buzzard object in string form
         public override string Serialize()
         {
             return string.Format("Buzzard,{0},{1},{2},{3}", speed, angle, coords.x, coords.y);

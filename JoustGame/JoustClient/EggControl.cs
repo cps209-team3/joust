@@ -59,6 +59,7 @@ namespace JoustClient
 
             int spawnX = 0;
             int spawnY = 0;
+            Console.WriteLine("SpawnPoints = " + World.Instance.SpawnPoints.Count); //egg crash???
             int randNum = new Random().Next(World.Instance.SpawnPoints.Count - 1);
 
             Point[] pArray = World.Instance.SpawnPoints[randNum];
@@ -94,6 +95,7 @@ namespace JoustClient
         /// Runs when the EggDestroyed fires. It removes this Control.
         /// </summary>
         public void NotifyDestroy(object sender, EventArgs e) {
+            DisplayFloatingNumbers(sender as Entity, new SolidColorBrush(Colors.Yellow));
             Canvas canvas = Parent as Canvas;
             canvas.Children.Remove(this);
         }
