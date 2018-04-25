@@ -1,1 +1,0 @@
-Ostrich,0,3,0,0,0,0,stand:Egg,0,0,0,0:Pterodactyl,0,315,0,0:Buzzard,3,0,0,0:Platform,,0,0,0:Respawn,0,0:Base,0,0:

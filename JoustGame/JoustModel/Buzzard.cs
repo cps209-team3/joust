@@ -103,6 +103,7 @@ namespace JoustModel
         /// </summary>
         public override void Update()
         {
+            //Console.WriteLine("Buzzard state = " + stateMachine.currentState.ToString());
             if (!isSpawning) {
                 if (!droppedEgg) CheckEnemyCollision();
 
