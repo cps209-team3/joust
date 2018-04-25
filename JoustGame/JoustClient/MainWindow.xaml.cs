@@ -423,6 +423,7 @@ namespace JoustClient
         }
 
         public void LoadStage(object sender, EventArgs e) {
+            controls_on = true;
             canvas.Children.Clear();
             control.WorldRef.Reset();
             designer_on = false;
@@ -457,13 +458,6 @@ namespace JoustClient
 
             SpawnEnemies();
             InitiateWorldObject("Base", 375, 800);
-
-            updateTimer = new DispatcherTimer(
-                TimeSpan.FromMilliseconds(5),
-                DispatcherPriority.Render,
-                UpdateTick,
-                Dispatcher.CurrentDispatcher);
-            updateTimer.Start();
         }
 
         private void UpdateTick(object sender, EventArgs e)
