@@ -14,6 +14,7 @@ namespace JoustModel
         public StateMachine stateMachine;
         public int lives;
         public int score;
+        public int stage;
         public override int Value { get; set; }
         public string input;
         public bool leftDown;
@@ -159,7 +160,7 @@ namespace JoustModel
         // Serialization
         public override string Serialize()
         {
-            return string.Format("Ostrich,{0},{1},{2},{3},{4},{5},{6}", score, lives, speed, angle, coords.x, coords.y, stateMachine.currentState.ToString());
+            return string.Format("Ostrich,{0},{1},{2},{3},{4},{5},{6},{7}", score, lives, speed, angle, coords.x, coords.y, stateMachine.currentState.ToString(), stage);
         }
 
         public override void Deserialize(string data)
@@ -172,7 +173,7 @@ namespace JoustModel
             coords.x = Convert.ToDouble(properties[5]); // set x coord
             coords.y = Convert.ToDouble(properties[6]); // set y coord
             stateMachine.Change(properties[7]);
-
+            stage = Convert.ToInt32(properties[8]); // set stage
         }
 
         public override string ToString()

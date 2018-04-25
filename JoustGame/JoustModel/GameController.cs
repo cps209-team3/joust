@@ -41,7 +41,7 @@ namespace JoustModel
 
         public void CalculateNumEnemies(ref int numBuzzards, ref int numPterodactyls)
         {
-            int stage = WorldRef.stage;
+            int stage = WorldRef.player.stage;
             numBuzzards = stage + 3;
             if (stage >= 5)
             {
@@ -87,7 +87,7 @@ namespace JoustModel
 
         public string Save()
         {
-            string filename = DateTime.Now.ToString("H-mm-ss");
+            string filename = DateTime.Now.ToString("yyyy-MM-dd-H-mm-ss");
             string line2save = "";
             foreach (WorldObject obj in WorldRef.objects)
             {
