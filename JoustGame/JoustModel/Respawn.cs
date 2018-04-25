@@ -11,6 +11,7 @@ namespace JoustModel
         public string respawnImagePath = "Images/Platform/platform_respawn1.png";
         public Respawn() : base()
         {
+            width = 40;
             type = "Respawn";
             imagePath = "Images/Platform/platform_respawn1.png";
         }

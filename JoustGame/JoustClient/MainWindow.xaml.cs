@@ -443,7 +443,6 @@ namespace JoustClient
 
             Ostrich o = InitiateWorldObject("Ostrich", 720, 350) as Ostrich;
             control.WorldRef.player = o;
-            localPlayer = o;
             playerStateMachine = control.WorldRef.player.stateMachine;
             control.WorldRef.player.ostrichDied += this.NotifyLost;
             if (cheatMode) {
@@ -598,6 +597,7 @@ namespace JoustClient
             designer_on = true;
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
+            control.WorldRef.win -= this.NotifyWon;
 
             Button startSingle = Make_Button("Single Player", 250.0, Single_Screen);
             Button help = Make_Button("Help", 350.0, Help_Screen);
