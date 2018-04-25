@@ -669,7 +669,7 @@ namespace JoustClient
             {
                 Button btn = new Button();
                 btn.Width = 183;
-                btn.Content = saveFiles[i].Substring(saveFiles[i].Length-12, 8);
+                btn.Content = saveFiles[i].Substring(saveFiles[i].Length-23, 19);
                 btn.Click += (object s, RoutedEventArgs ee) =>
                 {
                     LoadGame(s, ee);

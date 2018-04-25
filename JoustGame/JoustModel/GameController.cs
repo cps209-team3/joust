@@ -87,7 +87,7 @@ namespace JoustModel
 
         public string Save()
         {
-            string filename = DateTime.Now.ToString("H-mm-ss");
+            string filename = DateTime.Now.ToString("yyyy-MM-dd-H-mm-ss");
             string line2save = "";
             foreach (WorldObject obj in WorldRef.objects)
             {
