@@ -302,6 +302,7 @@ namespace JoustClient
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
             control.WorldRef.win += this.NotifyWon;
+            ShowHud();
 
             foreach (WorldObject obj in control.WorldRef.objects)
             {
@@ -311,6 +312,7 @@ namespace JoustClient
                 {
                     control.WorldRef.player = (obj as Ostrich);
                     playerStateMachine = control.WorldRef.player.stateMachine;
+                    control.WorldRef.player.ostrichDied += this.NotifyLost;
                     Console.WriteLine("player has been set");
                 }
                 WorldObjectControlFactory(obj);
@@ -334,6 +336,7 @@ namespace JoustClient
             flapLock = false;
             canvas.Children.Clear();
             canvas.Background = Brushes.Black;
+            ShowHud();
 
             // Load Map here
 
@@ -381,10 +384,7 @@ namespace JoustClient
             Canvas.SetZIndex(currScore, 3);
             currScore.FontSize = 15;
 
-            hudTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(5),
-            DispatcherPriority.Render,
-            HUDtick,
-            Dispatcher.CurrentDispatcher);
+
         }
 
         private void HUDtick(object sender, EventArgs e)
@@ -430,6 +430,7 @@ namespace JoustClient
             canvas.Background = Brushes.Black;
             Button b = sender as Button;
             control.StageLoad(b.Content + ".txt");
+            ShowHud();
             // Make the controls for each world object
             foreach (WorldObject obj in control.WorldRef.objects) {
                 WorldObjectControlFactory(obj);
@@ -498,6 +499,20 @@ namespace JoustClient
             obj.coords.y = y;
             WorldObjectControlFactory(obj);
             return obj;
+        }
+
+        /// <summary>
+        /// Displays lives and score counters on the map.
+        /// </summary>
+        public void ShowHud()
+        {
+            livesLeft = Make_TextBlock(800.0, 500.0, 20, 60);
+            Canvas.SetZIndex(livesLeft, 3);
+            livesLeft.FontSize = 15;
+
+            currScore = Make_TextBlock(800.0, 800.0, 20, 160);
+            Canvas.SetZIndex(currScore, 3);
+            currScore.FontSize = 15;
         }
 
         private Button Make_Button(object content, double top, RoutedEventHandler eventx)
@@ -601,6 +616,11 @@ namespace JoustClient
                 TimeSpan.FromMilliseconds(5),
                 DispatcherPriority.Render,
                 UpdateTick,
+                Dispatcher.CurrentDispatcher);
+
+            hudTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(5),
+                DispatcherPriority.Render,
+                HUDtick,
                 Dispatcher.CurrentDispatcher);
         }
 
