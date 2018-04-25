@@ -133,6 +133,7 @@ namespace JoustModel
                 if (objHit.ToString() == "Ostrich")
                 {
                     collected = true;
+                    (objHit as Ostrich).score += Value;
                 }
 
             }

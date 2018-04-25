@@ -163,6 +163,7 @@ namespace JoustModel
                     {
                         this.stateMachine.Change("destroyed");
                         stateMachine.currentState.Update();
+                        (objHit as Ostrich).score += Value;
                     }
                     else
                     {

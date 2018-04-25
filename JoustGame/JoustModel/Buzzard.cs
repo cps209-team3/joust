@@ -214,6 +214,7 @@ namespace JoustModel
                             }
                             this.stateMachine.Change("flee");
                             stateMachine.currentState.Update();
+                            (objHit as Ostrich).score += Value;
                         }
                         else
                         {

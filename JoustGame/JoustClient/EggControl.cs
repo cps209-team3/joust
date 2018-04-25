@@ -94,6 +94,7 @@ namespace JoustClient
         /// Runs when the EggDestroyed fires. It removes this Control.
         /// </summary>
         public void NotifyDestroy(object sender, EventArgs e) {
+            DisplayFloatingNumbers(sender as Entity, new SolidColorBrush(Colors.Yellow));
             Canvas canvas = Parent as Canvas;
             canvas.Children.Remove(this);
         }
