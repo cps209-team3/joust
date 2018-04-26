@@ -7,8 +7,7 @@ namespace JoustModel
 {
     public class PlaySounds
     {
-        //private SoundPlayer player;
-
+        // all represent the paths for the various sounds
         private string spawn;
         private string flap;
         private string walk;
@@ -19,6 +18,9 @@ namespace JoustModel
 
         public string path;
 
+        /// <summary>
+        /// private constructor that sets the paths
+        /// </summary>
         private PlaySounds()
         {
             string newpath = Directory.GetCurrentDirectory();
@@ -37,12 +39,16 @@ namespace JoustModel
 
         }
 
+        // setting the instance of the class
         private static PlaySounds instance = new PlaySounds();
         public static PlaySounds Instance
         {
             get { return instance; }
         }
 
+        /// <summary>
+        /// all the following methods play the sound effect that reflects their name
+        /// </summary>
         public async void Play_Spawn()
         {
             //SoundPlayer player = new SoundPlayer(spawn);
