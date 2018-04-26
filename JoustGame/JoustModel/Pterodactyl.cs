@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 
 namespace JoustModel
 {
+    //-----------------------------------------------------------
+    //  File:   Pterodactyl.cs
+    //  Desc:   This class handles the Pterodactyl enemy states.
+    //----------------------------------------------------------- 
     public class Pterodactyl : Enemy
     {
         // Event handlers to notify the view
@@ -41,7 +45,7 @@ namespace JoustModel
             charging = false;
             chargeTime = 0;
             dieAnimateTime = 0;
-            // Start out in falling state
+            // Initialize the State Machine dictionary
             stateMachine = new StateMachine();
             EnemyFlappingState flap = new EnemyFlappingState(this) { Angle = 90 };
             stateMachine.stateDict.Add("flap", flap);
@@ -121,7 +125,6 @@ namespace JoustModel
             else if (stateMachine.currentState is PterodactylChargeState)
             {
                 // Don't allow the state to change when charging
-                Trace.WriteLine("Charging: " + chargeTime);
                 charging = true;
                 chargeTime++;
                 speed = 10;
@@ -151,6 +154,10 @@ namespace JoustModel
             }
         }
 
+        /// <summary>
+        /// Determines if a collision happened with this object and changes
+        /// to the appropriate state.
+        /// </summary>
         public void CheckEnemyCollision()
         {
             // Check Collision
@@ -159,18 +166,22 @@ namespace JoustModel
             {
                 if (objHit.ToString() == "Ostrich")
                 {
-                    if (this.coords.y > objHit.coords.y)
+                    if (this.coords.y < objHit.coords.y)
                     {
                         this.stateMachine.Change("destroyed");
                         stateMachine.currentState.Update();
                         (objHit as Ostrich).score += Value;
+                        Task.Run(() =>
+                        {
+                            PlaySounds.Instance.Play_Collide();
+                        });
                     }
                     else
                     {
                         (objHit as Ostrich).Die();
                     }
                 }
-                else
+                else if(objHit.ToString() == "Platform")
                 {
                     Point minTV = FindMinTV(objHit);
                     if (minTV.y > 0)
@@ -193,12 +204,18 @@ namespace JoustModel
             }
         }
 
-        // returns the properties of this Pterodactyl object in string form
+        /// <summary>
+        /// Returns the properties of this Pterodactyl object in string form
+        /// </summary>
         public override string Serialize()
         {
             return string.Format("Pterodactyl,{0},{1},{2},{3}", speed, angle, coords.x, coords.y);
         }
 
+        /// <summary>
+        /// Extracts the properties of the Pterodactyl object from a string.
+        /// </summary>
+        /// <param name="data">The string of properties to extract</param>
         public override void Deserialize(string data)
         {
             string[] properties = data.Split(',');
@@ -208,6 +225,10 @@ namespace JoustModel
             coords.y = Convert.ToDouble(properties[4]); // set y coord
         }
 
+        /// <summary>
+        /// Returns the object's class name.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return "Pterodactyl";

@@ -1,4 +1,4 @@
-﻿////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 // filename: OstrichControl.cs
 // contents: GUI element for Ostriches created in-game
 //
@@ -39,9 +39,8 @@ namespace JoustClient
             Width = 50;
             currentMove = "Sprites/player_stand.png";
         }
-
         /// <summary>
-        /// handles the various images needed for an ostrich in a game and when they should be shown
+        /// Updates the visual for Ostrich based on the current state of the object in the model
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

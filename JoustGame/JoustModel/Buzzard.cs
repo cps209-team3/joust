@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 
 namespace JoustModel
 {
+    //-----------------------------------------------------------
+    //  File:   Buzzard.cs
+    //  Desc:   This class handles the Buzzard enemy states.
+    //----------------------------------------------------------- 
     public class Buzzard : Enemy
     {
         // Event handlers to notify the view
@@ -32,6 +36,7 @@ namespace JoustModel
         private const double SPEED = 3;
         private const double TERMINAL_VELOCITY = 4;
 
+        // Class Constructor
         public Buzzard()
         {
             // Initialize instance variables
@@ -44,7 +49,7 @@ namespace JoustModel
             updateGraphic = 0;
             prevAngle = angle;
             droppedEgg = false;
-            // Starting state is standing
+            // Initialize the State Machine dictionary
             stateMachine = new StateMachine();
             EnemySpawningState spawn = new EnemySpawningState(this);
             stateMachine.stateDict.Add("stand", new EnemyStandingState(this));
@@ -103,6 +108,7 @@ namespace JoustModel
         /// </summary>
         public override void Update()
         {
+            //Console.WriteLine("Buzzard state = " + stateMachine.currentState.ToString());
             if (!isSpawning) {
                 if (!droppedEgg) CheckEnemyCollision();
 
@@ -154,7 +160,6 @@ namespace JoustModel
             }
             else if (stateMachine.currentState is EnemySpawningState) {
                 respawning++;
-                //Trace.WriteLine("Spawning...");
                 isSpawning = true;
                 prevAngle = 90;
                 angle = 90;
@@ -194,6 +199,10 @@ namespace JoustModel
             }
         }
 
+        /// <summary>
+        /// Determines if a collision happened with this object and changes
+        /// to the appropriate state.
+        /// </summary>
         public void CheckEnemyCollision()
         {
             // Check Collision
@@ -203,7 +212,7 @@ namespace JoustModel
                 if (objHit.ToString() == "Ostrich")
                 {
                     string state = (objHit as Ostrich).stateMachine.currentState.ToString();
-                    //Console.WriteLine("ostrich state = " + state);
+                    
                     if (state != "dead" && state != "spawn")
                     {
                         if (this.coords.y > objHit.coords.y)
@@ -212,6 +221,10 @@ namespace JoustModel
                             {
                                 buzzDied(this, 0);
                             }
+                            Task.Run(() =>
+                            {
+                                PlaySounds.Instance.Play_Collide();
+                            });
                             this.stateMachine.Change("flee");
                             stateMachine.currentState.Update();
                             (objHit as Ostrich).score += Value;
@@ -222,7 +235,7 @@ namespace JoustModel
                         }
                     }
                 }
-                else
+                else if (objHit.ToString() == "Platform")
                 {
                     Point minTV = FindMinTV(objHit);
                     if (minTV.y > 0)
@@ -245,12 +258,18 @@ namespace JoustModel
             }
         }
 
-        // returns the properties of this Buzzard object in string form
+        /// <summary>
+        /// Returns the properties of this Buzzard object in string form
+        /// </summary>
         public override string Serialize()
         {
             return string.Format("Buzzard,{0},{1},{2},{3}", speed, angle, coords.x, coords.y);
         }
 
+        /// <summary>
+        /// Extracts the properties of the Buzzard object from a string.
+        /// </summary>
+        /// <param name="data">The string of properties to extract</param>
         public override void Deserialize(string data)
         {
             string[] properties = data.Split(',');
@@ -260,6 +279,10 @@ namespace JoustModel
             coords.y = Convert.ToDouble(properties[4]); // set y coord
         }
 
+        /// <summary>
+        /// Returns the object's class name.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return "Buzzard";

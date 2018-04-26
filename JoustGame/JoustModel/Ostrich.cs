@@ -1,3 +1,8 @@
+//-----------------------------------------------------------
+//  File:   Ostrich.cs
+//  Desc:   Holds the Ostrich class and Ostrich unit tests
+//----------------------------------------------------------- 
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,25 +12,42 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JoustModel
 {
+    //----------------------------------------------------------- 
+    //  Desc:   This class handles the Ostrich (player) entity. 
+    //          Handles movement, controls, Collision, and 
+    //          its saving/loading.
+    //----------------------------------------------------------- 
     public class Ostrich : Entity
-    {
+    {   
+        // Event handlers to notify view
         public event EventHandler<int> ostrichMoved;
         public event EventHandler<int> ostrichDied;
+        // Statemachine to control the states of ostrich
         public StateMachine stateMachine;
+        // Lives the player has left
         public int lives;
+        // Total score of the player
         public int score;
+        // Current stage the player is on
         public int stage;
+        // How much the Ostrich is worth in points
         public override int Value { get; set; }
+        // The input the user provides
         public string input;
+        // whether player is moving left and downward
         public bool leftDown;
+        // whether player is moving right and downward
         public bool rightDown;
+        // Is in cheat mode or not
         public bool cheatMode;
+        // Whether state is changing
         public bool changing;
-        public string spawnLock;
 
+        /// <summary>
+        /// Constructor for the Ostrich
+        /// </summary>
         public Ostrich()
         {
-            spawnLock = "spawn";
             changing = false;
             height = 67;
             width = 50;
@@ -52,9 +74,11 @@ namespace JoustModel
             World.Instance.objects.Add(this);
         }
 
+        /// <summary>
+        /// Changes the Otrich's state to the 'DeadState'
+        /// </summary>
         public override void Die()
         {
-            //Console.WriteLine("Ostrich has died!");
             if (!cheatMode)
             {
                 lives -= 1;
@@ -70,11 +94,11 @@ namespace JoustModel
             }
         }
 
-
+        /// <summary>
+        /// Updates the ostrich's speed and direction and checks for collision
+        /// </summary>
         public override void Update()
         {
-          //Console.WriteLine("Ostrich Initial state = " + stateMachine.currentState.ToString());
-
             double xSpeed = speed * (Math.Cos(angle * Math.PI / 180));
             double ySpeed = speed * (Math.Sin(angle * Math.PI / 180));
             double nXSpeed;
@@ -96,22 +120,22 @@ namespace JoustModel
             else if (coords.y > 900) coords.y = 900;
 
             if (ostrichMoved != null) { ostrichMoved(this, 0); }
-
-            //Console.WriteLine("Ostrich 2nd state = " + stateMachine.currentState.ToString());
-
             stateMachine.Update();
-            //Console.WriteLine("Ostrich 3rd state = " + stateMachine.currentState.ToString());
-
             stateMachine.currentState.CheckCollisions();
-            //Console.WriteLine("Ostrich 4th state = " + stateMachine.currentState.ToString());
         }
 
+        /// <summary>
+        /// Moves the Ostrich to the other side of the screen when it reaches the boarder
+        /// </summary>
         public void WrapAround()
         {
             if (coords.x < -25) coords.x = 1465;
             else if (coords.x > 1465) coords.x = -25;
         }
 
+        /// <summary>
+        /// determines whether the ostrich should go left or right
+        /// </summary>
         public void MoveLeftRight()
         {
             if (leftDown && !rightDown)
@@ -124,23 +148,15 @@ namespace JoustModel
             }
         }
 
+        /// <summary>
+        /// Checks for collision with a platform and sets the position of the ostrich to not collide with the platform
+        /// </summary>
+        /// <param name="objHit">Any WorldObject</param>
         public void CheckEnemyCollision(WorldObject objHit)
         {
             if (objHit != null)
-            {
-                //Console.WriteLine("Player detected collision with " + objHit.ToString());
-                if (objHit.ToString() == "Buzzard") 
-                {
-                    Buzzard buzzard = objHit as Buzzard;
-                    if (buzzard.stateMachine.currentState is BuzzardFleeingState) { }
-                    else {
-                        Task.Run(() =>
-                        {
-                            PlaySounds.Instance.Play_Collide();
-                        });
-                    }
-                }
-                else
+            { 
+                if (objHit.ToString() == "Platform" || objHit.ToString() == "Base")
                 {
                     Point minTV = FindMinTV(objHit);
                     coords.x -= minTV.x;
@@ -157,12 +173,18 @@ namespace JoustModel
             }
         }
 
-        // returns the properties of this Ostrich object in string form
+        /// <summary>
+        /// returns the properties of this Ostrich object in string form
+        /// </summary>
         public override string Serialize()
         {
             return string.Format("Ostrich,{0},{1},{2},{3},{4},{5},{6},{7}", score, lives, speed, angle, coords.x, coords.y, stateMachine.currentState.ToString(), stage);
         }
 
+        /// <summary>
+        /// Sets the properties of Ostrich based on the data passed in.
+        /// </summary>
+        /// <param name="data">String of Ostrich properties to be set</param>
         public override void Deserialize(string data)
         {
             string[] properties = data.Split(',');

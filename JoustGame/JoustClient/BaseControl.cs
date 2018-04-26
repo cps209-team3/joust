@@ -1,4 +1,4 @@
-﻿////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 // filename: BaseControl.cs
 // contents: for the lower platform in the game
 //
@@ -23,8 +23,16 @@ using JoustModel;
 
 namespace JoustClient
 {
+    //-----------------------------------------------------------
+    //  class:   BaseControl.cs
+    //  Desc:   Controls the view properties of the 'Base' object in model.
+    //----------------------------------------------------------- 
     public class BaseControl : WorldObjectControl
     {
+        /// <summary>
+        /// Contructor for the BaseControl
+        /// </summary>
+        /// <param name="imagePath"></param>
         public BaseControl(string imagePath) : base(imagePath)
         {
             Height = 100;
