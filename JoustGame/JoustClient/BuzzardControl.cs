@@ -1,4 +1,10 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////
+// filename: BuzzardControl.cs
+// contents: GUI element for Buzzards created in-game
+//
+////////////////////////////////////////////////////////
+
+using System;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Controls;

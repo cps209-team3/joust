@@ -1,4 +1,10 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////
+// filename: PterodactylControl.cs
+// contents: GUI element for Pterodactyls created in-game
+//
+////////////////////////////////////////////////////////
+
+using System;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
