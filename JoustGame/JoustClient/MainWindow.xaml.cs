@@ -896,6 +896,27 @@ namespace JoustClient
 
             yes.SetValue(Canvas.LeftProperty, 520.0);
             no.SetValue(Canvas.LeftProperty, 720.0);
+
+            TextBlock reminder = Make_TextBlock(425.0, 520.0, 150, 400);
+            reminder.Text = "\n    *REMINDER* Even if you press save,\n    scores are only saved if there\n    are less than ten scores or are\n    higher than the lowest saved score.";
+            reminder.FontSize = 20;
+
+            try
+            {
+                canvas.Children.Add(currScore);
+                Canvas.SetTop(currScore, 272 - currScore.Height);
+                Canvas.SetLeft(currScore, 520);
+            }
+            catch
+            {
+                currScore = Make_TextBlock(800.0, 800.0, 20, 160);
+                Canvas.SetZIndex(currScore, 3);
+                currScore.FontSize = 15;
+                Canvas.SetTop(currScore, 272 - currScore.Height);
+                Canvas.SetLeft(currScore, 520);
+                currScore.Text = "0";
+            }
+
         }
 
         /// <summary>
