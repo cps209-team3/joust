@@ -1,4 +1,8 @@
-﻿using System;
+﻿//-----------------------------------------------------------
+//  File:   BaseControl.cs
+//  Desc:   Holds the 'BaseControl' class
+//----------------------------------------------------------- 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -17,8 +21,16 @@ using JoustModel;
 
 namespace JoustClient
 {
+    //-----------------------------------------------------------
+    //  class:   BaseControl.cs
+    //  Desc:   Controls the view properties of the 'Base' object in model.
+    //----------------------------------------------------------- 
     public class BaseControl : WorldObjectControl
     {
+        /// <summary>
+        /// Contructor for the BaseControl
+        /// </summary>
+        /// <param name="imagePath"></param>
         public BaseControl(string imagePath) : base(imagePath)
         {
             Height = 100;

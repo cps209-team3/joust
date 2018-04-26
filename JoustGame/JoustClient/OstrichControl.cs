@@ -27,7 +27,11 @@ namespace JoustClient
             Width = 50;
             currentMove = "Sprites/player_stand.png";
         }
-
+        /// <summary>
+        /// Updates the visual for Ostrich based on the current state of the object in the model
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void NotifyMoved(object sender, int e)
         {
             Ostrich o = sender as Ostrich;
