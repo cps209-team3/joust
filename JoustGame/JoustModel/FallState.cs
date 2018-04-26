@@ -20,7 +20,7 @@ namespace JoustModel
 
         public void Update()
         {
-            ostrich.nSpeed = 200;
+            ostrich.nSpeed = 300;
             ostrich.nAngle = 270;
             ostrich.MoveLeftRight();
             ostrich.WrapAround();
