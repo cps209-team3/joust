@@ -1,10 +1,17 @@
-﻿using System;
+﻿//-----------------------------------------------------------
+//  File:   Standstate.cs
+//  Desc:   Holds the StandState class
+//----------------------------------------------------------- 
+
+using System;
 
 namespace JoustModel
 {
     public class StandState : IState
     {
+        // State machine to be modified
         StateMachine stateMachine;
+        // Ostrich object to be changed
         Ostrich ostrich;
 
         public StandState(Ostrich ostrich)
@@ -13,12 +20,14 @@ namespace JoustModel
             this.stateMachine = ostrich.stateMachine;
         }
 
+        // Updates the ostrich's position
         public void Update()
         {
             ostrich.MoveLeftRight();
             ostrich.WrapAround();
         }
 
+        // Changes the direction and state of the ostrich based on input
         public void HandleInput(string command)
         {
             switch (command)
@@ -47,6 +56,7 @@ namespace JoustModel
             return "stand";
         }
 
+        // Checks for collisions with other world objects
         public void CheckCollisions()
         {
             bool collisionDetected = false;

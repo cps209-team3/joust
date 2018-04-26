@@ -1,3 +1,8 @@
+//-----------------------------------------------------------
+//  File:   Buzzard.cs
+//  Desc:   Holds the Buzzard class
+//----------------------------------------------------------- 
+
 using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -6,7 +11,6 @@ using System.Threading.Tasks;
 namespace JoustModel
 {
     //-----------------------------------------------------------
-    //  File:   Buzzard.cs
     //  Desc:   This class handles the Buzzard enemy states.
     //----------------------------------------------------------- 
     public class Buzzard : Enemy

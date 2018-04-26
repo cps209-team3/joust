@@ -1,8 +1,16 @@
-﻿using System;
+﻿//-----------------------------------------------------------
+//  File:   StateMachine.cs
+//  Desc:   Holds the StateMachine class
+//----------------------------------------------------------- 
+
+using System;
 using System.Collections.Generic;
 
 namespace JoustModel
 {
+    //-----------------------------------------------------------
+    //  Desc:   Controls the state of every entity that implements it
+    //----------------------------------------------------------- 
     public class StateMachine
     {
         public Dictionary<string, IState> stateDict = new Dictionary<string, IState>();

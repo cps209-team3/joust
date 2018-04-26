@@ -1,12 +1,22 @@
-﻿using System;
+﻿//-----------------------------------------------------------
+//  File:   SpawnState.cs
+//  Desc:   Holds the SpawnState class
+//----------------------------------------------------------- 
+
+using System;
 using System.Threading.Tasks;
 using System.Threading;
 
 namespace JoustModel
 {
+    //-----------------------------------------------------------
+    //  Desc:   Handles what happens when the Ostrich is spawning
+    //----------------------------------------------------------- 
     public class SpawnState : IState
     {
+        // State machine to be modified
         StateMachine stateMachine;
+        // Ostrich object to be changed
         Ostrich ostrich;
 
         public SpawnState(Ostrich ostrich)
@@ -18,6 +28,8 @@ namespace JoustModel
         public void Update() { }
 
         public void HandleInput(string command) { }
+
+        //Animates the ostrich to emerge frm the base platform
         public void Enter()
         {
             ostrich.coords.x = World.Instance.basePlatform.coords.x + 350;
@@ -37,6 +49,7 @@ namespace JoustModel
             return "spawn";
         }
 
+        // Check for collisions
         public void CheckCollisions() { }
     }
 }

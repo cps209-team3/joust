@@ -1,12 +1,24 @@
-﻿using System;
+﻿//-----------------------------------------------------------
+//  File:   Base.cs
+//  Desc:   Holds the Base class
+//----------------------------------------------------------- 
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
 namespace JoustModel
 {
+    //-----------------------------------------------------------
+    //  Desc: Handles initialization and saveing/loading of Base object
+    //----------------------------------------------------------- 
     public class Base : Platform
     {
+
+        /// <summary>
+        /// Constructor for Base class
+        /// </summary>
         public Base() : base()
         {
             height = 100;

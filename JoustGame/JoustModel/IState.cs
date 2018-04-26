@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------
+//  File:   IState.cs
+//  Desc:   Holds the IState interface that must be implemented 
+//          by all entities with a state machine.
+//----------------------------------------------------------- 
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;

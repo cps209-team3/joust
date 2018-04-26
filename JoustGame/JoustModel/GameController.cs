@@ -1,14 +1,23 @@
-﻿using System;
+﻿//-----------------------------------------------------------
+//  File:   GameController.cs
+//  Desc:   Holds the GameController class
+//----------------------------------------------------------- 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Threading;
 
 namespace JoustModel
 {
+    //-----------------------------------------------------------
+    //  Desc:   Controls the game entirely
+    //----------------------------------------------------------- 
     public class GameController
     {
+        // Reference of the world that must be changed
         public World WorldRef { get; set; }
 
+        // Constructor
         public GameController()
         {
             WorldRef = World.Instance;
@@ -39,6 +48,7 @@ namespace JoustModel
             } 
         }
 
+        // Calculates the number of enemies for each stage
         public void CalculateNumEnemies(ref int numBuzzards, ref int numPterodactyls)
         {
             int stage = WorldRef.player.stage;
@@ -49,6 +59,7 @@ namespace JoustModel
             }
         }
 
+        // Spawns the entities based on num of buzzards and Pterodactyls
         public void SpawnEnemies(int numBuzzards, int numPterodactyls)
         {
             for (int i = 0; i < numBuzzards; i++)
@@ -74,6 +85,7 @@ namespace JoustModel
             }
         }
 
+        // Load a custom stage
         public void StageLoad(string filename) {
             string loadedLine = System.IO.File.ReadAllText(string.Format(@"../../Saves/Custom Stages/{0}", filename));
             string[] savedObjects = loadedLine.Split(':');
@@ -100,6 +112,7 @@ namespace JoustModel
             return line2save;
         }
 
+        // gets spawn points based on how many are in the current game
         public void GetSpawnPoints() {
             WorldRef.SpawnPoints = new List<Point[]>();
             foreach (WorldObject obj in WorldRef.objects) {
@@ -112,6 +125,7 @@ namespace JoustModel
             }
         }
 
+        // Creates and returns a world object based on the type passed in.
         public WorldObject CreateWorldObj(string type)
         {
             switch (type)

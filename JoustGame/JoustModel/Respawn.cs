@@ -1,4 +1,9 @@
-﻿using System;
+﻿//-----------------------------------------------------------
+//  File:   Respawn.cs
+//  Desc:   Holds the Respawn class
+//----------------------------------------------------------- 
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +11,12 @@ using System.Threading.Tasks;
 
 namespace JoustModel
 {
+    //-----------------------------------------------------------
+    //  Desc:   Object that spawns entities after they have died
+    //----------------------------------------------------------- 
     public class Respawn : Platform
     {
+        // iamge path
         public string respawnImagePath = "Images/Platform/platform_respawn1.png";
         public Respawn() : base()
         {

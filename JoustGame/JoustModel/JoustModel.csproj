@@ -81,7 +81,6 @@
     <Compile Include="HighScoreManagerTest.cs" />
     <Compile Include="ISerializable.cs" />
     <Compile Include="IState.cs" />
-    <Compile Include="Map.cs" />
     <Compile Include="EmptyState.cs" />
     <Compile Include="PlaySounds.cs" />
     <Compile Include="Score.cs" />

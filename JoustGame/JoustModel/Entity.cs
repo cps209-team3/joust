@@ -1,3 +1,8 @@
+//-----------------------------------------------------------
+//  File:   Entity.cs
+//  Desc:   Holds the Entity class
+//----------------------------------------------------------- 
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,17 +12,25 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JoustModel
 {
+    //-----------------------------------------------------------
+    //  Desc:   Parent class for all Entities of the game.
+    //          Defines movement variables and the collision test
+    //----------------------------------------------------------- 
     public abstract class Entity : WorldObject
     {
+        // speed of the entity
         public double speed;
+        // angle of the entity
         public double angle;
+        // new speed of the entity
         public double nSpeed;
+        // new angle of the entity
         public double nAngle;
-
+        // Value of the entity
         public abstract int Value { get; set; }
-
+        // Death method all entities must implement
         public abstract void Die();
-
+        // Update method all entities must implement
         public abstract void Update();
 
 
@@ -37,14 +50,24 @@ namespace JoustModel
             return null; // no collision
         }
 
+        /// <summary>
+        /// calculates the smallest movement vector the object has to made in order to not be colliding for the object that has been collided with
+        /// </summary>
+        /// <param name="wo"> Object that has been collided with </param>
+        /// <returns> smallest movement the the object must make to not be colliding </returns>
         public Point FindMinTV(WorldObject wo)
         {
-            Point leftV = new Point(coords.x - (wo.coords.x + wo.width), 0);
-            Point rightV = new Point((coords.x + width) - wo.coords.x, 0);
-            Point topV = new Point(0, coords.y - (wo.coords.y + wo.height));
-            Point bottomV = new Point(0, (coords.y + height) - wo.coords.y);
-            List<Point> cornerVectors = new List<Point> { leftV, rightV, topV, bottomV };
-            Point minTV = leftV;
+            // bottom right corner of the object
+            Point bRight = new Point(coords.x - (wo.coords.x + wo.width), 0);
+            // top right corner of the object
+            Point tRight = new Point((coords.x + width) - wo.coords.x, 0);
+            // bottom left corner of the object
+            Point bLeft = new Point(0, coords.y - (wo.coords.y + wo.height));
+            // top left corner of the object
+            Point tLeft = new Point(0, (coords.y + height) - wo.coords.y);
+            List<Point> cornerVectors = new List<Point> { bRight, tRight, bLeft, tLeft };
+            // Smallest vector of movement the object has to make
+            Point minTV = tLeft;
             foreach (Point p in cornerVectors) // find smallest vector
             {
                 if (Math.Sqrt(Math.Pow(minTV.x, 2) + Math.Pow(minTV.y, 2)) > Math.Sqrt(Math.Pow(p.x, 2) + Math.Pow(p.y, 2)))

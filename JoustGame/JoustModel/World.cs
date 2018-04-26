@@ -1,9 +1,17 @@
-﻿using System;
+﻿//-----------------------------------------------------------
+//  File:   World.cs
+//  Desc:   Holds the World class
+//----------------------------------------------------------- 
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace JoustModel
 {
+    //-----------------------------------------------------------
+    //  Desc:   Handles all variables needed to run the world
+    //----------------------------------------------------------- 
     public class World
     {
         // Event handler to notify the view
@@ -33,6 +41,7 @@ namespace JoustModel
             enemies = new List<Enemy>();
         }
 
+        // Resets the world
         public void Reset() {
             objects = new List<WorldObject>();
             enemies = new List<Enemy>();
@@ -44,6 +53,7 @@ namespace JoustModel
             get { return instance; }
         }
 
+        // Checks whether the player has won
         public void CheckWin()
         {
             if (enemies.Count == 0 && win != null)
