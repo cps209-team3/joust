@@ -8,12 +8,21 @@ namespace JoustModel
     // handles saving and loading high scores
     public class HighScoreManager
     {
-        // must be set with the "Load" method
+        // a list of scores representing the file's contents
         public List<Score> AllScores { get; set; }
+
+        // lowest score on file; used for adding
         public Score lowestScore;
+
+        // a path that is fully set by the constructor
         public string path = "";
+
+        // represents the amount of lines in the file; set 
         public int lineCount;
 
+        /// <summary>
+        /// private constructor
+        /// </summary>
         private HighScoreManager()
         {
             string newpath = Directory.GetCurrentDirectory();
@@ -38,12 +47,17 @@ namespace JoustModel
             this.replaceLow();
         }
 
+        // instance of the HighScoreManager class
         private static HighScoreManager instance = new HighScoreManager();
         public static HighScoreManager Instance
         {
             get { return instance; }
         }
 
+        /// <summary>
+        /// adds the give Score to the local list; then saves it to the file
+        /// </summary>
+        /// <param name="newScore"></param>
         public void AddScore(Score newScore)
         {
             if (AllScores.Count < 10)
@@ -59,11 +73,17 @@ namespace JoustModel
             this.Save();
         }
 
+        /// <summary>
+        /// sets the lineCount variable
+        /// </summary>
         public void FindLines()
         {
             this.lineCount = File.ReadLines(this.path).Count();
         }
 
+        /// <summary>
+        /// takes the local list and saves it to the file
+        /// </summary>
         public void Save()
         {
             // when a player's score is created, the points attribute is 
@@ -95,11 +115,20 @@ namespace JoustModel
             }
         }
 
+        /// <summary>
+        /// gives back all the lines of the file
+        /// </summary>
+        /// <returns></returns>
         private string[] GetText()
         {
             return File.ReadAllLines(this.path);
         }
 
+        /// <summary>
+        /// loads the local list with the file contents
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns></returns>
         private static List<Score> Load(string filepath)
         {
             // line by line will split the txt file and return a 
@@ -135,6 +164,11 @@ namespace JoustModel
             }
         }
 
+        /// <summary>
+        /// orders a give Score list
+        /// </summary>
+        /// <param name="listToOrder"></param>
+        /// <returns></returns>
         private static List<Score> OrderList(List<Score> listToOrder)
         {
             List<Score> toReturn = listToOrder.OrderBy(o => o.points).ToList();
@@ -142,6 +176,9 @@ namespace JoustModel
             return toReturn;
         }
 
+        /// <summary>
+        /// sets the lowest score on file
+        /// </summary>
         public void replaceLow()
         {
             if (this.AllScores.Count > 0)
@@ -159,6 +196,9 @@ namespace JoustModel
             }
         }
 
+        /// <summary>
+        /// for testing
+        /// </summary>
         public void testReset_pathChange()
         {
             this.lowestScore = null;
