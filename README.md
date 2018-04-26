@@ -46,7 +46,7 @@ JD
 * No Known Issues
 
 Sandeep
-* Scores don't update for the player in the model so the HUD doesn't change
+* No known issues
 
 ## Recording
 https://drive.google.com/open?id=1p-HC5exoE7CdVMBaHH9NzhhoHfu0tNDb
@@ -57,4 +57,4 @@ https://drive.google.com/open?id=1p-HC5exoE7CdVMBaHH9NzhhoHfu0tNDb
 | Clayton | 49:15 |
 | Jacob | 49:52 |
 | JD | 39:10 |
-| Sandeep | 42 hrs, 19 min |
+| Sandeep | 45 hrs, 52 min |
