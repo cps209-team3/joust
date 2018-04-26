@@ -57,4 +57,4 @@ https://drive.google.com/open?id=1p-HC5exoE7CdVMBaHH9NzhhoHfu0tNDb
 | Clayton | 49:15 |
 | Jacob | 49:52 |
 | JD | 44:40 |
-| Sandeep | 45 hrs, 52 min |
+| Sandeep | 46 hrs, 33 min |
