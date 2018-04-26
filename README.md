@@ -49,7 +49,7 @@ Sandeep
 * No known issues
 
 ## Recording
-https://drive.google.com/open?id=1p-HC5exoE7CdVMBaHH9NzhhoHfu0tNDb
+https://drive.google.com/open?id=12Fh1Wn-crRkowWjN6hWrlXih6H_R70LB
 
 ## Expenses
 | Developer | Total Time Spent |
