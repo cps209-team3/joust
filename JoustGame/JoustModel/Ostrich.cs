@@ -127,20 +127,8 @@ namespace JoustModel
         public void CheckEnemyCollision(WorldObject objHit)
         {
             if (objHit != null)
-            {
-                //Console.WriteLine("Player detected collision with " + objHit.ToString());
-                if (objHit.ToString() == "Buzzard") 
-                {
-                    Buzzard buzzard = objHit as Buzzard;
-                    if (buzzard.stateMachine.currentState is BuzzardFleeingState) { }
-                    else {
-                        Task.Run(() =>
-                        {
-                            PlaySounds.Instance.Play_Collide();
-                        });
-                    }
-                }
-                else
+            { 
+                if (objHit.ToString() == "Platform" || objHit.ToString() == "Base")
                 {
                     Point minTV = FindMinTV(objHit);
                     coords.x -= minTV.x;

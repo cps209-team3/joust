@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 
 namespace JoustModel
 {
@@ -107,6 +108,7 @@ namespace JoustModel
         /// </summary>
         public override void Update()
         {
+            //Console.WriteLine("Buzzard state = " + stateMachine.currentState.ToString());
             if (!isSpawning) {
                 if (!droppedEgg) CheckEnemyCollision();
 
@@ -219,6 +221,10 @@ namespace JoustModel
                             {
                                 buzzDied(this, 0);
                             }
+                            Task.Run(() =>
+                            {
+                                PlaySounds.Instance.Play_Collide();
+                            });
                             this.stateMachine.Change("flee");
                             stateMachine.currentState.Update();
                             (objHit as Ostrich).score += Value;
@@ -229,7 +235,7 @@ namespace JoustModel
                         }
                     }
                 }
-                else
+                else if (objHit.ToString() == "Platform")
                 {
                     Point minTV = FindMinTV(objHit);
                     if (minTV.y > 0)

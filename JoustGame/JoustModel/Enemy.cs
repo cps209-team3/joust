@@ -113,10 +113,14 @@ namespace JoustModel
                         b.stateMachine.Change("stand");
                     }
                 }
-                else
+                else if (b.stateMachine.currentState is BuzzardFleeingState)
                 {
                     // If none of the previous states, set state to Fleeing
                     b.stateMachine.Change("flee");
+                }
+                else
+                {
+                    b.stateMachine.Change("flap");
                 }
             }
             else if (e is Egg)
