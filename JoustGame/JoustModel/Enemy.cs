@@ -5,12 +5,13 @@ using System.Windows.Threading;
 
 namespace JoustModel
 {
-    /// <summary>
-    /// This is the Class that all enemies in the game
-    /// inherit from getting an EnemyState variable.
-    /// </summary>
+    //-----------------------------------------------------------
+    //  File:   Enemy.cs
+    //  Desc:   This class is the parent class of all enemy classes.
+    //----------------------------------------------------------- 
     public abstract class Enemy : Entity
     {
+        // public instance variables for each enemy
         public EnemyState state;
         public StateMachine stateMachine;
     }
@@ -35,6 +36,7 @@ namespace JoustModel
         /// <returns> A new EnemyState Child </returns>
         public static void GetNextState(Enemy e)
         {
+            // Use Random number to choose next state
             Random rand = new Random(DateTime.Now.Millisecond);
             for (int i = 0; i < 999990; i++) { }
             int chance = rand.Next(100);
@@ -103,12 +105,11 @@ namespace JoustModel
                 {
                     BuzzardPickupState set_state = b.stateMachine.currentState as BuzzardPickupState;
 
-                    // Determine if the Buzzard is close enough to the Mik being picked up
+                    // Determine if the Buzzard is close enough to the Mik (Hatched Egg) being picked up
                     if ((set_state.TargetEgg.coords.x - b.coords.x) > -5 && (set_state.TargetEgg.coords.x - b.coords.x) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) < 5 && ((set_state.TargetEgg.coords.y - 50) - b.coords.y) > -5) {
-                        // Picked up Mik
+                        // Picked up Mik (Hatched Egg)
                         set_state.TargetEgg.mounted = true;
                         b.droppedEgg = false;
-                        Trace.WriteLine(set_state.TargetEgg.mounted);
                         b.stateMachine.Change("stand");
                     }
                 }
@@ -125,7 +126,6 @@ namespace JoustModel
 
                 if (egg.stateMachine.currentState is EnemyFallingState)
                 {
-                    // *** Implement when the egg lands on a platform ***
                     if (egg.coords.y > 750) egg.stateMachine.Change("stand");
                 }
                 else
@@ -194,6 +194,7 @@ namespace JoustModel
             }
         }
 
+        // Methods to be overridden
         public virtual void Update() { }
         public virtual void HandleInput(string data) { }
         public virtual void Enter() { }
@@ -203,7 +204,9 @@ namespace JoustModel
 
 
 
-
+    /// <summary>
+    /// This is the standing state of the enemies
+    /// </summary>
     public class EnemyStandingState : EnemyState
     {
         StateMachine stateMachine;
@@ -251,6 +254,9 @@ namespace JoustModel
         public override void Exit() { }
     }
 
+    /// <summary>
+    /// This is the running state of the enemies
+    /// </summary>
     public class EnemyRunningState : EnemyState
     {
         StateMachine stateMachine;
@@ -295,6 +301,9 @@ namespace JoustModel
         public override void CheckCollisions() { }
     }
 
+    /// <summary>
+    /// This is the falling state of the enemies
+    /// </summary>
     public class EnemyFallingState : EnemyState
     {
         StateMachine stateMachine;
@@ -350,6 +359,9 @@ namespace JoustModel
         public override void Exit() { }
     }
 
+    /// <summary>
+    /// This is the flapping state of the enemies
+    /// </summary>
     public class EnemyFlappingState : EnemyState
     {
         StateMachine stateMachine;
@@ -409,6 +421,9 @@ namespace JoustModel
         public override void Exit() { }
     }
 
+    /// <summary>
+    /// This is the spawning state of the enemies
+    /// </summary>
     public class EnemySpawningState : EnemyState {
         StateMachine stateMachine;
 
@@ -432,6 +447,9 @@ namespace JoustModel
         public override void Exit() { }
     }
 
+    /// <summary>
+    /// This is the fleeing state of the Buzzard
+    /// </summary>
     public class BuzzardFleeingState : EnemyState
     {
         StateMachine stateMachine;
@@ -468,6 +486,9 @@ namespace JoustModel
         public override void Exit() { }
     }
 
+    /// <summary>
+    /// This is the pickup state of the Buzzard
+    /// </summary>
     public class BuzzardPickupState : EnemyState
     {
         public Egg TargetEgg { get; set; }
@@ -573,6 +594,9 @@ namespace JoustModel
         public override void Exit() { }
     }
 
+    /// <summary>
+    /// This is the hatching state of the Egg
+    /// </summary>
     public class EggHatchingState : EnemyState
     {
         StateMachine stateMachine;
@@ -614,6 +638,9 @@ namespace JoustModel
         public override void Exit() { }
     }
 
+    /// <summary>
+    /// This is the hatched state of the Egg
+    /// </summary>
     public class EggHatchedState : EnemyState
     {
         StateMachine stateMachine;
@@ -646,6 +673,9 @@ namespace JoustModel
         public override void Exit() { }
     }
 
+    /// <summary>
+    /// This is the destroyed state of the Pterodactyl
+    /// </summary>
     public class PterodactylDestroyedState : EnemyState
     {
         StateMachine stateMachine;
@@ -680,6 +710,9 @@ namespace JoustModel
         public override void Exit() { }
     }
 
+    /// <summary>
+    /// This is the charge state of the Pterodactyl
+    /// </summary>
     public class PterodactylChargeState : EnemyState
     {
         StateMachine stateMachine;
